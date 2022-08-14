@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::domain::role::ExistingRole;
+
 #[derive(Debug, Deserialize)]
 pub struct RoleResponse {
     pub id: String,
@@ -7,6 +9,15 @@ pub struct RoleResponse {
     pub permissions: String,
     pub hoist: bool,
     pub mentionable: bool,
+}
+
+impl Into<ExistingRole> for RoleResponse {
+    fn into(self) -> ExistingRole {
+        ExistingRole {
+            id: self.id,
+            name: self.name,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]

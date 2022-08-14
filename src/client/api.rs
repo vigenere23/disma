@@ -1,12 +1,14 @@
-use crate::utils::http::HttpClient;
+use crate::{
+    domain::{
+        guild::{ExistingGuild, GuildRepo},
+        role::RolesList,
+    },
+    utils::http::HttpClient,
+};
 
-use async_trait::async_trait;
 use reqwest::header::{AUTHORIZATION, USER_AGENT};
 
-use super::{
-    base::DiscordClient,
-    responses::{ChannelResponse, RoleResponse},
-};
+use super::responses::{ChannelResponse, RoleResponse};
 
 pub struct DiscordApi {
     client: HttpClient,
@@ -22,17 +24,26 @@ impl DiscordApi {
             .build();
         DiscordApi { client, guild_id }
     }
-}
 
-#[async_trait]
-impl DiscordClient for DiscordApi {
-    async fn get_roles(&self) -> Vec<RoleResponse> {
+    pub fn get_roles(&self) -> Vec<RoleResponse> {
         let url = format!("/guilds/{}/roles", &self.guild_id);
-        self.client.get(&url).await
+        self.client.get(&url)
     }
 
-    async fn get_channels(&self) -> Vec<ChannelResponse> {
+    pub fn get_channels(&self) -> Vec<ChannelResponse> {
         let url = format!("/guilds/{}/channels", &self.guild_id);
-        self.client.get(&url).await
+        self.client.get(&url)
     }
 }
+
+// TODO
+
+impl GuildRepo for DiscordApi {
+    fn guild(&self) -> ExistingGuild {
+        let roles = self.get_roles();
+        ExistingGuild {
+            roles: RolesList::new(roles.into_iter().map(|value| value.into()).collect()),
+        }
+    }
+}
+// impl AwaitingGuild for DiscordApi {}

@@ -1,6 +1,6 @@
 use reqwest::{
+    blocking::{Client, RequestBuilder},
     header::{HeaderMap, HeaderName, HeaderValue},
-    Client, RequestBuilder,
 };
 use serde::{de::DeserializeOwned, Serialize};
 
@@ -16,17 +16,17 @@ impl HttpClient {
 }
 
 impl HttpClient {
-    pub async fn get<ResponseBody>(&self, url: &str) -> ResponseBody
+    pub fn get<ResponseBody>(&self, url: &str) -> ResponseBody
     where
         ResponseBody: DeserializeOwned,
     {
         let client = Client::new();
         let request = client.get(self.full_url(url));
 
-        self.send_request(request, Some(())).await
+        self.send_request(request, Some(()))
     }
 
-    pub async fn post<RequestBody, ResponseBody>(
+    pub fn post<RequestBody, ResponseBody>(
         &self,
         url: &str,
         body: Option<RequestBody>,
@@ -38,10 +38,10 @@ impl HttpClient {
         let client = Client::new();
         let request = client.post(self.full_url(url));
 
-        self.send_request(request, body).await
+        self.send_request(request, body)
     }
 
-    async fn send_request<RequestBody, ResponseBody>(
+    fn send_request<RequestBody, ResponseBody>(
         &self,
         builder: RequestBuilder,
         body: Option<RequestBody>,
@@ -54,15 +54,14 @@ impl HttpClient {
             .headers(self.headers.clone())
             // .body(body)  TODO
             .send()
-            .await
             .unwrap();
 
         if response.status().is_success() {
-            response.json().await.unwrap()
+            response.json().unwrap()
         } else {
             panic!(
                 "Error sending request. Returned body : {}",
-                response.text().await.unwrap()
+                response.text().unwrap()
             )
         }
     }
