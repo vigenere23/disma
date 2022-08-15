@@ -26,6 +26,13 @@ impl HttpClient {
         self.send_request(request, Some(()))
     }
 
+    pub fn delete(&self, url: &str) {
+        let client = Client::new();
+        let request = client.delete(self.full_url(url));
+
+        self.send_request(request, Some(()))
+    }
+
     pub fn post<RequestBody, ResponseBody>(
         &self,
         url: &str,

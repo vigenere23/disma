@@ -1,6 +1,9 @@
+pub mod requests;
+pub mod responses;
+
 use crate::{
     domain::{
-        guild::{ExistingGuild, GuildRepo},
+        guild::{AwaitingGuild, ExistingGuild, GuildRepo},
         role::RolesList,
     },
     utils::http::HttpClient,
@@ -8,7 +11,7 @@ use crate::{
 
 use reqwest::header::{AUTHORIZATION, USER_AGENT};
 
-use super::responses::{ChannelResponse, RoleResponse};
+use self::responses::{ChannelResponse, RoleResponse};
 
 pub struct DiscordApi {
     client: HttpClient,
@@ -34,6 +37,11 @@ impl DiscordApi {
         let url = format!("/guilds/{}/channels", &self.guild_id);
         self.client.get(&url)
     }
+
+    pub fn delete_role(&self, id: &str) {
+        let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
+        self.client.delete(&url);
+    }
 }
 
 // TODO
@@ -46,4 +54,13 @@ impl GuildRepo for DiscordApi {
         }
     }
 }
-// impl AwaitingGuild for DiscordApi {}
+
+impl AwaitingGuild for DiscordApi {
+    fn add_role(&self, role: &crate::domain::role::AwaitingRole) {
+        todo!()
+    }
+
+    fn delete_role(&self, id: &str) {
+        todo!()
+    }
+}

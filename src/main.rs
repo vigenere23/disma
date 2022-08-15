@@ -1,10 +1,10 @@
-mod client;
 mod domain;
+mod infra;
 mod utils;
 
 use std::env;
 
-use crate::{client::api::DiscordApi, domain::guild::GuildRepo};
+use crate::{domain::guild::GuildRepo, infra::api::DiscordApi};
 
 fn main() {
     let repo = DiscordApi::new(

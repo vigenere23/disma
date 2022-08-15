@@ -5,8 +5,9 @@ pub trait GuildRepo {
 }
 
 pub trait AwaitingGuild {
-    fn add_role(&self, role: AwaitingRole);
-    fn update_role(&self, id: String, role: AwaitingRole);
+    fn add_role(&self, role: &AwaitingRole);
+    // fn update_role(&self, id: &str, role: AwaitingRole);
+    fn delete_role(&self, id: &str);
 }
 
 #[derive(Debug)]
