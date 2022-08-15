@@ -1,26 +1,29 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    guild::AwaitingGuild,
+    guild::GuildCommander,
     role::{AwaitingRole, ExistingRole},
 };
 
 use super::GuildCommand;
 
 pub struct AddRole {
-    guild: Arc<dyn AwaitingGuild>,
+    guild_commander: Arc<dyn GuildCommander>,
     role: AwaitingRole,
 }
 
 impl AddRole {
-    fn new(guild: Arc<dyn AwaitingGuild>, role: AwaitingRole) -> Self {
-        AddRole { guild, role }
+    pub fn new(guild: Arc<dyn GuildCommander>, role: AwaitingRole) -> Self {
+        Self {
+            guild_commander: guild,
+            role,
+        }
     }
 }
 
 impl GuildCommand for AddRole {
     fn execute(&self) {
-        self.guild.add_role(&self.role);
+        self.guild_commander.add_role(&self.role);
     }
 
     fn describe(&self) -> String {
@@ -29,22 +32,56 @@ impl GuildCommand for AddRole {
 }
 
 pub struct DeleteRole {
-    guild: Arc<dyn AwaitingGuild>,
+    guild_commander: Arc<dyn GuildCommander>,
     role: ExistingRole,
 }
 
 impl DeleteRole {
-    fn new(guild: Arc<dyn AwaitingGuild>, role: ExistingRole) -> Self {
-        DeleteRole { guild, role }
+    pub fn new(guild: Arc<dyn GuildCommander>, role: ExistingRole) -> Self {
+        Self {
+            guild_commander: guild,
+            role,
+        }
     }
 }
 
 impl GuildCommand for DeleteRole {
     fn execute(&self) {
-        self.guild.delete_role(&self.role.id);
+        self.guild_commander.delete_role(&self.role.id);
     }
 
     fn describe(&self) -> String {
         format!("Deleting role {}.", &self.role.name)
+    }
+}
+
+pub struct UpdateRole {
+    guild_commander: Arc<dyn GuildCommander>,
+    existing_role: ExistingRole,
+    awaiting_role: AwaitingRole,
+}
+
+impl UpdateRole {
+    pub fn new(
+        guild: Arc<dyn GuildCommander>,
+        existing_role: ExistingRole,
+        awaiting_role: AwaitingRole,
+    ) -> Self {
+        Self {
+            guild_commander: guild,
+            existing_role,
+            awaiting_role,
+        }
+    }
+}
+
+impl GuildCommand for UpdateRole {
+    fn execute(&self) {
+        self.guild_commander
+            .update_role(&self.existing_role.id, &self.awaiting_role);
+    }
+
+    fn describe(&self) -> String {
+        format!("Updating role {}.", &self.existing_role.name)
     }
 }

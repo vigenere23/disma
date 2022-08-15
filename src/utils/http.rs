@@ -85,7 +85,7 @@ pub struct HttpClientBuilder {
 
 impl HttpClientBuilder {
     pub fn new() -> HttpClientBuilder {
-        HttpClientBuilder {
+        Self {
             headers: HeaderMap::new(),
             base_url: String::new(),
         }

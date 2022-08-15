@@ -16,6 +16,8 @@ impl Into<ExistingRole> for RoleResponse {
         ExistingRole {
             id: self.id,
             name: self.name,
+            is_mentionalbe: self.mentionable,
+            show_in_sidebar: self.hoist,
         }
     }
 }

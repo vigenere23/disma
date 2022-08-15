@@ -1,16 +1,20 @@
-use super::role::{AwaitingRole, RolesList};
+use super::role::{AwaitingRole, AwaitingRolesList, ExistingRolesList};
 
-pub trait GuildRepo {
+pub trait GuildQuerier {
     fn guild(&self) -> ExistingGuild;
 }
 
-pub trait AwaitingGuild {
+pub trait GuildCommander {
     fn add_role(&self, role: &AwaitingRole);
-    // fn update_role(&self, id: &str, role: AwaitingRole);
+    fn update_role(&self, id: &str, role: &AwaitingRole);
     fn delete_role(&self, id: &str);
 }
 
 #[derive(Debug)]
 pub struct ExistingGuild {
-    pub roles: RolesList,
+    pub roles: ExistingRolesList,
+}
+
+pub struct AwaitingGuild {
+    pub roles: AwaitingRolesList,
 }

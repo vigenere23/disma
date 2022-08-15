@@ -3,8 +3,8 @@ pub mod responses;
 
 use crate::{
     domain::{
-        guild::{AwaitingGuild, ExistingGuild, GuildRepo},
-        role::RolesList,
+        guild::{ExistingGuild, GuildCommander, GuildQuerier},
+        role::{AwaitingRole, ExistingRolesList},
     },
     utils::http::HttpClient,
 };
@@ -25,7 +25,7 @@ impl DiscordApi {
             .header(USER_AGENT, String::new())
             .header(AUTHORIZATION, format!("Bot {}", token))
             .build();
-        DiscordApi { client, guild_id }
+        Self { client, guild_id }
     }
 
     pub fn get_roles(&self) -> Vec<RoleResponse> {
@@ -46,21 +46,25 @@ impl DiscordApi {
 
 // TODO
 
-impl GuildRepo for DiscordApi {
+impl GuildQuerier for DiscordApi {
     fn guild(&self) -> ExistingGuild {
         let roles = self.get_roles();
         ExistingGuild {
-            roles: RolesList::new(roles.into_iter().map(|value| value.into()).collect()),
+            roles: ExistingRolesList::new(roles.into_iter().map(|value| value.into()).collect()),
         }
     }
 }
 
-impl AwaitingGuild for DiscordApi {
-    fn add_role(&self, role: &crate::domain::role::AwaitingRole) {
+impl GuildCommander for DiscordApi {
+    fn add_role(&self, role: &AwaitingRole) {
         todo!()
     }
 
     fn delete_role(&self, id: &str) {
+        todo!()
+    }
+
+    fn update_role(&self, id: &str, role: &AwaitingRole) {
         todo!()
     }
 }
