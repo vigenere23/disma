@@ -1,11 +1,10 @@
-use std::{ops::Deref, sync::Arc};
+use std::sync::Arc;
+
+use crate::domain::guild::{AwaitingGuild, ExistingGuild, GuildCommander};
 
 use super::{
-    commands::{
-        roles::{AddRole, DeleteRole, UpdateRole},
-        GuildCommand,
-    },
-    guild::{AwaitingGuild, ExistingGuild, GuildCommander},
+    roles::{AddRole, DeleteRole, UpdateRole},
+    GuildCommand,
 };
 
 pub struct DiffCalculator {
@@ -24,15 +23,17 @@ impl DiffCalculator {
     ) -> Vec<Arc<dyn GuildCommand>> {
         let mut commands: Vec<Arc<dyn GuildCommand>> = Vec::new();
 
-        for awaiting_role in (&awaiting_guild.roles.items).into_iter() {
+        for awaiting_role in &awaiting_guild.roles.items {
             match existing_guild.roles.find_by_name(&awaiting_role.name) {
                 Some(role) => {
-                    let command = UpdateRole::new(
-                        self.guild_commander.clone(),
-                        role.clone(),
-                        awaiting_role.clone(),
-                    );
-                    commands.push(Arc::from(command));
+                    if awaiting_role != role {
+                        let command = UpdateRole::new(
+                            self.guild_commander.clone(),
+                            role.clone(),
+                            awaiting_role.clone(),
+                        );
+                        commands.push(Arc::from(command));
+                    }
                 }
                 None => {
                     let command = AddRole::new(self.guild_commander.clone(), awaiting_role.clone());
@@ -41,7 +42,7 @@ impl DiffCalculator {
             }
         }
 
-        for existing_role in (&existing_guild.roles.items).into_iter() {
+        for existing_role in &existing_guild.roles.items {
             match awaiting_guild.roles.find_by_name(&existing_role.name) {
                 None => {
                     let command =

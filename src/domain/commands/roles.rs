@@ -82,6 +82,9 @@ impl GuildCommand for UpdateRole {
     }
 
     fn describe(&self) -> String {
-        format!("Updating role {}.", &self.existing_role.name)
+        format!(
+            "Updating role {}\nfrom :{:#?}\nto :{:#?}.",
+            &self.existing_role.name, &self.existing_role, &self.awaiting_role
+        )
     }
 }
