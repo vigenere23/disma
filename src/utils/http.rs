@@ -33,7 +33,7 @@ impl HttpClient {
         self.send_request(request, Some(()))
     }
 
-    pub fn post<RequestBody, ResponseBody>(
+    pub fn _post<RequestBody, ResponseBody>(
         &self,
         url: &str,
         body: Option<RequestBody>,
@@ -51,7 +51,7 @@ impl HttpClient {
     fn send_request<RequestBody, ResponseBody>(
         &self,
         builder: RequestBuilder,
-        body: Option<RequestBody>,
+        _body: Option<RequestBody>,
     ) -> ResponseBody
     where
         RequestBody: Serialize,

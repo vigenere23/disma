@@ -28,23 +28,16 @@ impl DiscordApi {
         Self { client, guild_id }
     }
 
-    pub fn get_roles(&self) -> Vec<RoleResponse> {
+    fn get_roles(&self) -> Vec<RoleResponse> {
         let url = format!("/guilds/{}/roles", &self.guild_id);
         self.client.get(&url)
     }
 
-    pub fn get_channels(&self) -> Vec<ChannelResponse> {
+    pub fn _get_channels(&self) -> Vec<ChannelResponse> {
         let url = format!("/guilds/{}/channels", &self.guild_id);
         self.client.get(&url)
     }
-
-    pub fn delete_role(&self, id: &str) {
-        let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
-        self.client.delete(&url);
-    }
 }
-
-// TODO
 
 impl GuildQuerier for DiscordApi {
     fn guild(&self) -> ExistingGuild {
@@ -56,15 +49,16 @@ impl GuildQuerier for DiscordApi {
 }
 
 impl GuildCommander for DiscordApi {
-    fn add_role(&self, role: &AwaitingRole) {
+    fn add_role(&self, _role: &AwaitingRole) {
         todo!()
     }
 
     fn delete_role(&self, id: &str) {
-        todo!()
+        let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
+        self.client.delete(&url);
     }
 
-    fn update_role(&self, id: &str, role: &AwaitingRole) {
+    fn update_role(&self, _id: &str, _role: &AwaitingRole) {
         todo!()
     }
 }
