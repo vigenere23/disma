@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use reqwest::{
     blocking::{Client, RequestBuilder},
     header::{HeaderMap, HeaderName, HeaderValue},
 };
 use serde::{de::DeserializeOwned, Serialize};
+use serde_json::Value;
 
 pub struct HttpClient {
     base_url: String,
@@ -23,21 +26,10 @@ impl HttpClient {
         let client = Client::new();
         let request = client.get(self.full_url(url));
 
-        self.send_request(request, Some(()))
+        self.send_request(request)
     }
 
-    pub fn delete(&self, url: &str) {
-        let client = Client::new();
-        let request = client.delete(self.full_url(url));
-
-        self.send_request(request, Some(()))
-    }
-
-    pub fn _post<RequestBody, ResponseBody>(
-        &self,
-        url: &str,
-        body: Option<RequestBody>,
-    ) -> ResponseBody
+    pub fn post<RequestBody, ResponseBody>(&self, url: &str, body: RequestBody) -> ResponseBody
     where
         RequestBody: Serialize,
         ResponseBody: DeserializeOwned,
@@ -45,23 +37,54 @@ impl HttpClient {
         let client = Client::new();
         let request = client.post(self.full_url(url));
 
-        self.send_request(request, body)
+        self.send_body_request(request, body)
     }
 
-    fn send_request<RequestBody, ResponseBody>(
+    pub fn patch<RequestBody>(&self, url: &str, body: RequestBody)
+    where
+        RequestBody: Serialize,
+    {
+        let client = Client::new();
+        let request = client.patch(self.full_url(url));
+
+        self.send_body_request::<RequestBody, HashMap<String, Value>>(request, body);
+    }
+
+    pub fn delete(&self, url: &str) {
+        let client = Client::new();
+        let request = client.delete(self.full_url(url));
+
+        self.send_request(request)
+    }
+
+    fn send_request<ResponseBody>(&self, builder: RequestBuilder) -> ResponseBody
+    where
+        ResponseBody: DeserializeOwned,
+    {
+        let request = builder.headers(self.headers.clone());
+        let response = request.send().unwrap();
+
+        if response.status().is_success() {
+            response.json().unwrap()
+        } else {
+            panic!(
+                "Error sending request. Returned body : {}",
+                response.text().unwrap()
+            )
+        }
+    }
+
+    fn send_body_request<RequestBody, ResponseBody>(
         &self,
         builder: RequestBuilder,
-        _body: Option<RequestBody>,
+        body: RequestBody,
     ) -> ResponseBody
     where
         RequestBody: Serialize,
         ResponseBody: DeserializeOwned,
     {
-        let response = builder
-            .headers(self.headers.clone())
-            // .body(body)  TODO
-            .send()
-            .unwrap();
+        let request = builder.headers(self.headers.clone()).json(&body);
+        let response = request.send().unwrap();
 
         if response.status().is_success() {
             response.json().unwrap()

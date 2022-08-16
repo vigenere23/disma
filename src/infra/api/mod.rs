@@ -11,7 +11,10 @@ use crate::{
 
 use reqwest::header::{AUTHORIZATION, USER_AGENT};
 
-use self::responses::{ChannelResponse, RoleResponse};
+use self::{
+    requests::RoleRequest,
+    responses::{ChannelResponse, RoleResponse},
+};
 
 pub struct DiscordApi {
     client: HttpClient,
@@ -49,16 +52,18 @@ impl GuildQuerier for DiscordApi {
 }
 
 impl GuildCommander for DiscordApi {
-    fn add_role(&self, _role: &AwaitingRole) {
-        todo!()
+    fn add_role(&self, role: &AwaitingRole) {
+        let url = format!("/guilds/{}/roles", &self.guild_id);
+        self.client.post(&url, Some(RoleRequest::from(role)))
+    }
+
+    fn update_role(&self, id: &str, role: &AwaitingRole) {
+        let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
+        self.client.patch(&url, Some(RoleRequest::from(role)));
     }
 
     fn delete_role(&self, id: &str) {
         let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
         self.client.delete(&url);
-    }
-
-    fn update_role(&self, _id: &str, _role: &AwaitingRole) {
-        todo!()
     }
 }

@@ -11,6 +11,11 @@ impl CommandsExecutor {
         dry_run: bool,
         force: bool,
     ) {
+        if commands.is_empty() {
+            println!("\nNo commands to be executed.");
+            return;
+        }
+
         println!("\nCommands to be executed :");
 
         for command in &commands {

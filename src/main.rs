@@ -28,15 +28,21 @@ fn main() {
     let existing_guild = api.guild();
     let awaiting_guild = AwaitingGuild {
         roles: AwaitingRolesList::new(Vec::from([
-            AwaitingRole {
-                name: String::from("test1"),
-                permissions: String::from(""),
-                is_mentionalbe: true,
-                show_in_sidebar: true,
-            },
+            // AwaitingRole {
+            //     name: String::from("test1"),
+            //     permissions: String::from("1071698660929"),
+            //     is_mentionalbe: true,
+            //     show_in_sidebar: true,
+            // },
             AwaitingRole {
                 name: String::from("@everyone"),
-                permissions: String::from(""),
+                permissions: String::from("1071698660929"),
+                is_mentionalbe: false,
+                show_in_sidebar: false,
+            },
+            AwaitingRole {
+                name: String::from("dac"),
+                permissions: String::from("8"),
                 is_mentionalbe: false,
                 show_in_sidebar: false,
             },
@@ -44,5 +50,5 @@ fn main() {
     };
 
     let commands = diff_calculator.create_commands(existing_guild, awaiting_guild);
-    commands_executor.execute_commands(commands, true, false);
+    commands_executor.execute_commands(commands, false, false);
 }
