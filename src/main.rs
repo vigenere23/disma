@@ -19,8 +19,6 @@ fn main() {
         "969728902891184239".to_string(),
     ));
 
-    // let command_repository = Arc::from(InMemoryCommandRepository::new());
-
     let diff_calculator = DiffCalculator::new(api.clone());
 
     let commands_executor = CommandsExecutor {};

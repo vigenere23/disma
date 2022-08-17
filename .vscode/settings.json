@@ -1,5 +1,5 @@
 {
-    "rust-analyzer.checkOnSave.command": "clippy",
+    "rust-analyzer.checkOnSave.command": "build",
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "rust-lang.rust-analyzer",
     "rust-analyzer.inlayHints.typeHints.enable": false,

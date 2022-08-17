@@ -27,9 +27,14 @@ impl CommandsExecutor {
                 // TODO ask before executing
             }
 
+            println!("\nExecuting commands...");
+
             for command in &commands {
+                println!(" - {}", command.describe());
                 command.execute();
             }
+
+            println!("\nDONE.");
         }
     }
 }

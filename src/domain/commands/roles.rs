@@ -27,7 +27,7 @@ impl GuildCommand for AddRole {
     }
 
     fn describe(&self) -> String {
-        format!("Adding role {}.", &self.role.name)
+        format!("Adding role {}", &self.role.name)
     }
 }
 
@@ -51,7 +51,7 @@ impl GuildCommand for DeleteRole {
     }
 
     fn describe(&self) -> String {
-        format!("Deleting role {}.", &self.role.name)
+        format!("Deleting role {}", &self.role.name)
     }
 }
 
@@ -83,7 +83,7 @@ impl GuildCommand for UpdateRole {
 
     fn describe(&self) -> String {
         format!(
-            "Updating role {}\nfrom :{:#?}\nto :{:#?}.",
+            "Updating role {}\nfrom :{:#?}\nto :{:#?}",
             &self.existing_role.name, &self.existing_role, &self.awaiting_role
         )
     }

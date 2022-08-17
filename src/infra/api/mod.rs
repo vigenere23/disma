@@ -6,7 +6,7 @@ use crate::{
         guild::{ExistingGuild, GuildCommander, GuildQuerier},
         role::{AwaitingRole, ExistingRolesList},
     },
-    utils::http::HttpClient,
+    utils::http::{Client, ClientBuilder},
 };
 
 use reqwest::header::{AUTHORIZATION, USER_AGENT};
@@ -17,28 +17,28 @@ use self::{
 };
 
 pub struct DiscordApi {
-    client: HttpClient,
+    client: Client,
     guild_id: String,
 }
 
 impl DiscordApi {
     pub fn new(token: String, guild_id: String) -> DiscordApi {
-        let client = HttpClient::builder()
+        let client = ClientBuilder::new()
             .base_url("https://discord.com/api/v9")
-            .header(USER_AGENT, String::new())
-            .header(AUTHORIZATION, format!("Bot {}", token))
+            .header(USER_AGENT, "")
+            .header(AUTHORIZATION, &format!("Bot {}", token))
             .build();
         Self { client, guild_id }
     }
 
     fn get_roles(&self) -> Vec<RoleResponse> {
         let url = format!("/guilds/{}/roles", &self.guild_id);
-        self.client.get(&url)
+        self.client.request().url(&url).get().send().parsed_body()
     }
 
     pub fn _get_channels(&self) -> Vec<ChannelResponse> {
         let url = format!("/guilds/{}/channels", &self.guild_id);
-        self.client.get(&url)
+        self.client.request().url(&url).get().send().parsed_body()
     }
 }
 
@@ -54,16 +54,26 @@ impl GuildQuerier for DiscordApi {
 impl GuildCommander for DiscordApi {
     fn add_role(&self, role: &AwaitingRole) {
         let url = format!("/guilds/{}/roles", &self.guild_id);
-        self.client.post(&url, Some(RoleRequest::from(role)))
+        self.client
+            .request()
+            .url(&url)
+            .json_body(RoleRequest::from(role))
+            .post()
+            .send();
     }
 
     fn update_role(&self, id: &str, role: &AwaitingRole) {
         let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
-        self.client.patch(&url, Some(RoleRequest::from(role)));
+        self.client
+            .request()
+            .url(&url)
+            .json_body(RoleRequest::from(role))
+            .patch()
+            .send();
     }
 
     fn delete_role(&self, id: &str) {
         let url = format!("/guilds/{}/roles/{}", &self.guild_id, id);
-        self.client.delete(&url);
+        self.client.request().url(&url).delete().send();
     }
 }
