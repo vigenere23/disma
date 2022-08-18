@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, CONTENT_TYPE},
     Method, StatusCode,
