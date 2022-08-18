@@ -4,7 +4,7 @@ use core::fmt;
 use std::{collections::HashSet, fmt::Display};
 
 #[non_exhaustive]
-#[derive(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Clone, Copy)]
 pub struct Permission {
     pub name: &'static str,
     pub code: u64,
@@ -235,8 +235,30 @@ impl PermissionsList {
         Self { permissions }
     }
 
+    pub fn empty() -> Self {
+        Self {
+            permissions: HashSet::new(),
+        }
+    }
+
     pub fn code(&self) -> String {
-        todo!("Calculate total code")
+        let mut code: u64 = 0;
+
+        for permission in self.permissions.iter() {
+            code |= permission.code
+        }
+
+        format!("{}", code)
+    }
+
+    pub fn permissions(&self) -> HashSet<Permission> {
+        HashSet::from_iter(self.permissions.iter().copied())
+    }
+}
+
+impl PartialEq for PermissionsList {
+    fn eq(&self, other: &Self) -> bool {
+        self.permissions.eq(&other.permissions)
     }
 }
 
@@ -279,31 +301,82 @@ impl<const N: usize> From<[Permission; N]> for PermissionsList {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashSet;
+    mod persission {
+        use std::collections::HashSet;
 
-    use super::Permission;
+        use crate::domain::permission::Permission;
 
-    #[test]
-    fn same_permissions_are_equal() {
-        let permission1 = Permission::ADMINISTRATOR;
-        let permission2 = Permission::ADMINISTRATOR;
+        #[test]
+        fn same_permissions_are_equal() {
+            let permission1 = Permission::ADMINISTRATOR;
+            let permission2 = Permission::ADMINISTRATOR;
 
-        assert!(permission1 == permission2);
-        assert!(permission1.eq(&permission2));
+            assert!(permission1 == permission2);
+            assert!(permission1.eq(&permission2));
 
-        let set = HashSet::from([permission1, permission2]);
-        assert_eq!(set.len(), 1);
+            let set = HashSet::from([permission1, permission2]);
+            assert_eq!(set.len(), 1);
+        }
+
+        #[test]
+        fn different_permissions_are_not_equal() {
+            let permission1 = Permission::ADMINISTRATOR;
+            let permission2 = Permission::SEND_MESSAGES;
+
+            assert!(permission1 != permission2);
+            assert!(!permission1.eq(&permission2));
+
+            let set = HashSet::from([permission1, permission2]);
+            assert_eq!(set.len(), 2);
+        }
     }
 
-    #[test]
-    fn different_permissions_are_not_equal() {
-        let permission1 = Permission::ADMINISTRATOR;
-        let permission2 = Permission::SEND_MESSAGES;
+    mod permission_list {
+        use std::collections::HashSet;
 
-        assert!(permission1 != permission2);
-        assert!(!permission1.eq(&permission2));
+        use crate::domain::permission::{Permission, PermissionsList};
 
-        let set = HashSet::from([permission1, permission2]);
-        assert_eq!(set.len(), 2);
+        #[test]
+        fn when_empty_then_code_is_0() {
+            let permission_list = PermissionsList::empty();
+            assert_eq!(permission_list.code(), "0");
+        }
+
+        #[test]
+        fn does_not_care_about_duplicates() {
+            let permissions = [Permission::ADMINISTRATOR, Permission::ADMINISTRATOR];
+            let permission_list = PermissionsList::from(permissions);
+
+            let expected_code = format!("{}", Permission::ADMINISTRATOR.code);
+            assert_eq!(permission_list.code(), expected_code);
+        }
+
+        #[test]
+        fn can_create_code_from_permissions() {
+            let permissions = [
+                Permission::ADD_REACTIONS,
+                Permission::EMBED_LINKS,
+                Permission::USE_EXTERNAL_EMOJIS,
+            ];
+            let permission_list = PermissionsList::from(permissions);
+            let code = permission_list.code();
+
+            assert_eq!(code, "278592");
+        }
+
+        #[test]
+        fn can_create_permissions_from_code() {
+            let permission_list = PermissionsList::from("278592".to_string());
+
+            let permissions = permission_list.permissions();
+
+            let expected_permissions = HashSet::from([
+                Permission::ADD_REACTIONS,
+                Permission::EMBED_LINKS,
+                Permission::USE_EXTERNAL_EMOJIS,
+            ]);
+            let diff: Vec<_> = permissions.difference(&expected_permissions).collect();
+            assert_eq!(diff.len(), 0);
+        }
     }
 }
