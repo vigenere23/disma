@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, CONTENT_TYPE},
     Method, StatusCode,
@@ -49,31 +47,74 @@ impl Client {
         }
     }
 
-    pub fn request(&self) -> RequestBuilder {
-        RequestBuilder::new(&self.base_url, self.base_headers.clone())
+    pub fn get(&self, url: &str) -> RequestBuilder {
+        self.request(Method::GET, &url)
+    }
+
+    pub fn post(&self, url: &str) -> RequestBuilder {
+        self.request(Method::POST, &url)
+    }
+
+    pub fn patch(&self, url: &str) -> RequestBuilder {
+        self.request(Method::PATCH, &url)
+    }
+
+    pub fn put(&self, url: &str) -> RequestBuilder {
+        self.request(Method::PUT, &url)
+    }
+
+    pub fn delete(&self, url: &str) -> RequestBuilder {
+        self.request(Method::DELETE, &url)
+    }
+
+    pub fn request(&self, method: Method, url: &str) -> RequestBuilder {
+        RequestBuilder::new(method, &self.full_url(url)).headers(&self.base_headers)
+    }
+
+    fn full_url(&self, url_suffix: &str) -> String {
+        if self.base_url.is_empty() {
+            url_suffix.to_string()
+        } else {
+            format!("{}/{}", &self.base_url, &url_suffix)
+        }
     }
 }
 
 pub struct RequestBuilder {
-    base_url: String,
-    url: Option<String>,
+    method: Method,
+    url: String,
     headers: HeaderMap,
     body: Option<String>,
 }
 
 impl RequestBuilder {
-    pub fn new(base_url: &str, headers: HeaderMap) -> Self {
+    pub fn new(method: Method, url: &str) -> Self {
         Self {
-            base_url: base_url.to_string(),
-            url: None,
-            headers,
+            method,
+            url: url.to_string(),
+            headers: HeaderMap::new(),
             body: None,
         }
     }
 
-    pub fn url(mut self, url: &str) -> Self {
-        self.url = Some(url.to_string());
-        self
+    pub fn get(url: &str) -> Self {
+        Self::new(Method::GET, url)
+    }
+
+    pub fn post(url: &str) -> Self {
+        Self::new(Method::POST, url)
+    }
+
+    pub fn patch(url: &str) -> Self {
+        Self::new(Method::PATCH, url)
+    }
+
+    pub fn put(url: &str) -> Self {
+        Self::new(Method::PUT, url)
+    }
+
+    pub fn delete(url: &str) -> Self {
+        Self::new(Method::DELETE, url)
     }
 
     pub fn header(mut self, key: HeaderName, value: &str) -> Self {
@@ -82,86 +123,59 @@ impl RequestBuilder {
         self
     }
 
-    pub fn json_body<T: Serialize>(mut self, body: T) -> Self {
-        self.body = Some(serde_json::to_string(&body).unwrap());
-        self.header(CONTENT_TYPE, "application/json")
+    pub fn headers(mut self, headers: &HeaderMap) -> Self {
+        self.headers = headers.clone();
+        self
     }
 
-    pub fn get(&self) -> Request {
+    pub fn json_body<T: Serialize>(mut self, body: T) -> Result<Self, String> {
+        let json_body = serde_json::to_string(&body).map_err(|error| {
+            format!(
+                "Error occured while serializing json body. Error: {}",
+                error
+            )
+        })?;
+
+        self.body = Some(json_body);
+        Ok(self.header(CONTENT_TYPE, "application/json"))
+    }
+
+    pub fn build(&self) -> Request {
         Request::new(
-            Method::GET,
-            self.full_url(),
+            self.method.clone(),
+            &self.url,
             self.headers.clone(),
             self.body.clone(),
         )
     }
 
-    pub fn post(&self) -> Request {
-        Request::new(
-            Method::POST,
-            self.full_url(),
-            self.headers.clone(),
-            self.body.clone(),
-        )
-    }
-
-    pub fn put(&self) -> Request {
-        Request::new(
-            Method::PUT,
-            self.full_url(),
-            self.headers.clone(),
-            self.body.clone(),
-        )
-    }
-
-    pub fn patch(&self) -> Request {
-        Request::new(
-            Method::PATCH,
-            self.full_url(),
-            self.headers.clone(),
-            self.body.clone(),
-        )
-    }
-
-    pub fn delete(&self) -> Request {
-        Request::new(
-            Method::DELETE,
-            self.full_url(),
-            self.headers.clone(),
-            self.body.clone(),
-        )
-    }
-
-    fn full_url(&self) -> String {
-        match &self.url {
-            Some(url) => format!("{}/{}", &self.base_url, &url),
-            None => self.base_url.to_string(),
-        }
+    pub fn send(&self) -> Result<Response, String> {
+        self.build().send()
     }
 }
 
 #[derive(Clone)]
 pub struct Request {
     method: Method,
-    full_url: String,
+    url: String,
     headers: HeaderMap,
     body: Option<String>,
 }
 
 impl Request {
-    pub fn new(method: Method, full_url: String, headers: HeaderMap, body: Option<String>) -> Self {
+    pub fn new(method: Method, url: &str, headers: HeaderMap, body: Option<String>) -> Self {
         Self {
-            method,
-            full_url,
-            headers,
+            method: method.clone(),
+            url: url.to_string(),
+            headers: headers.clone(),
             body,
         }
     }
 
-    pub fn send(&self) -> Response {
+    pub fn send(&self) -> Result<Response, String> {
         let client = reqwest::blocking::Client::new();
         let mut request = client
-            .request(self.method.clone(), self.full_url.clone())
+            .request(self.method.clone(), self.url.clone())
             .headers(self.headers.clone());
 
         request = match &self.body {
@@ -169,13 +183,17 @@ impl Request {
             None => request,
         };
 
-        let http_response = request.send().unwrap();
+        let http_response = request
+            .send()
+            .map_err(|error| format!("Could not send request. Error: {}", error))?;
 
-        Response::new(
-            self.clone(),
-            http_response.status(),
-            http_response.text().unwrap(),
-        )
+        let status = http_response.status();
+        let text_content = http_response
+            .text()
+            .map_err(|error| format!("Could not fetch response text content. Error: {}", error))?;
+
+        let response = Response::new(self.clone(), status, &text_content);
+        Ok(response)
     }
 }
 
@@ -186,11 +204,11 @@ pub struct Response {
 }
 
 impl Response {
-    pub fn new(request: Request, status: StatusCode, content: String) -> Self {
+    pub fn new(request: Request, status: StatusCode, content: &str) -> Self {
         Self {
             request,
             status,
-            content,
+            content: content.to_string(),
         }
     }
 
@@ -198,11 +216,21 @@ impl Response {
         &self.content
     }
 
-    pub fn json_body(&self) -> HashMap<String, Value> {
-        serde_json::from_str(&self.content).unwrap()
+    pub fn json_body(&self) -> Result<Value, String> {
+        serde_json::from_str(&self.content).map_err(|error| {
+            format!(
+                "Could not parse response body to json.\nBody: {}\nError: {}",
+                &self.content, error
+            )
+        })
     }
 
-    pub fn parsed_body<T: DeserializeOwned>(&self) -> T {
-        serde_json::from_str(&self.content).unwrap()
+    pub fn parsed_body<T: DeserializeOwned>(&self) -> Result<T, String> {
+        serde_json::from_str(&self.content).map_err(|error| {
+            format!(
+                "Could not parse response body to specified type.\nBody: {}\nError: {}",
+                &self.content, error
+            )
+        })
     }
 }

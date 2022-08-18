@@ -14,7 +14,7 @@ use crate::{
 };
 
 fn main() {
-    let api = Arc::from(DiscordApi::new(
+    let api = Arc::from(DiscordApi::from_bot(
         env::var("DAC_DISCORD_TOKEN").expect("Missing env variable 'DISCORD_TOKEN'."),
         "969728902891184239".to_string(),
     ));
