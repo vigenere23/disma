@@ -122,6 +122,10 @@ impl PermissionsList {
 
         format!("{}", code)
     }
+
+    pub fn items(&self) -> &HashSet<Permission> {
+        &self.permissions
+    }
 }
 
 impl From<&str> for PermissionsList {
@@ -150,6 +154,14 @@ impl<const N: usize> From<[Permission; N]> for PermissionsList {
     fn from(permissions: [Permission; N]) -> Self {
         Self {
             permissions: HashSet::from(permissions),
+        }
+    }
+}
+
+impl From<&Vec<Permission>> for PermissionsList {
+    fn from(permissions: &Vec<Permission>) -> Self {
+        Self {
+            permissions: HashSet::from_iter(permissions.iter().cloned()),
         }
     }
 }

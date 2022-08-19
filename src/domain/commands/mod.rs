@@ -1,5 +1,3 @@
-pub mod diff;
-pub mod executor;
 pub mod roles;
 
 pub trait GuildCommand {

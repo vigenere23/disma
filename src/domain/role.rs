@@ -37,30 +37,42 @@ impl PartialEq<ExistingRole> for AwaitingRole {
 
 #[derive(Debug)]
 pub struct ExistingRolesList {
-    pub items: Vec<ExistingRole>,
+    roles: Vec<ExistingRole>,
 }
 
 impl ExistingRolesList {
     pub fn new(roles: Vec<ExistingRole>) -> Self {
-        Self { items: roles }
+        Self { roles }
     }
 
     pub fn find_by_name(&self, name: &str) -> Option<&ExistingRole> {
-        (&self.items).into_iter().find(|role| role.name == name)
+        (&self.roles).into_iter().find(|role| role.name == name)
+    }
+
+    pub fn items(&self) -> &Vec<ExistingRole> {
+        &self.roles
     }
 }
 
 // TODO merge with existing roles list
 pub struct AwaitingRolesList {
-    pub items: Vec<AwaitingRole>,
+    roles: Vec<AwaitingRole>,
+}
+
+impl From<&Vec<AwaitingRole>> for AwaitingRolesList {
+    fn from(roles: &Vec<AwaitingRole>) -> Self {
+        Self {
+            roles: roles.clone(),
+        }
+    }
 }
 
 impl AwaitingRolesList {
-    pub fn new(roles: Vec<AwaitingRole>) -> Self {
-        Self { items: roles }
+    pub fn find_by_name(&self, name: &str) -> Option<&AwaitingRole> {
+        (&self.roles).into_iter().find(|role| role.name == name)
     }
 
-    pub fn find_by_name(&self, name: &str) -> Option<&AwaitingRole> {
-        (&self.items).into_iter().find(|role| role.name == name)
+    pub fn items(&self) -> &Vec<AwaitingRole> {
+        &self.roles
     }
 }

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::GuildCommand;
+use crate::domain::commands::GuildCommand;
 
 pub struct CommandsExecutor {}
 

@@ -1,0 +1,38 @@
+{
+  "roles": [
+    {
+      "name": "@everyone",
+      "permissions": [
+        "USE_VAD",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "USE_EXTERNAL_STICKERS",
+        "USE_APPLICATION_COMMANDS",
+        "ADD_REACTIONS",
+        "SEND_MESSAGES",
+        "STREAM",
+        "CHANGE_NICKNAME",
+        "SPEAK",
+        "ATTACH_FILES",
+        "REQUEST_TO_SPEAK",
+        "READ_MESSAGE_HISTORY",
+        "CONNECT",
+        "USE_EXTERNAL_EMOJIS",
+        "CREATE_INSTANT_INVITE",
+        "SEND_MESSAGES_IN_THREADS",
+        "VIEW_CHANNEL",
+        "USE_EMBEDDED_ACTIVITIES"
+      ],
+      "show_in_sidebar": false,
+      "is_mentionable": false
+    },
+    {
+      "name": "dac",
+      "permissions": [
+        "ADMINISTRATOR"
+      ],
+      "show_in_sidebar": false,
+      "is_mentionable": false
+    }
+  ]
+}

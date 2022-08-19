@@ -1,57 +1,65 @@
+#![allow(dead_code)]
+
 mod domain;
 mod infra;
 mod utils;
 
 use std::{env, sync::Arc};
 
-use domain::permission::PermissionsList;
+use domain::services::{loader::AwaitingGuildLoader, saver::ExistingGuildSaver};
 
 use crate::{
-    domain::{
-        commands::{diff::DiffCalculator, executor::CommandsExecutor},
-        guild::{AwaitingGuild, GuildQuerier},
-        role::{AwaitingRole, AwaitingRolesList},
-    },
+    domain::guild::{AwaitingGuild, GuildQuerier},
+    domain::services::{diff::DiffCalculator, executor::CommandsExecutor},
     infra::api::DiscordApi,
 };
 
 fn main() {
-    let api = Arc::from(DiscordApi::from_bot(
-        env::var("DAC_DISCORD_TOKEN").expect("Missing env variable 'DISCORD_TOKEN'."),
-        "969728902891184239".to_string(),
-    ));
+    apply_changes();
+}
 
-    let diff_calculator = DiffCalculator::new(api.clone());
+fn load_guild() -> AwaitingGuild {
+    let loader = AwaitingGuildLoader {};
 
-    let commands_executor = CommandsExecutor {};
+    loader.load_awaiting_guild()
+}
+
+fn save_guild() {
+    let api = api();
+    let saver = ExistingGuildSaver {};
 
     let existing_guild = api.guild();
 
-    println!("Existing guild :\n{:#?}", existing_guild);
+    saver.save_existing_guild(&existing_guild);
+}
 
-    let awaiting_guild = AwaitingGuild {
-        roles: AwaitingRolesList::new(Vec::from([
-            AwaitingRole {
-                name: String::from("test1"),
-                permissions: PermissionsList::from("1071698660929"),
-                is_mentionalbe: true,
-                show_in_sidebar: true,
-            },
-            AwaitingRole {
-                name: String::from("@everyone"),
-                permissions: PermissionsList::from("1071698660929"),
-                is_mentionalbe: false,
-                show_in_sidebar: false,
-            },
-            AwaitingRole {
-                name: String::from("dac"),
-                permissions: PermissionsList::from("8"),
-                is_mentionalbe: false,
-                show_in_sidebar: false,
-            },
-        ])),
-    };
+fn apply_changes() {
+    let api = api();
+    let diff_calculator = DiffCalculator::new(api.clone());
+    let commands_executor = CommandsExecutor {};
+
+    let awaiting_guild = load_guild();
+    let existing_guild = api.guild();
+
+    let commands = diff_calculator.create_commands(existing_guild, awaiting_guild);
+    commands_executor.execute_commands(commands, false, false);
+}
+
+fn display_changes() {
+    let api = api();
+    let diff_calculator = DiffCalculator::new(api.clone());
+    let commands_executor = CommandsExecutor {};
+
+    let awaiting_guild = load_guild();
+    let existing_guild = api.guild();
 
     let commands = diff_calculator.create_commands(existing_guild, awaiting_guild);
     commands_executor.execute_commands(commands, true, false);
+}
+
+fn api() -> Arc<DiscordApi> {
+    Arc::from(DiscordApi::from_bot(
+        env::var("DAC_DISCORD_TOKEN").expect("Missing env variable 'DISCORD_TOKEN'."),
+        "969728902891184239".to_string(),
+    ))
 }
