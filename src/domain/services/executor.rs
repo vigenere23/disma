@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::domain::commands::GuildCommand;
 
-pub struct CommandsExecutor {}
+pub struct CommandsExecutor();
 
 impl CommandsExecutor {
     pub fn execute_commands(

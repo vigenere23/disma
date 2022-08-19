@@ -1,0 +1,90 @@
+use std::{env, sync::Arc};
+
+use crate::{
+    application::{apply_changes::ApplyChanges, save_guild::SaveExistingGuild},
+    domain::{
+        guild::GuildQuerier,
+        services::{
+            diff::DiffCalculator, executor::CommandsExecutor, loader::AwaitingGuildLoader,
+            saver::ExistingGuildSaver,
+        },
+    },
+    infra::api::DiscordApi,
+};
+
+pub struct Injector {
+    config_file_path: String,
+}
+
+impl Injector {
+    pub fn new(config_file_path: &str) -> Self {
+        Self {
+            config_file_path: config_file_path.to_string(),
+        }
+    }
+}
+
+pub trait Get<T> {
+    fn get(&self) -> T;
+}
+
+impl Get<Arc<DiscordApi>> for Injector {
+    fn get(&self) -> Arc<DiscordApi> {
+        Arc::from(DiscordApi::from_bot(
+            env::var("DAC_DISCORD_TOKEN").expect("Missing env variable 'DISCORD_TOKEN'."),
+            "969728902891184239".to_string(),
+        ))
+    }
+}
+
+impl Get<Arc<DiffCalculator>> for Injector {
+    fn get(&self) -> Arc<DiffCalculator> {
+        let api: Arc<DiscordApi> = self.get();
+        Arc::from(DiffCalculator::new(api.clone()))
+    }
+}
+
+impl Get<Arc<CommandsExecutor>> for Injector {
+    fn get(&self) -> Arc<CommandsExecutor> {
+        Arc::from(CommandsExecutor())
+    }
+}
+
+impl Get<Arc<ExistingGuildSaver>> for Injector {
+    fn get(&self) -> Arc<ExistingGuildSaver> {
+        Arc::from(ExistingGuildSaver::new(&self.config_file_path))
+    }
+}
+
+impl Get<Arc<AwaitingGuildLoader>> for Injector {
+    fn get(&self) -> Arc<AwaitingGuildLoader> {
+        Arc::from(AwaitingGuildLoader::new(&self.config_file_path))
+    }
+}
+
+impl Get<Arc<dyn GuildQuerier>> for Injector {
+    fn get(&self) -> Arc<dyn GuildQuerier> {
+        <Self as Get<Arc<DiscordApi>>>::get(&self)
+    }
+}
+
+impl Get<Arc<ApplyChanges>> for Injector {
+    fn get(&self) -> Arc<ApplyChanges> {
+        let querier: Arc<dyn GuildQuerier> = self.get();
+
+        Arc::from(ApplyChanges::new(
+            querier,
+            self.get(),
+            self.get(),
+            self.get(),
+        ))
+    }
+}
+
+impl Get<Arc<SaveExistingGuild>> for Injector {
+    fn get(&self) -> Arc<SaveExistingGuild> {
+        let querier: Arc<dyn GuildQuerier> = self.get();
+
+        Arc::from(SaveExistingGuild::new(querier, self.get()))
+    }
+}

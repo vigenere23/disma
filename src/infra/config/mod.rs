@@ -30,7 +30,7 @@ impl From<&AwaitingGuild> for GuildConfig {
     }
 }
 
-impl Into<AwaitingGuild> for &GuildConfig {
+impl Into<AwaitingGuild> for GuildConfig {
     fn into(self) -> AwaitingGuild {
         let roles: Vec<AwaitingRole> = self.roles.iter().map(|role| role.into()).collect();
 
