@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::domain::role::ExistingRole;
+use crate::domain::{permission::PermissionsList, role::ExistingRole};
 
 #[derive(Debug, Deserialize)]
 pub struct RoleResponse {
@@ -16,7 +16,7 @@ impl Into<ExistingRole> for RoleResponse {
         ExistingRole {
             id: self.id,
             name: self.name,
-            permissions: self.permissions,
+            permissions: PermissionsList::from(self.permissions.as_str()),
             is_mentionalbe: self.mentionable,
             show_in_sidebar: self.hoist,
         }

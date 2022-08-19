@@ -1,269 +1,131 @@
-#![allow(dead_code)]
+#![allow(non_camel_case_types)]
 
-use core::fmt;
-use std::{collections::HashSet, fmt::Display};
+use std::collections::HashSet;
 
-#[non_exhaustive]
-#[derive(Eq, PartialEq, Hash, Clone, Copy)]
-pub struct Permission {
-    pub name: &'static str,
-    pub code: u64,
-}
+use strum::{EnumIter, EnumString, IntoEnumIterator};
 
-impl Display for Permission {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(self.name)
-    }
+#[derive(Clone, Debug, Eq, PartialEq, Hash, EnumIter, EnumString)]
+pub enum Permission {
+    CREATE_INSTANT_INVITE,
+    KICK_MEMBERS,
+    BAN_MEMBERS,
+    ADMINISTRATOR,
+    MANAGE_CHANNELS,
+    MANAGE_GUILD,
+    ADD_REACTIONS,
+    VIEW_AUDIT_LOG,
+    PRIORITY_SPEAKER,
+    STREAM,
+    VIEW_CHANNEL,
+    SEND_MESSAGES,
+    SEND_TTS_MESSAGES,
+    MANAGE_MESSAGES,
+    EMBED_LINKS,
+    ATTACH_FILES,
+    READ_MESSAGE_HISTORY,
+    MENTION_EVERYONE,
+    USE_EXTERNAL_EMOJIS,
+    VIEW_GUILD_INSIGHTS,
+    CONNECT,
+    SPEAK,
+    MUTE_MEMBERS,
+    DEAFEN_MEMBERS,
+    MOVE_MEMBERS,
+    USE_VAD,
+    CHANGE_NICKNAME,
+    MANAGE_NICKNAMES,
+    MANAGE_ROLES,
+    MANAGE_WEBHOOKS,
+    MANAGE_EMOJIS_AND_STICKERS,
+    USE_APPLICATION_COMMANDS,
+    REQUEST_TO_SPEAK,
+    MANAGE_EVENTS,
+    MANAGE_THREADS,
+    CREATE_PUBLIC_THREADS,
+    CREATE_PRIVATE_THREADS,
+    USE_EXTERNAL_STICKERS,
+    SEND_MESSAGES_IN_THREADS,
+    USE_EMBEDDED_ACTIVITIES,
+    MODERATE_MEMBERS,
 }
 
 impl Permission {
-    pub const CREATE_INSTANT_INVITE: Permission = Permission {
-        name: "Create instant invite",
-        code: 1 << 0,
-    };
-
-    pub const KICK_MEMBERS: Permission = Permission {
-        name: "Kick members",
-        code: 1 << 1,
-    };
-
-    pub const BAN_MEMBERS: Permission = Permission {
-        name: "Ban members",
-        code: 1 << 2,
-    };
-
-    pub const ADMINISTRATOR: Permission = Permission {
-        name: "Administrator",
-        code: 1 << 3,
-    };
-
-    pub const MANAGE_CHANNELS: Permission = Permission {
-        name: "Manage channels",
-        code: 1 << 4,
-    };
-
-    pub const MANAGE_GUILD: Permission = Permission {
-        name: "Manage guild",
-        code: 1 << 5,
-    };
-
-    pub const ADD_REACTIONS: Permission = Permission {
-        name: "Add reactions",
-        code: 1 << 6,
-    };
-
-    pub const VIEW_AUDIT_LOG: Permission = Permission {
-        name: "View audit logs",
-        code: 1 << 7,
-    };
-
-    pub const PRIORITY_SPEAKER: Permission = Permission {
-        name: "Speak with priority",
-        code: 1 << 8,
-    };
-
-    pub const STREAM: Permission = Permission {
-        name: "Share screen",
-        code: 1 << 9,
-    };
-
-    pub const VIEW_CHANNEL: Permission = Permission {
-        name: "View channel",
-        code: 1 << 10,
-    };
-
-    pub const SEND_MESSAGES: Permission = Permission {
-        name: "Send messages",
-        code: 1 << 11,
-    };
-
-    pub const SEND_TTS_MESSAGES: Permission = Permission {
-        name: "Send TTS messages",
-        code: 1 << 12,
-    };
-
-    pub const MANAGE_MESSAGES: Permission = Permission {
-        name: "Manage messages",
-        code: 1 << 13,
-    };
-
-    pub const EMBED_LINKS: Permission = Permission {
-        name: "Emed links (GIFs, HTML, etc.)",
-        code: 1 << 14,
-    };
-
-    pub const ATTACH_FILES: Permission = Permission {
-        name: "Attach files",
-        code: 1 << 15,
-    };
-
-    pub const READ_MESSAGE_HISTORY: Permission = Permission {
-        name: "Read messages history",
-        code: 1 << 16,
-    };
-
-    pub const MENTION_EVERYONE: Permission = Permission {
-        name: "Mention everyone",
-        code: 1 << 17,
-    };
-
-    pub const USE_EXTERNAL_EMOJIS: Permission = Permission {
-        name: "Use external emojis",
-        code: 1 << 18,
-    };
-
-    pub const VIEW_GUILD_INSIGHTS: Permission = Permission {
-        name: "View guild insights",
-        code: 1 << 19,
-    };
-
-    pub const CONNECT: Permission = Permission {
-        name: "Join voice channels",
-        code: 1 << 20,
-    };
-
-    pub const SPEAK: Permission = Permission {
-        name: "Speak in voice channel",
-        code: 1 << 21,
-    };
-
-    pub const MUTE_MEMBERS: Permission = Permission {
-        name: "Mute members",
-        code: 1 << 22,
-    };
-
-    pub const DEAFEN_MEMBERS: Permission = Permission {
-        name: "Deafen members",
-        code: 1 << 23,
-    };
-
-    pub const MOVE_MEMBERS: Permission = Permission {
-        name: "Move members (voice channels)",
-        code: 1 << 24,
-    };
-
-    pub const USE_VAD: Permission = Permission {
-        name: "Use Voice Activity Detection",
-        code: 1 << 25,
-    };
-
-    pub const CHANGE_NICKNAME: Permission = Permission {
-        name: "Change own nickname (server name)",
-        code: 1 << 26,
-    };
-
-    pub const MANAGE_NICKNAMES: Permission = Permission {
-        name: "Manage nicknames (server names)",
-        code: 1 << 27,
-    };
-
-    pub const MANAGE_ROLES: Permission = Permission {
-        name: "Manage roles",
-        code: 1 << 28,
-    };
-
-    pub const MANAGE_WEBHOOKS: Permission = Permission {
-        name: "Manage webhooks",
-        code: 1 << 29,
-    };
-
-    pub const MANAGE_EMOJIS_AND_STICKERS: Permission = Permission {
-        name: "Manage emojis and stickers",
-        code: 1 << 30,
-    };
-
-    pub const USE_APPLICATION_COMMANDS: Permission = Permission {
-        name: "Use application (bot) commands",
-        code: 1 << 31,
-    };
-
-    pub const REQUEST_TO_SPEAK: Permission = Permission {
-        name: "Request to speak (stage channels)",
-        code: 1 << 32,
-    };
-
-    pub const MANAGE_EVENTS: Permission = Permission {
-        name: "Manage events",
-        code: 1 << 33,
-    };
-
-    pub const MANAGE_THREADS: Permission = Permission {
-        name: "Manage threads",
-        code: 1 << 34,
-    };
-
-    pub const CREATE_PUBLIC_THREADS: Permission = Permission {
-        name: "Create public thread",
-        code: 1 << 35,
-    };
-
-    pub const CREATE_PRIVATE_THREADS: Permission = Permission {
-        name: "Create private thread",
-        code: 1 << 36,
-    };
-
-    pub const USE_EXTERNAL_STICKERS: Permission = Permission {
-        name: "Use external stickers",
-        code: 1 << 37,
-    };
-
-    pub const SEND_MESSAGES_IN_THREADS: Permission = Permission {
-        name: "Send messages in threads",
-        code: 1 << 38,
-    };
-
-    pub const USE_EMBEDDED_ACTIVITIES: Permission = Permission {
-        name: "Use embedded activities",
-        code: 1 << 39,
-    };
-
-    pub const MODERATE_MEMBERS: Permission = Permission {
-        name: "Moderate members",
-        code: 1 << 40,
-    };
+    fn code(&self) -> u64 {
+        match self {
+            Self::CREATE_INSTANT_INVITE => 1 << 0,
+            Self::KICK_MEMBERS => 1 << 1,
+            Self::BAN_MEMBERS => 1 << 2,
+            Self::ADMINISTRATOR => 1 << 3,
+            Self::MANAGE_CHANNELS => 1 << 4,
+            Self::MANAGE_GUILD => 1 << 5,
+            Self::ADD_REACTIONS => 1 << 6,
+            Self::VIEW_AUDIT_LOG => 1 << 7,
+            Self::PRIORITY_SPEAKER => 1 << 8,
+            Self::STREAM => 1 << 9,
+            Self::VIEW_CHANNEL => 1 << 10,
+            Self::SEND_MESSAGES => 1 << 11,
+            Self::SEND_TTS_MESSAGES => 1 << 12,
+            Self::MANAGE_MESSAGES => 1 << 13,
+            Self::EMBED_LINKS => 1 << 14,
+            Self::ATTACH_FILES => 1 << 15,
+            Self::READ_MESSAGE_HISTORY => 1 << 16,
+            Self::MENTION_EVERYONE => 1 << 17,
+            Self::USE_EXTERNAL_EMOJIS => 1 << 18,
+            Self::VIEW_GUILD_INSIGHTS => 1 << 19,
+            Self::CONNECT => 1 << 20,
+            Self::SPEAK => 1 << 21,
+            Self::MUTE_MEMBERS => 1 << 22,
+            Self::DEAFEN_MEMBERS => 1 << 23,
+            Self::MOVE_MEMBERS => 1 << 24,
+            Self::USE_VAD => 1 << 25,
+            Self::CHANGE_NICKNAME => 1 << 26,
+            Self::MANAGE_NICKNAMES => 1 << 27,
+            Self::MANAGE_ROLES => 1 << 28,
+            Self::MANAGE_WEBHOOKS => 1 << 29,
+            Self::MANAGE_EMOJIS_AND_STICKERS => 1 << 30,
+            Self::USE_APPLICATION_COMMANDS => 1 << 31,
+            Self::REQUEST_TO_SPEAK => 1 << 32,
+            Self::MANAGE_EVENTS => 1 << 33,
+            Self::MANAGE_THREADS => 1 << 34,
+            Self::CREATE_PUBLIC_THREADS => 1 << 35,
+            Self::CREATE_PRIVATE_THREADS => 1 << 36,
+            Self::USE_EXTERNAL_STICKERS => 1 << 37,
+            Self::SEND_MESSAGES_IN_THREADS => 1 << 38,
+            Self::USE_EMBEDDED_ACTIVITIES => 1 << 39,
+            Self::MODERATE_MEMBERS => 1 << 40,
+        }
+    }
 }
 
+impl ToString for Permission {
+    fn to_string(&self) -> String {
+        format!("{:?}", self)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct PermissionsList {
     permissions: HashSet<Permission>,
 }
 
 impl PermissionsList {
-    const ALL_PERMISSIONS: [Permission; 2] =
-        [Permission::ADMINISTRATOR, Permission::MODERATE_MEMBERS];
-
-    pub fn new(permissions: HashSet<Permission>) -> Self {
+    fn new(permissions: HashSet<Permission>) -> Self {
         Self { permissions }
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            permissions: HashSet::new(),
-        }
     }
 
     pub fn code(&self) -> String {
         let mut code: u64 = 0;
 
         for permission in self.permissions.iter() {
-            code |= permission.code
+            code |= permission.code()
         }
 
         format!("{}", code)
     }
-
-    pub fn permissions(&self) -> HashSet<Permission> {
-        HashSet::from_iter(self.permissions.iter().copied())
-    }
 }
 
-impl PartialEq for PermissionsList {
-    fn eq(&self, other: &Self) -> bool {
-        self.permissions.eq(&other.permissions)
-    }
-}
-
-impl From<String> for PermissionsList {
-    fn from(code: String) -> Self {
+impl From<&str> for PermissionsList {
+    fn from(code: &str) -> Self {
         let num_code: u64 = code.parse().unwrap();
         Self::from(num_code)
     }
@@ -273,21 +135,14 @@ impl From<u64> for PermissionsList {
     fn from(code: u64) -> Self {
         let mut permissions = HashSet::new();
 
-        for permission in Self::ALL_PERMISSIONS {
-            if (code & permission.code) == permission.code {
+        for permission in Permission::iter() {
+            let permission_code = permission.code();
+            if (code & permission_code) == permission_code {
                 permissions.insert(permission);
             }
         }
 
         Self::new(permissions)
-    }
-}
-
-impl From<Vec<Permission>> for PermissionsList {
-    fn from(permissions: Vec<Permission>) -> Self {
-        Self {
-            permissions: HashSet::from_iter(permissions.into_iter()),
-        }
     }
 }
 
@@ -302,7 +157,7 @@ impl<const N: usize> From<[Permission; N]> for PermissionsList {
 #[cfg(test)]
 mod tests {
     mod persission {
-        use std::collections::HashSet;
+        use std::{collections::HashSet, str::FromStr};
 
         use crate::domain::permission::Permission;
 
@@ -329,16 +184,36 @@ mod tests {
             let set = HashSet::from([permission1, permission2]);
             assert_eq!(set.len(), 2);
         }
+
+        #[test]
+        fn can_parse_from_str() {
+            let permission = Permission::from_str("SEND_MESSAGES");
+            let expected_permission = Permission::SEND_MESSAGES;
+
+            assert!(permission.is_ok());
+            assert_eq!(permission.unwrap(), expected_permission);
+        }
+
+        #[test]
+        fn given_invalid_str_it_cannot_parse_from_str() {
+            let permission = Permission::from_str("bullshit");
+            assert!(permission.is_err());
+        }
+
+        #[test]
+        fn can_format_to_str() {
+            let permission = Permission::SEND_MESSAGES;
+
+            assert_eq!(permission.to_string(), "SEND_MESSAGES");
+        }
     }
 
     mod permission_list {
-        use std::collections::HashSet;
-
         use crate::domain::permission::{Permission, PermissionsList};
 
         #[test]
         fn when_empty_then_code_is_0() {
-            let permission_list = PermissionsList::empty();
+            let permission_list = PermissionsList::from([]);
             assert_eq!(permission_list.code(), "0");
         }
 
@@ -347,7 +222,7 @@ mod tests {
             let permissions = [Permission::ADMINISTRATOR, Permission::ADMINISTRATOR];
             let permission_list = PermissionsList::from(permissions);
 
-            let expected_code = format!("{}", Permission::ADMINISTRATOR.code);
+            let expected_code = Permission::ADMINISTRATOR.code().to_string();
             assert_eq!(permission_list.code(), expected_code);
         }
 
@@ -366,17 +241,30 @@ mod tests {
 
         #[test]
         fn can_create_permissions_from_code() {
-            let permission_list = PermissionsList::from("278592".to_string());
+            let permission_list = PermissionsList::from("278592");
+            let code = permission_list.code();
 
-            let permissions = permission_list.permissions();
+            assert_eq!(code, "278592");
+        }
 
-            let expected_permissions = HashSet::from([
-                Permission::ADD_REACTIONS,
-                Permission::EMBED_LINKS,
-                Permission::USE_EXTERNAL_EMOJIS,
-            ]);
-            let diff: Vec<_> = permissions.difference(&expected_permissions).collect();
-            assert_eq!(diff.len(), 0);
+        #[test]
+        fn lists_are_equal_if_same_permissions() {
+            let list1 =
+                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+            let list2 =
+                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+
+            assert_eq!(list1, list2);
+        }
+
+        #[test]
+        fn lists_are_not_equal_if_different_permissions() {
+            let list1 =
+                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+            let list2 =
+                PermissionsList::from([Permission::ADD_REACTIONS, Permission::SEND_MESSAGES]);
+
+            assert_ne!(list1, list2);
         }
     }
 }

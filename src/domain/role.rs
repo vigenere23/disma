@@ -1,8 +1,10 @@
+use super::permission::PermissionsList;
+
 #[derive(Debug, Clone)]
 pub struct ExistingRole {
     pub id: String,
     pub name: String,
-    pub permissions: String,
+    pub permissions: PermissionsList,
     pub is_mentionalbe: bool,
     pub show_in_sidebar: bool,
 }
@@ -19,7 +21,7 @@ impl PartialEq<AwaitingRole> for ExistingRole {
 #[derive(Debug, Clone)]
 pub struct AwaitingRole {
     pub name: String,
-    pub permissions: String,
+    pub permissions: PermissionsList,
     pub is_mentionalbe: bool,
     pub show_in_sidebar: bool,
 }
