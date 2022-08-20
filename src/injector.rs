@@ -10,6 +10,7 @@ use crate::{
         },
     },
     infra::api::DiscordApi,
+    utils::io::{Deserializer, Serializer},
 };
 
 pub struct Injector {}
@@ -49,13 +50,25 @@ impl Get<Arc<CommandsExecutor>> for Injector {
 
 impl Get<Arc<ExistingGuildSaver>> for Injector {
     fn get(&self) -> Arc<ExistingGuildSaver> {
-        Arc::from(ExistingGuildSaver::new())
+        Arc::from(ExistingGuildSaver::new(self.get()))
     }
 }
 
 impl Get<Arc<AwaitingGuildLoader>> for Injector {
     fn get(&self) -> Arc<AwaitingGuildLoader> {
-        Arc::from(AwaitingGuildLoader::new())
+        Arc::from(AwaitingGuildLoader::new(self.get()))
+    }
+}
+
+impl Get<Arc<Deserializer>> for Injector {
+    fn get(&self) -> Arc<Deserializer> {
+        Arc::from(Deserializer())
+    }
+}
+
+impl Get<Arc<Serializer>> for Injector {
+    fn get(&self) -> Arc<Serializer> {
+        Arc::from(Serializer())
     }
 }
 

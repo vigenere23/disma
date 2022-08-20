@@ -1,19 +1,23 @@
-use std::fs;
+use std::{path::Path, sync::Arc};
 
-use crate::{domain::guild::AwaitingGuild, infra::config::GuildConfig};
+use crate::{domain::guild::AwaitingGuild, infra::config::GuildConfig, utils::io::Deserializer};
 
-pub struct AwaitingGuildLoader {}
+pub struct AwaitingGuildLoader {
+    deserializer: Arc<Deserializer>,
+}
 
 impl AwaitingGuildLoader {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(deserializer: Arc<Deserializer>) -> Self {
+        Self { deserializer }
     }
 
-    pub fn load_awaiting_guild(&self, file_path: &str) -> AwaitingGuild {
-        println!("Loading guild config from '{}'...", &file_path);
+    pub fn load_awaiting_guild(&self, file_path: &Path) -> AwaitingGuild {
+        println!(
+            "Loading guild config from '{}'...",
+            &file_path.as_os_str().to_str().unwrap()
+        );
 
-        let file_content = fs::read_to_string(&file_path).unwrap();
-        let config: GuildConfig = serde_json::from_str(&file_content).unwrap();
+        let config: GuildConfig = self.deserializer.deserialize(file_path);
 
         config.into()
     }
