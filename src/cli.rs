@@ -1,10 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[clap(
-    name = "\nDiscord as Code",
-    about = "\nA tool to manage Discord settings as a config"
-)]
+#[clap(name = "Discord as Code", about)]
 pub struct ArgParser {
     #[clap(subcommand)]
     pub command: Command,
@@ -21,6 +18,9 @@ pub enum Command {
 pub struct SaveCommand {
     #[clap(short, long)]
     pub output: String,
+
+    #[clap(short, long, help = "Bypass user input confirmation")]
+    pub force: bool,
 }
 
 #[derive(Debug, Args)]

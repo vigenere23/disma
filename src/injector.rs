@@ -26,11 +26,11 @@ pub trait Get<T> {
 
 impl Get<Arc<DiscordApi>> for Injector {
     fn get(&self) -> Arc<DiscordApi> {
-        Arc::from(DiscordApi::from_bot(
-            env::var("DAC_DISCORD_BOT_TOKEN")
-                .expect("Missing env variable 'DAC_DISCORD_BOT_TOKEN'."),
-            "969728902891184239".to_string(),
-        ))
+        let bot_token = env::var("DAC_DISCORD_BOT_TOKEN")
+            .expect("Missing env variable 'DAC_DISCORD_BOT_TOKEN'.");
+        let guild_id = env::var("DAC_GUILD_ID").expect("Missing env variable 'DAC_GUILD_ID'.");
+
+        Arc::from(DiscordApi::from_bot(&bot_token, &guild_id))
     }
 }
 

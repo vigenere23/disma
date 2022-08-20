@@ -19,7 +19,7 @@ fn main() {
     let injector = Injector::new();
 
     match &args.command {
-        Command::Save(args) => save_existing_guild(&injector, &args.output),
+        Command::Save(args) => save_existing_guild(&injector, &args.output, args.force),
         Command::Apply(args) => apply_changes(&injector, &args.input, args.dry_run, args.force),
     }
 
@@ -32,7 +32,7 @@ fn apply_changes(injector: &Injector, file_path: &str, dry_run: bool, force: boo
     service.run(&file_path, dry_run, force);
 }
 
-fn save_existing_guild(injector: &Injector, file_path: &str) {
+fn save_existing_guild(injector: &Injector, file_path: &str, force: bool) {
     let service: Arc<SaveExistingGuild> = injector.get();
-    service.run(&file_path);
+    service.run(&file_path, force);
 }

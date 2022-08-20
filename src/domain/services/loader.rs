@@ -10,6 +10,8 @@ impl AwaitingGuildLoader {
     }
 
     pub fn load_awaiting_guild(&self, file_path: &str) -> AwaitingGuild {
+        println!("Loading guild config from '{}'...", &file_path);
+
         let file_content = fs::read_to_string(&file_path).unwrap();
         let config: GuildConfig = serde_json::from_str(&file_content).unwrap();
 

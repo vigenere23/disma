@@ -1,10 +1,9 @@
-use std::{
-    io::{self, Write},
-    process::exit,
-    sync::Arc,
-};
+use std::sync::Arc;
 
-use crate::domain::commands::GuildCommand;
+use crate::{
+    domain::commands::GuildCommand,
+    utils::input::{abort, ask_user_confirmation},
+};
 
 pub struct CommandsExecutor();
 
@@ -26,31 +25,21 @@ impl CommandsExecutor {
             println!(" - {}", command.describe());
         }
 
-        if !dry_run {
-            if !force && !self.confirmed() {
-                println!("❌ CANCELED.");
-                exit(1);
-            }
-
-            println!("\n🚀 Applying changes...");
-
-            for command in &commands {
-                println!(" - {}", command.describe());
-                command.execute();
-            }
-
-            println!("\n✨ DONE.");
+        if dry_run {
+            return;
         }
-    }
 
-    fn confirmed(&self) -> bool {
-        print!("\n❔ Do you want to proceeed? (y/N) ");
-        let _ = io::stdout().flush();
-        let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("❌ Unable to read user input");
+        if !force && !ask_user_confirmation() {
+            abort();
+        }
 
-        input.trim().to_lowercase() == "y"
+        println!("\n🚀 Applying changes...");
+
+        for command in &commands {
+            println!(" - {}", command.describe());
+            command.execute();
+        }
+
+        println!("\n✨ DONE.");
     }
 }

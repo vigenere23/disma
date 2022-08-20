@@ -22,13 +22,16 @@ pub struct DiscordApi {
 }
 
 impl DiscordApi {
-    pub fn from_bot(bot_token: String, guild_id: String) -> DiscordApi {
+    pub fn from_bot(bot_token: &str, guild_id: &str) -> DiscordApi {
         let client = ClientBuilder::new()
             .base_url("https://discord.com/api/v9")
             .header(USER_AGENT, "")
             .header(AUTHORIZATION, &format!("Bot {}", bot_token))
             .build();
-        Self { client, guild_id }
+        Self {
+            client,
+            guild_id: guild_id.to_string(),
+        }
     }
 
     fn get_roles(&self) -> Vec<RoleResponse> {
