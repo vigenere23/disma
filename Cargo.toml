@@ -3,6 +3,11 @@ name = "dac"
 description = "A tool to manage Discord settings as a config"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+homepage = "https://github.com/vigenere23/dac"
+repository = "https://github.com/vigenere23/dac"
+readme = "README.md"
+keywords = ["discord", "cli"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
