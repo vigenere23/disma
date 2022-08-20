@@ -2,19 +2,15 @@ use std::fs;
 
 use crate::{domain::guild::AwaitingGuild, infra::config::GuildConfig};
 
-pub struct AwaitingGuildLoader {
-    file_path: String,
-}
+pub struct AwaitingGuildLoader {}
 
 impl AwaitingGuildLoader {
-    pub fn new(file_path: &str) -> Self {
-        Self {
-            file_path: file_path.to_string(),
-        }
+    pub fn new() -> Self {
+        Self {}
     }
 
-    pub fn load_awaiting_guild(&self) -> AwaitingGuild {
-        let file_content = fs::read_to_string(&self.file_path).unwrap();
+    pub fn load_awaiting_guild(&self, file_path: &str) -> AwaitingGuild {
+        let file_content = fs::read_to_string(&file_path).unwrap();
         let config: GuildConfig = serde_json::from_str(&file_content).unwrap();
 
         config.into()

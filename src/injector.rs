@@ -12,15 +12,11 @@ use crate::{
     infra::api::DiscordApi,
 };
 
-pub struct Injector {
-    config_file_path: String,
-}
+pub struct Injector {}
 
 impl Injector {
-    pub fn new(config_file_path: &str) -> Self {
-        Self {
-            config_file_path: config_file_path.to_string(),
-        }
+    pub fn new() -> Self {
+        Self {}
     }
 }
 
@@ -31,7 +27,8 @@ pub trait Get<T> {
 impl Get<Arc<DiscordApi>> for Injector {
     fn get(&self) -> Arc<DiscordApi> {
         Arc::from(DiscordApi::from_bot(
-            env::var("DAC_DISCORD_TOKEN").expect("Missing env variable 'DISCORD_TOKEN'."),
+            env::var("DAC_DISCORD_BOT_TOKEN")
+                .expect("Missing env variable 'DAC_DISCORD_BOT_TOKEN'."),
             "969728902891184239".to_string(),
         ))
     }
@@ -52,13 +49,13 @@ impl Get<Arc<CommandsExecutor>> for Injector {
 
 impl Get<Arc<ExistingGuildSaver>> for Injector {
     fn get(&self) -> Arc<ExistingGuildSaver> {
-        Arc::from(ExistingGuildSaver::new(&self.config_file_path))
+        Arc::from(ExistingGuildSaver::new())
     }
 }
 
 impl Get<Arc<AwaitingGuildLoader>> for Injector {
     fn get(&self) -> Arc<AwaitingGuildLoader> {
-        Arc::from(AwaitingGuildLoader::new(&self.config_file_path))
+        Arc::from(AwaitingGuildLoader::new())
     }
 }
 

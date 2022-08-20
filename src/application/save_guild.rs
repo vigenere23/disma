@@ -15,8 +15,8 @@ impl SaveExistingGuild {
         }
     }
 
-    pub fn run(&self) {
+    pub fn run(&self, file_path: &str) {
         let guild = self.guild_querier.guild();
-        self.guild_saver.save_existing_guild(&guild);
+        self.guild_saver.save_existing_guild(&file_path, &guild);
     }
 }

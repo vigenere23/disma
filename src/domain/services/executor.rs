@@ -1,4 +1,8 @@
-use std::sync::Arc;
+use std::{
+    io::{self, Write},
+    process::exit,
+    sync::Arc,
+};
 
 use crate::domain::commands::GuildCommand;
 
@@ -12,29 +16,41 @@ impl CommandsExecutor {
         force: bool,
     ) {
         if commands.is_empty() {
-            println!("\nNo commands to be executed.");
+            println!("\n✨ No change to be applied.");
             return;
         }
 
-        println!("\nCommands to be executed :");
+        println!("\n📜 Changes to be applied :");
 
         for command in &commands {
             println!(" - {}", command.describe());
         }
 
         if !dry_run {
-            if !force {
-                // TODO ask before executing
+            if !force && !self.confirmed() {
+                println!("❌ CANCELED.");
+                exit(1);
             }
 
-            println!("\nExecuting commands...");
+            println!("\n🚀 Applying changes...");
 
             for command in &commands {
                 println!(" - {}", command.describe());
                 command.execute();
             }
 
-            println!("\nDONE.");
+            println!("\n✨ DONE.");
         }
+    }
+
+    fn confirmed(&self) -> bool {
+        print!("\n❔ Do you want to proceeed? (y/N) ");
+        let _ = io::stdout().flush();
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("❌ Unable to read user input");
+
+        input.trim().to_lowercase() == "y"
     }
 }
