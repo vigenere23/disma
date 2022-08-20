@@ -4,7 +4,7 @@ pub mod responses;
 use crate::{
     domain::{
         guild::{ExistingGuild, GuildCommander, GuildQuerier},
-        role::{AwaitingRole, ExistingRolesList},
+        role::{AwaitingRole, RolesList},
     },
     utils::http::{Client, ClientBuilder},
 };
@@ -49,7 +49,7 @@ impl GuildQuerier for DiscordApi {
     fn guild(&self) -> ExistingGuild {
         let roles = self.get_roles();
         ExistingGuild {
-            roles: ExistingRolesList::new(roles.into_iter().map(|value| value.into()).collect()),
+            roles: RolesList::from(&roles.into_iter().map(|value| value.into()).collect()),
         }
     }
 }

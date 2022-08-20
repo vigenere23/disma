@@ -1,4 +1,10 @@
+use std::collections::HashSet;
+
 use super::permission::PermissionsList;
+
+pub trait Role: Clone {
+    fn name(&self) -> String;
+}
 
 #[derive(Debug, Clone)]
 pub struct ExistingRole {
@@ -7,6 +13,12 @@ pub struct ExistingRole {
     pub permissions: PermissionsList,
     pub is_mentionalbe: bool,
     pub show_in_sidebar: bool,
+}
+
+impl Role for ExistingRole {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 impl PartialEq<AwaitingRole> for ExistingRole {
@@ -26,6 +38,12 @@ pub struct AwaitingRole {
     pub show_in_sidebar: bool,
 }
 
+impl Role for AwaitingRole {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 impl PartialEq<ExistingRole> for AwaitingRole {
     fn eq(&self, other: &ExistingRole) -> bool {
         self.name == other.name
@@ -36,42 +54,43 @@ impl PartialEq<ExistingRole> for AwaitingRole {
 }
 
 #[derive(Debug)]
-pub struct ExistingRolesList {
-    roles: Vec<ExistingRole>,
+pub struct RolesList<T>
+where
+    T: Role,
+{
+    roles: Vec<T>,
+    role_names: HashSet<String>,
 }
 
-impl ExistingRolesList {
-    pub fn new(roles: Vec<ExistingRole>) -> Self {
-        Self { roles }
+impl<T: Role> RolesList<T> {
+    fn new(roles: Vec<T>, role_names: HashSet<String>) -> Self {
+        Self { roles, role_names }
     }
 
-    pub fn find_by_name(&self, name: &str) -> Option<&ExistingRole> {
-        self.roles.iter().find(|role| role.name == name)
+    pub fn find_by_name(&self, name: &str) -> Option<&T> {
+        self.roles.iter().find(|role| role.name() == name)
     }
 
-    pub fn items(&self) -> &Vec<ExistingRole> {
+    pub fn items(&self) -> &Vec<T> {
         &self.roles
     }
 }
 
-pub struct AwaitingRolesList {
-    roles: Vec<AwaitingRole>,
-}
+impl<T: Role> From<&Vec<T>> for RolesList<T> {
+    fn from(roles: &Vec<T>) -> Self {
+        let mut role_names: HashSet<String> = HashSet::new();
 
-impl From<&Vec<AwaitingRole>> for AwaitingRolesList {
-    fn from(roles: &Vec<AwaitingRole>) -> Self {
+        for role in roles.iter() {
+            if role_names.contains(&role.name()) {
+                panic!("All roles must have unique names.");
+            }
+
+            role_names.insert(role.name().clone());
+        }
+
         Self {
             roles: roles.clone(),
+            role_names,
         }
-    }
-}
-
-impl AwaitingRolesList {
-    pub fn find_by_name(&self, name: &str) -> Option<&AwaitingRole> {
-        self.roles.iter().find(|role| role.name == name)
-    }
-
-    pub fn items(&self) -> &Vec<AwaitingRole> {
-        &self.roles
     }
 }

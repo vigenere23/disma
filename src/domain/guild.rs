@@ -1,4 +1,4 @@
-use super::role::{AwaitingRole, AwaitingRolesList, ExistingRolesList};
+use super::role::{AwaitingRole, ExistingRole, RolesList};
 
 pub trait GuildQuerier {
     fn guild(&self) -> ExistingGuild;
@@ -12,9 +12,9 @@ pub trait GuildCommander {
 
 #[derive(Debug)]
 pub struct ExistingGuild {
-    pub roles: ExistingRolesList,
+    pub roles: RolesList<ExistingRole>,
 }
 
 pub struct AwaitingGuild {
-    pub roles: AwaitingRolesList,
+    pub roles: RolesList<AwaitingRole>,
 }

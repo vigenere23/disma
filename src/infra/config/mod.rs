@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::domain::{
     guild::{AwaitingGuild, ExistingGuild},
-    role::{AwaitingRole, AwaitingRolesList},
+    role::{AwaitingRole, RolesList},
 };
 
 use self::role::RoleConfig;
@@ -35,7 +35,7 @@ impl Into<AwaitingGuild> for GuildConfig {
         let roles: Vec<AwaitingRole> = self.roles.iter().map(|role| role.into()).collect();
 
         AwaitingGuild {
-            roles: AwaitingRolesList::from(&roles),
+            roles: RolesList::from(&roles),
         }
     }
 }
