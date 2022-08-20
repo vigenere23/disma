@@ -57,7 +57,7 @@ impl Into<AwaitingRole> for &RoleConfig {
         let permissions: Vec<Permission> = self
             .permissions
             .iter()
-            .map(|permission| Permission::from_str(&permission).unwrap())
+            .map(|permission| Permission::from_str(permission).unwrap())
             .collect();
 
         AwaitingRole {

@@ -50,23 +50,23 @@ impl Client {
     }
 
     pub fn get(&self, url: &str) -> RequestBuilder {
-        self.request(Method::GET, &url)
+        self.request(Method::GET, url)
     }
 
     pub fn post(&self, url: &str) -> RequestBuilder {
-        self.request(Method::POST, &url)
+        self.request(Method::POST, url)
     }
 
     pub fn patch(&self, url: &str) -> RequestBuilder {
-        self.request(Method::PATCH, &url)
+        self.request(Method::PATCH, url)
     }
 
     pub fn put(&self, url: &str) -> RequestBuilder {
-        self.request(Method::PUT, &url)
+        self.request(Method::PUT, url)
     }
 
     pub fn delete(&self, url: &str) -> RequestBuilder {
-        self.request(Method::DELETE, &url)
+        self.request(Method::DELETE, url)
     }
 
     pub fn request(&self, method: Method, url: &str) -> RequestBuilder {
@@ -167,9 +167,9 @@ pub struct Request {
 impl Request {
     pub fn new(method: Method, url: &str, headers: HeaderMap, body: Option<String>) -> Self {
         Self {
-            method: method.clone(),
+            method,
             url: url.to_string(),
-            headers: headers.clone(),
+            headers,
             body,
         }
     }

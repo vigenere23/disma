@@ -29,10 +29,10 @@ fn main() {
 
 fn apply_changes(injector: &Injector, file_path: &str, dry_run: bool, force: bool) {
     let service: Arc<ApplyChanges> = injector.get();
-    service.run(&file_path, dry_run, force);
+    service.run(file_path, dry_run, force);
 }
 
 fn save_existing_guild(injector: &Injector, file_path: &str, force: bool) {
     let service: Arc<SaveExistingGuild> = injector.get();
-    service.run(&file_path, force);
+    service.run(file_path, force);
 }

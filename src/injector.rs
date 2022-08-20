@@ -37,7 +37,7 @@ impl Get<Arc<DiscordApi>> for Injector {
 impl Get<Arc<DiffCalculator>> for Injector {
     fn get(&self) -> Arc<DiffCalculator> {
         let api: Arc<DiscordApi> = self.get();
-        Arc::from(DiffCalculator::new(api.clone()))
+        Arc::from(DiffCalculator::new(api))
     }
 }
 
@@ -61,7 +61,7 @@ impl Get<Arc<AwaitingGuildLoader>> for Injector {
 
 impl Get<Arc<dyn GuildQuerier>> for Injector {
     fn get(&self) -> Arc<dyn GuildQuerier> {
-        <Self as Get<Arc<DiscordApi>>>::get(&self)
+        <Self as Get<Arc<DiscordApi>>>::get(self)
     }
 }
 

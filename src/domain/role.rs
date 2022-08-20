@@ -46,7 +46,7 @@ impl ExistingRolesList {
     }
 
     pub fn find_by_name(&self, name: &str) -> Option<&ExistingRole> {
-        (&self.roles).into_iter().find(|role| role.name == name)
+        self.roles.iter().find(|role| role.name == name)
     }
 
     pub fn items(&self) -> &Vec<ExistingRole> {
@@ -54,7 +54,6 @@ impl ExistingRolesList {
     }
 }
 
-// TODO merge with existing roles list
 pub struct AwaitingRolesList {
     roles: Vec<AwaitingRole>,
 }
@@ -69,7 +68,7 @@ impl From<&Vec<AwaitingRole>> for AwaitingRolesList {
 
 impl AwaitingRolesList {
     pub fn find_by_name(&self, name: &str) -> Option<&AwaitingRole> {
-        (&self.roles).into_iter().find(|role| role.name == name)
+        self.roles.iter().find(|role| role.name == name)
     }
 
     pub fn items(&self) -> &Vec<AwaitingRole> {

@@ -28,7 +28,7 @@ impl ApplyChanges {
     }
 
     pub fn run(&self, file_path: &str, dry_run: bool, force: bool) {
-        let awaiting_guild = self.guild_loader.load_awaiting_guild(&file_path);
+        let awaiting_guild = self.guild_loader.load_awaiting_guild(file_path);
         let existing_guild = self.guild_querier.guild();
 
         let commands = self

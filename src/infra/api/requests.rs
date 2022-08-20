@@ -15,8 +15,8 @@ impl From<&AwaitingRole> for RoleRequest {
         Self {
             name: role.name.clone(),
             permissions: role.permissions.code(),
-            hoist: role.show_in_sidebar.clone(),
-            mentionable: role.is_mentionalbe.clone(),
+            hoist: role.show_in_sidebar,
+            mentionable: role.is_mentionalbe,
         }
     }
 }

@@ -44,13 +44,13 @@ impl DiffCalculator {
         }
 
         for existing_role in existing_guild.roles.items() {
-            match awaiting_guild.roles.find_by_name(&existing_role.name) {
-                None => {
-                    let command =
-                        DeleteRole::new(self.guild_commander.clone(), existing_role.clone());
-                    commands.push(Arc::from(command));
-                }
-                _ => (),
+            if awaiting_guild
+                .roles
+                .find_by_name(&existing_role.name)
+                .is_none()
+            {
+                let command = DeleteRole::new(self.guild_commander.clone(), existing_role.clone());
+                commands.push(Arc::from(command));
             }
         }
 
