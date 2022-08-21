@@ -1,8 +1,8 @@
 [![CI](https://github.com/vigenere23/dac/actions/workflows/ci.yml/badge.svg)](https://github.com/vigenere23/dac/actions/workflows/ci.yml)
 
-# Discord as Code (dac)
+# Discord as Config (dac)
 
-A tool to manage Discord settings as a config, just like Infra as Code.
+👨🏼‍🔧 Manage Discord server settings with a repeatable, versionable config file.
 
 - [Prerequesites](#prerequesites)
   - [Install the executable](#install-the-executable)
