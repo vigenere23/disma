@@ -1,6 +1,21 @@
 use serde::Deserialize;
 
-use crate::domain::{permission::PermissionsList, role::ExistingRole};
+use crate::domain::{guild::GuildSummary, permission::PermissionsList, role::ExistingRole};
+
+#[derive(Deserialize)]
+pub struct GuildResponse {
+    pub name: String,
+    pub id: String,
+}
+
+impl Into<GuildSummary> for GuildResponse {
+    fn into(self) -> GuildSummary {
+        GuildSummary {
+            name: self.name,
+            id: self.id,
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 pub struct RoleResponse {

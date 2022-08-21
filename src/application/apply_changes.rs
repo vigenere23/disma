@@ -27,9 +27,9 @@ impl ApplyChanges {
         }
     }
 
-    pub fn run(&self, file_path: &str, dry_run: bool, force: bool) {
+    pub fn run(&self, guild_id: &str, file_path: &str, dry_run: bool, force: bool) {
         let awaiting_guild = self.guild_loader.load_awaiting_guild(Path::new(file_path));
-        let existing_guild = self.guild_querier.guild();
+        let existing_guild = self.guild_querier.get_guild(guild_id);
 
         let commands = self
             .diff_calculator

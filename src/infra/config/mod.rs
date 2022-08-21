@@ -35,7 +35,7 @@ impl Into<AwaitingGuild> for GuildConfig {
         let roles: Vec<AwaitingRole> = self.roles.iter().map(|role| role.into()).collect();
 
         AwaitingGuild {
-            roles: RolesList::from(&roles),
+            roles: RolesList::from(roles),
         }
     }
 }

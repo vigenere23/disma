@@ -59,14 +59,9 @@ where
     T: Role,
 {
     roles: Vec<T>,
-    role_names: HashSet<String>,
 }
 
 impl<T: Role> RolesList<T> {
-    fn new(roles: Vec<T>, role_names: HashSet<String>) -> Self {
-        Self { roles, role_names }
-    }
-
     pub fn find_by_name(&self, name: &str) -> Option<&T> {
         self.roles.iter().find(|role| role.name() == name)
     }
@@ -76,8 +71,8 @@ impl<T: Role> RolesList<T> {
     }
 }
 
-impl<T: Role> From<&Vec<T>> for RolesList<T> {
-    fn from(roles: &Vec<T>) -> Self {
+impl<T: Role> From<Vec<T>> for RolesList<T> {
+    fn from(roles: Vec<T>) -> Self {
         let mut role_names: HashSet<String> = HashSet::new();
 
         for role in roles.iter() {
@@ -88,9 +83,6 @@ impl<T: Role> From<&Vec<T>> for RolesList<T> {
             role_names.insert(role.name().clone());
         }
 
-        Self {
-            roles: roles.clone(),
-            role_names,
-        }
+        Self { roles }
     }
 }

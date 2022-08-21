@@ -1,7 +1,8 @@
 use super::role::{AwaitingRole, ExistingRole, RolesList};
 
 pub trait GuildQuerier {
-    fn guild(&self) -> ExistingGuild;
+    fn get_guild(&self, guild_id: &str) -> ExistingGuild;
+    fn list_guilds(&self) -> Vec<GuildSummary>;
 }
 
 pub trait GuildCommander {
@@ -17,4 +18,9 @@ pub struct ExistingGuild {
 
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
+}
+
+pub struct GuildSummary {
+    pub name: String,
+    pub id: String,
 }

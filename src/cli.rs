@@ -9,13 +9,19 @@ pub struct ArgParser {
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    Save(SaveCommand),
-    Apply(ApplyCommand),
+    #[clap(about = "Save existing guild to config")]
+    Save(SaveArgs),
+    #[clap(about = "Apply guild changes from config")]
+    Apply(ApplyArgs),
+    #[clap(name = "list", about = "List guilds accessible by bot")]
+    ListGuilds,
 }
 
 #[derive(Debug, Args)]
-#[clap(name = "Save existing guild config")]
-pub struct SaveCommand {
+pub struct SaveArgs {
+    #[clap(short, long, help = "Guild ID")]
+    pub guild: String,
+
     #[clap(short, long)]
     pub output: String,
 
@@ -24,8 +30,10 @@ pub struct SaveCommand {
 }
 
 #[derive(Debug, Args)]
-#[clap(name = "Apply guild config")]
-pub struct ApplyCommand {
+pub struct ApplyArgs {
+    #[clap(short, long, help = "Guild ID")]
+    pub guild: String,
+
     #[clap(short, long, help = "Input config file")]
     pub input: String,
 
