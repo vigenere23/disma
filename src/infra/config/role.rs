@@ -18,6 +18,8 @@ pub enum RoleConfig {
 pub struct FullRoleConfig {
     pub name: String,
     pub permissions: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<String>,
     pub show_in_sidebar: bool,
     pub is_mentionable: bool,
 }
@@ -34,24 +36,7 @@ impl From<&ExistingRole> for FullRoleConfig {
         Self {
             name: role.name.clone(),
             permissions,
-            show_in_sidebar: role.show_in_sidebar,
-            is_mentionable: role.is_mentionalbe,
-        }
-    }
-}
-
-impl From<&AwaitingRole> for FullRoleConfig {
-    fn from(role: &AwaitingRole) -> Self {
-        let permissions = role
-            .permissions
-            .items()
-            .iter()
-            .map(|permission| permission.to_string())
-            .collect();
-
-        Self {
-            name: role.name.clone(),
-            permissions,
+            color: role.color.clone(),
             show_in_sidebar: role.show_in_sidebar,
             is_mentionable: role.is_mentionalbe,
         }
@@ -88,6 +73,7 @@ impl RoleConfigAssembler {
         AwaitingRole {
             name: role_config.name.clone(),
             permissions: PermissionsList::from(&permissions),
+            color: role_config.color.clone(),
             is_mentionalbe: role_config.is_mentionable,
             show_in_sidebar: role_config.show_in_sidebar,
         }
@@ -107,6 +93,7 @@ impl RoleConfigAssembler {
                 let config = FullRoleConfig {
                     name: config.name.clone(),
                     permissions: template.permissions.clone(),
+                    color: template.color.clone(),
                     is_mentionable: template.is_mentionable,
                     show_in_sidebar: template.show_in_sidebar,
                 };

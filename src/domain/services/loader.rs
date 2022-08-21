@@ -2,7 +2,7 @@ use std::{path::Path, sync::Arc};
 
 use crate::{
     domain::guild::AwaitingGuild,
-    infra::config::{GuildConfig, GuildConfigAssembler},
+    infra::config::guild::{GuildConfig, GuildConfigAssembler},
     utils::io::Deserializer,
 };
 

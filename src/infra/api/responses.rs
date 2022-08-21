@@ -22,16 +22,23 @@ pub struct RoleResponse {
     pub id: String,
     pub name: String,
     pub permissions: String,
+    pub color: u32,
     pub hoist: bool,
     pub mentionable: bool,
 }
 
 impl Into<ExistingRole> for RoleResponse {
     fn into(self) -> ExistingRole {
+        let color = match self.color {
+            0 => None,
+            color => Some(format!("{:X}", color)),
+        };
+
         ExistingRole {
             id: self.id,
             name: self.name,
             permissions: PermissionsList::from(self.permissions.as_str()),
+            color,
             is_mentionalbe: self.mentionable,
             show_in_sidebar: self.hoist,
         }

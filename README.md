@@ -130,12 +130,14 @@ roles:
   - name: admin
     permissions:
       - ADMINISTRATOR
+    color: 36AF6D
     show_in_sidebar: false
     is_mentionable: false
 
   - name: dac
     permissions:
       - MANAGE_ROLES
+    color: 98ADF3
     show_in_sidebar: false
     is_mentionable: false
 
@@ -177,6 +179,7 @@ templates:
 - `permissions` (`string[]`) : List of permissions by name. You can read more about Discord's permissions on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions).
 - `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
+- `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
 - `template` (`string`) : Name of the template to use. :warning: **If set, only the `name` field should be present**. All other fileds **must** be deleted. The template must also be defined in [`templates.roles`](#templateroles).
 
 ### `template.roles`

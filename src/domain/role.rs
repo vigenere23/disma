@@ -11,6 +11,7 @@ pub struct ExistingRole {
     pub id: String,
     pub name: String,
     pub permissions: PermissionsList,
+    pub color: Option<String>,
     pub is_mentionalbe: bool,
     pub show_in_sidebar: bool,
 }
@@ -24,9 +25,10 @@ impl Role for ExistingRole {
 impl PartialEq<AwaitingRole> for ExistingRole {
     fn eq(&self, other: &AwaitingRole) -> bool {
         self.name == other.name
+            && self.permissions == other.permissions
+            && self.color == other.color
             && self.is_mentionalbe == other.is_mentionalbe
             && self.show_in_sidebar == other.show_in_sidebar
-            && self.permissions == other.permissions
     }
 }
 
@@ -34,6 +36,7 @@ impl PartialEq<AwaitingRole> for ExistingRole {
 pub struct AwaitingRole {
     pub name: String,
     pub permissions: PermissionsList,
+    pub color: Option<String>,
     pub is_mentionalbe: bool,
     pub show_in_sidebar: bool,
 }

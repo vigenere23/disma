@@ -2,7 +2,7 @@ use std::{path::Path, sync::Arc};
 
 use crate::{
     domain::guild::ExistingGuild,
-    infra::config::GuildConfig,
+    infra::config::guild::GuildConfig,
     utils::{
         input::{abort, ask_user_confirmation},
         io::Serializer,

@@ -16,7 +16,7 @@ use crate::{
             api::DiscordApi,
             client::{DiscordClient, DiscordGuildClient},
         },
-        config::{role::RoleConfigAssembler, GuildConfigAssembler},
+        config::{guild::GuildConfigAssembler, role::RoleConfigAssembler},
     },
     utils::io::{Deserializer, Serializer},
 };
