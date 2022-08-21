@@ -12,7 +12,10 @@ use crate::{
         },
     },
     infra::{
-        api::{Discord, DiscordApi, DiscordGuild},
+        api::{
+            api::DiscordApi,
+            client::{DiscordClient, DiscordGuildClient},
+        },
         config::{role::RoleConfigAssembler, GuildConfigAssembler},
     },
     utils::io::{Deserializer, Serializer},
@@ -41,22 +44,22 @@ impl Get<Arc<DiscordApi>> for Injector {
     }
 }
 
-impl Get<Arc<Discord>> for Injector {
-    fn get(&self) -> Arc<Discord> {
-        Arc::from(Discord::new(self.get()))
+impl Get<Arc<DiscordClient>> for Injector {
+    fn get(&self) -> Arc<DiscordClient> {
+        Arc::from(DiscordClient::new(self.get()))
     }
 }
 
-impl Get<Arc<DiscordGuild>> for Injector {
-    fn get(&self) -> Arc<DiscordGuild> {
+impl Get<Arc<DiscordGuildClient>> for Injector {
+    fn get(&self) -> Arc<DiscordGuildClient> {
         let guild_id = self.guild_id.clone().expect("Missing guild id.");
-        Arc::from(DiscordGuild::new(self.get(), &guild_id))
+        Arc::from(DiscordGuildClient::new(self.get(), &guild_id))
     }
 }
 
 impl Get<Arc<DiffCalculator>> for Injector {
     fn get(&self) -> Arc<DiffCalculator> {
-        let discord_guild: Arc<DiscordGuild> = self.get();
+        let discord_guild: Arc<DiscordGuildClient> = self.get();
         Arc::from(DiffCalculator::new(discord_guild))
     }
 }
@@ -105,7 +108,7 @@ impl Get<Arc<Serializer>> for Injector {
 
 impl Get<Arc<dyn GuildQuerier>> for Injector {
     fn get(&self) -> Arc<dyn GuildQuerier> {
-        <Self as Get<Arc<Discord>>>::get(self)
+        <Self as Get<Arc<DiscordClient>>>::get(self)
     }
 }
 
