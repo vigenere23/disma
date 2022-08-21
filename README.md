@@ -180,7 +180,9 @@ templates:
 - `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
 - `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
-- `template` (`string`) : Name of the template to use. :warning: **If set, only the `name` field should be present**. All other fileds **must** be deleted. The template must also be defined in [`templates.roles`](#templateroles).
+- `template` (`string`) : Name of the template to use. :warning: **If used :**
+  - All other fields (except `name`) become optional. If they are present, they **act as overrides**.
+  - The template must also be defined in [`templates.roles`](#templateroles).
 
 ### `template.roles`
 
