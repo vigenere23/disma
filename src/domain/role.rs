@@ -27,7 +27,7 @@ impl PartialEq<AwaitingRole> for ExistingRole {
         self.name == other.name
             && self.permissions == other.permissions
             && self.color == other.color
-            && self.is_mentionalbe == other.is_mentionalbe
+            && self.is_mentionalbe == other.is_mentionable
             && self.show_in_sidebar == other.show_in_sidebar
     }
 }
@@ -37,7 +37,7 @@ pub struct AwaitingRole {
     pub name: String,
     pub permissions: PermissionsList,
     pub color: Option<String>,
-    pub is_mentionalbe: bool,
+    pub is_mentionable: bool,
     pub show_in_sidebar: bool,
 }
 
@@ -47,10 +47,12 @@ impl Role for AwaitingRole {
     }
 }
 
+// TODO : change to .diff_with(other) -> List<Diff>
 impl PartialEq<ExistingRole> for AwaitingRole {
     fn eq(&self, other: &ExistingRole) -> bool {
         self.name == other.name
-            && self.is_mentionalbe == other.is_mentionalbe
+            && self.is_mentionable == other.is_mentionalbe
+            && self.color == other.color
             && self.show_in_sidebar == other.show_in_sidebar
             && self.permissions == other.permissions
     }

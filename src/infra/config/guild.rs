@@ -7,7 +7,7 @@ use crate::domain::{
     role::{AwaitingRole, RolesList},
 };
 
-use super::role::{FullRoleConfig, RoleConfig, RoleConfigAssembler};
+use super::role::{RoleConfig, RoleConfigAssembler, RoleConfigFull};
 
 #[derive(Serialize, Deserialize)]
 pub struct GuildConfig {
@@ -18,7 +18,7 @@ pub struct GuildConfig {
 
 #[derive(Serialize, Deserialize)]
 pub struct TemplatesConfig {
-    roles: Option<Vec<FullRoleConfig>>,
+    roles: Option<Vec<RoleConfigFull>>,
 }
 
 impl From<&ExistingGuild> for GuildConfig {

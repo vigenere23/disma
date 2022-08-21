@@ -12,11 +12,11 @@ use crate::{
         },
     },
     infra::{
-        api::{
+        config::{guild::GuildConfigAssembler, role::RoleConfigAssembler},
+        discord::{
             api::DiscordApi,
             client::{DiscordClient, DiscordGuildClient},
         },
-        config::{guild::GuildConfigAssembler, role::RoleConfigAssembler},
     },
     utils::io::{Deserializer, Serializer},
 };
