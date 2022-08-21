@@ -4,6 +4,7 @@ mod domain;
 mod infra;
 mod injector;
 mod utils;
+
 use std::sync::Arc;
 
 use application::{
@@ -22,9 +23,6 @@ fn main() {
         Command::Apply(args) => apply_changes(&args.guild, &args.input, args.dry_run, args.force),
         Command::ListGuilds => list_guilds(),
     }
-
-    // apply_changes(injector, true, false);
-    //load_existing_guild(injector);
 }
 
 fn apply_changes(guild_id: &str, file_path: &str, dry_run: bool, force: bool) {
