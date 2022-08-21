@@ -1,14 +1,25 @@
 use std::{path::Path, sync::Arc};
 
-use crate::{domain::guild::AwaitingGuild, infra::config::GuildConfig, utils::io::Deserializer};
+use crate::{
+    domain::guild::AwaitingGuild,
+    infra::config::{GuildConfig, GuildConfigAssembler},
+    utils::io::Deserializer,
+};
 
 pub struct AwaitingGuildLoader {
     deserializer: Arc<Deserializer>,
+    guild_assembler: Arc<GuildConfigAssembler>,
 }
 
 impl AwaitingGuildLoader {
-    pub fn new(deserializer: Arc<Deserializer>) -> Self {
-        Self { deserializer }
+    pub fn new(
+        deserializer: Arc<Deserializer>,
+        guild_assembler: Arc<GuildConfigAssembler>,
+    ) -> Self {
+        Self {
+            deserializer,
+            guild_assembler,
+        }
     }
 
     pub fn load_awaiting_guild(&self, file_path: &Path) -> AwaitingGuild {
@@ -19,6 +30,6 @@ impl AwaitingGuildLoader {
 
         let config: GuildConfig = self.deserializer.deserialize(file_path);
 
-        config.into()
+        self.guild_assembler.to_awaiting(&config)
     }
 }

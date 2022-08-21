@@ -11,7 +11,10 @@ use crate::{
             saver::ExistingGuildSaver,
         },
     },
-    infra::api::{Discord, DiscordApi, DiscordGuild},
+    infra::{
+        api::{Discord, DiscordApi, DiscordGuild},
+        config::{role::RoleConfigAssembler, GuildConfigAssembler},
+    },
     utils::io::{Deserializer, Serializer},
 };
 
@@ -72,7 +75,19 @@ impl Get<Arc<ExistingGuildSaver>> for Injector {
 
 impl Get<Arc<AwaitingGuildLoader>> for Injector {
     fn get(&self) -> Arc<AwaitingGuildLoader> {
-        Arc::from(AwaitingGuildLoader::new(self.get()))
+        Arc::from(AwaitingGuildLoader::new(self.get(), self.get()))
+    }
+}
+
+impl Get<Arc<GuildConfigAssembler>> for Injector {
+    fn get(&self) -> Arc<GuildConfigAssembler> {
+        Arc::from(GuildConfigAssembler::new(self.get()))
+    }
+}
+
+impl Get<Arc<RoleConfigAssembler>> for Injector {
+    fn get(&self) -> Arc<RoleConfigAssembler> {
+        Arc::from(RoleConfigAssembler {})
     }
 }
 
