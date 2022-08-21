@@ -1,7 +1,7 @@
 [package]
 name = "dac"
 description = "A tool to manage Discord settings as a config"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 license-file = "LICENSE"
 homepage = "https://github.com/vigenere23/dac"
