@@ -1,4 +1,8 @@
-use super::role::{AwaitingRole, ExistingRole, RolesList};
+use super::{
+    category::ExistingCategory,
+    channel::ExistingChannel,
+    role::{AwaitingRole, ExistingRole, RolesList},
+};
 
 pub trait GuildQuerier {
     fn get_guild(&self, guild_id: &str) -> ExistingGuild;
@@ -14,6 +18,8 @@ pub trait GuildCommander {
 #[derive(Debug)]
 pub struct ExistingGuild {
     pub roles: RolesList<ExistingRole>,
+    pub categories: Vec<ExistingCategory>,
+    pub channels: Vec<ExistingChannel>,
 }
 
 pub struct AwaitingGuild {

@@ -7,11 +7,16 @@ use crate::domain::{
     role::{AwaitingRole, RolesList},
 };
 
-use super::role::{RoleConfig, RoleConfigAssembler, RoleConfigFull};
+use super::{
+    category::CategoryConfig,
+    role::{RoleConfig, RoleConfigAssembler, RoleConfigFull},
+};
 
 #[derive(Serialize, Deserialize)]
 pub struct GuildConfig {
     roles: Vec<RoleConfig>,
+    categories: Vec<CategoryConfig>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     templates: Option<TemplatesConfig>,
 }
@@ -30,8 +35,15 @@ impl From<&ExistingGuild> for GuildConfig {
             .map(|role| RoleConfig::Full(role.into()))
             .collect();
 
+        let categories = guild
+            .categories
+            .iter()
+            .map(|category| CategoryConfig::from(category))
+            .collect();
+
         Self {
             roles,
+            categories,
             templates: None,
         }
     }

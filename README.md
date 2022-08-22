@@ -49,7 +49,6 @@ If you don't have created a bot yet, here's how to do it :
 
 > P.S.: The same bot can be used for all of your Discord servers :wink:
 
-
 ### Add a bot to a Discord server (guild)
 
 If your bot hasn't been already added to the server that you want to manage with dac, here's how do add it :
