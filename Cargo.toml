@@ -2,7 +2,7 @@
 name = "dac"
 authors = ["Gab St-Pierre <lolgab1@hotmail.com>"]
 description = "Manage Discord server settings with a repeatable, versionable config file"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 license-file = "LICENSE"
 homepage = "https://github.com/vigenere23/dac"
