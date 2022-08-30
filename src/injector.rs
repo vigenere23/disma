@@ -2,7 +2,8 @@ use std::{env, sync::Arc};
 
 use crate::{
     application::{
-        apply_changes::ApplyChanges, list_guilds::ListGuilds, save_guild::SaveExistingGuild,
+        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        save_guild::SaveExistingGuild,
     },
     domain::{
         guild::GuildQuerier,
@@ -136,5 +137,11 @@ impl Get<Arc<SaveExistingGuild>> for Injector {
 impl Get<Arc<ListGuilds>> for Injector {
     fn get(&self) -> Arc<ListGuilds> {
         Arc::from(ListGuilds::new(self.get()))
+    }
+}
+
+impl Get<Arc<CompileConfig>> for Injector {
+    fn get(&self) -> Arc<CompileConfig> {
+        Arc::from(CompileConfig::new(self.get()))
     }
 }

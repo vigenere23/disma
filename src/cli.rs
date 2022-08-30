@@ -9,12 +9,17 @@ pub struct ArgParser {
 
 #[derive(Subcommand, Debug)]
 pub enum Command {
-    #[clap(about = "Save existing guild to config")]
+    #[clap(name = "save", about = "Save existing guild to config")]
     Save(SaveArgs),
-    #[clap(about = "Apply guild changes from config")]
+
+    #[clap(name = "apply", about = "Apply guild changes from config")]
     Apply(ApplyArgs),
+
     #[clap(name = "list", about = "List guilds accessible by bot")]
     ListGuilds,
+
+    #[clap(name = "compile", about = "Compile YAML config")]
+    CompileConfig(CompileConfigArgs),
 }
 
 #[derive(Debug, Args)]
@@ -39,6 +44,21 @@ pub struct ApplyArgs {
 
     #[clap(long, help = "Do not execute any action")]
     pub dry_run: bool,
+
+    #[clap(short, long, help = "Bypass user input confirmation")]
+    pub force: bool,
+}
+
+#[derive(Debug, Args)]
+pub struct CompileConfigArgs {
+    #[clap(short, long, help = "Input config template file")]
+    pub template: String,
+
+    #[clap(short, long, help = "Template variables")]
+    pub vars: String,
+
+    #[clap(short, long, help = "Compiled config output path")]
+    pub output: String,
 
     #[clap(short, long, help = "Bypass user input confirmation")]
     pub force: bool,

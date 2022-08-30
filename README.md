@@ -6,17 +6,15 @@
 
 - [Prerequesites](#prerequesites)
   - [Install the executable](#install-the-executable)
-    - [Method 1 : with `cargo`](#method-1--with-cargo)
-    - [Method 2 : standalone](#method-2--standalone)
   - [Create and get a Discord bot token](#create-and-get-a-discord-bot-token)
   - [Add a bot to a Discord server (guild)](#add-a-bot-to-a-discord-server-guild)
 - [Commands](#commands)
   - [`list`](#list)
+  - [`compile`](#compile)
   - [`save`](#save)
   - [`apply`](#apply)
 - [Server configuration file](#server-configuration-file)
   - [`roles`](#roles)
-  - [`template.roles`](#templateroles)
 
 ## Prerequesites
 
@@ -80,6 +78,17 @@ dac list
 
 List bot's accessible servers. If you don't see access to your server, make sure to [add your bot to it](#add-a-bot-to-a-discord-server-guild).
 
+### `compile`
+
+Compile a template config to a full config file. Only the handlebars format is supported for now. Will compile to the original format (JSON or YAML).
+
+**Arguments**
+
+- `--template, -t <TEMPLATE_FILE>` : File to use as a template (contains handlebars tokens).
+- `--vars, -v <VARS_FILE>` : File containing variables that populates the template. can be either YAML or JSON.
+- `--output, -o <OUTPUT_FILE>` : Compiled config output file.
+- `--force, -f` : Bypass the user confirmation step.
+
 ### `save`
 
 Save a server (guild) configuration.
@@ -88,8 +97,7 @@ Save a server (guild) configuration.
 
 - `--guild, -g <GUILD_ID>` : Id of the guild to save. To find your guild id, use [`list`](#list).
 - `--output, -o <OUTPUT_FILE>` : Output file path. Both `.json` and `.yaml`/`.yml` files are supported.
-
-> :warning: The saving functionality will **never** use templates. Therefore, the file could easily have a few hundred lines.
+- `--force, -f` : Bypass the user confirmation step.
 
 ### `apply`
 
@@ -99,10 +107,13 @@ Apply changes to a server based on a configuration file.
 
 - `--guild, -g <GUILD_ID>` : Id of the guild to save. To find your guild id, use [`list`](#list).
 - `--input, -i <INPUT_FILE>` : Configuration file to use. Both `.json` and `.yaml`/`.yml` files are supported. Make sure to correctly follow the [configuration file schemas](#server-configuration-file).
+- `--force, -f` : Bypass the user confirmation step.
+
+
 
 ## Server configuration file
 
-The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). It is used to describe the wanted state or a Discord server (guild).
+The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild).
 
 <details>
 <summary>Configuration file example (click to reveal)</summary>
@@ -183,7 +194,3 @@ templates:
 - `template` (`string`) : Name of the template to use. :warning: **If used :**
   - All other fields (except `name`) become optional. If they are present, they **act as overrides**.
   - The template must also be defined in [`templates.roles`](#templateroles).
-
-### `template.roles`
-
-Same as [`roles`](#roles), but the name represents the template's name instead of the role's name.
