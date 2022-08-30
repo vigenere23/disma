@@ -1,6 +1,8 @@
 use std::{fs, path::Path};
 
 use serde::{de::DeserializeOwned, Serialize};
+use yaml_merge_keys::merge_keys;
+use yaml_rust::{YamlEmitter, YamlLoader};
 
 fn serialize_json<T: Serialize>(object: &T, file_path: &Path) {
     let file_content = serde_json::to_string_pretty(object).unwrap();
@@ -19,7 +21,16 @@ fn serialize_yaml<T: Serialize + ?Sized>(object: &T, file_path: &Path) {
 
 fn deserialize_yaml<T: DeserializeOwned>(file_path: &Path) -> T {
     let file_content = fs::read_to_string(file_path).unwrap();
-    serde_yaml::from_str(&file_content).unwrap()
+
+    let yaml_content = YamlLoader::load_from_str(&file_content).unwrap().remove(0);
+    let merged_yaml_content = merge_keys(yaml_content).unwrap();
+
+    let mut merge_yaml_str = String::new();
+    YamlEmitter::new(&mut merge_yaml_str)
+        .dump(&merged_yaml_content)
+        .unwrap();
+
+    serde_yaml::from_str(&merge_yaml_str).unwrap()
 }
 
 pub struct Serializer();

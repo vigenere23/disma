@@ -110,9 +110,11 @@ Apply changes to a server based on a configuration file.
 - `--input, -i <INPUT_FILE>` : Configuration file to use. Both `.json` and `.yaml`/`.yml` files are supported. Make sure to correctly follow the [configuration file schemas](#server-configuration-file).
 - `--force, -f` : Bypass the user confirmation step.
 
+
+
 ## Server configuration file
 
-The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). It is used to describe the wanted state or a Discord server (guild).
+The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild).
 
 <details>
 <summary>Configuration file example (click to reveal)</summary>

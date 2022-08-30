@@ -149,6 +149,8 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "strum",
+ "yaml-merge-keys",
+ "yaml-rust",
 ]
 
 [[package]]
@@ -455,6 +457,12 @@ name = "libc"
 version = "0.2.129"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "64de3cc433455c14174d42e554d4027ee631c4d046d43e3ecc6efc4636cdc7a7"
+
+[[package]]
+name = "linked-hash-map"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0717cef1bc8b636c6e1c1bbdefc09e6322da8a9321966e8928ef80d20f7f770f"
 
 [[package]]
 name = "log"
@@ -1289,4 +1297,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "yaml-merge-keys"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af47d205071caaef70ebce5e04e1d88eba944833f8a6626dacdda700f86c285a"
+dependencies = [
+ "lazy_static",
+ "thiserror",
+ "yaml-rust",
+]
+
+[[package]]
+name = "yaml-rust"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
+dependencies = [
+ "linked-hash-map",
 ]
