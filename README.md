@@ -15,7 +15,6 @@
   - [`apply`](#apply)
 - [Server configuration file](#server-configuration-file)
   - [`roles`](#roles)
-  - [`template.roles` (DEPRECATED)](#templateroles-deprecated)
 
 ## Prerequesites
 
@@ -195,9 +194,3 @@ templates:
 - `template` (`string`) : Name of the template to use. :warning: **If used :**
   - All other fields (except `name`) become optional. If they are present, they **act as overrides**.
   - The template must also be defined in [`templates.roles`](#templateroles).
-
-### `template.roles` (DEPRECATED)
-
-> Will be replaced with handlebars syntax using the `compile` command.
-
-Same as [`roles`](#roles), but the name represents the template's name instead of the role's name.
