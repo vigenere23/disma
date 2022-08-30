@@ -9,31 +9,23 @@ use crate::domain::{
 
 use super::{
     category::CategoryConfig,
-    role::{RoleConfig, RoleConfigAssembler, RoleConfigFull},
+    role::{RoleConfig, RoleConfigAssembler},
 };
 
 #[derive(Serialize, Deserialize)]
 pub struct GuildConfig {
     roles: Vec<RoleConfig>,
     categories: Vec<CategoryConfig>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    templates: Option<TemplatesConfig>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct TemplatesConfig {
-    roles: Option<Vec<RoleConfigFull>>,
+    roles: Option<Vec<RoleConfig>>,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
     fn from(guild: &ExistingGuild) -> Self {
-        let roles = guild
-            .roles
-            .items()
-            .iter()
-            .map(|role| RoleConfig::Full(role.into()))
-            .collect();
+        let roles = guild.roles.items().iter().map(|role| role.into()).collect();
 
         let categories = guild
             .categories
@@ -41,11 +33,7 @@ impl From<&ExistingGuild> for GuildConfig {
             .map(|category| CategoryConfig::from(category))
             .collect();
 
-        Self {
-            roles,
-            categories,
-            templates: None,
-        }
+        Self { roles, categories }
     }
 }
 
@@ -59,15 +47,10 @@ impl GuildConfigAssembler {
     }
 
     pub fn to_awaiting(&self, config: &GuildConfig) -> AwaitingGuild {
-        let role_templates = config
-            .templates
-            .as_ref()
-            .and_then(|templates| templates.roles.as_ref());
-
         let roles: Vec<AwaitingRole> = config
             .roles
             .iter()
-            .map(|role_config| self.role_assembler.to_awaiting(role_config, role_templates))
+            .map(|role_config| self.role_assembler.to_awaiting(role_config))
             .collect();
 
         AwaitingGuild {
