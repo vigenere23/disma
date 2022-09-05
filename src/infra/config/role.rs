@@ -36,22 +36,20 @@ impl From<&ExistingRole> for RoleConfig {
     }
 }
 
-pub struct RoleConfigAssembler {}
-
-impl RoleConfigAssembler {
-    pub fn to_awaiting(&self, role_config: &RoleConfig) -> AwaitingRole {
-        let permissions: Vec<Permission> = role_config
+impl Into<AwaitingRole> for RoleConfig {
+    fn into(self) -> AwaitingRole {
+        let permissions: Vec<Permission> = self
             .permissions
             .iter()
             .map(|permission| Permission::from_str(permission).unwrap())
             .collect();
 
         AwaitingRole {
-            name: role_config.name.clone(),
+            name: self.name,
             permissions: PermissionsList::from(&permissions),
-            color: role_config.color.clone().map(|color| color.to_lowercase()),
-            is_mentionable: role_config.is_mentionable,
-            show_in_sidebar: role_config.show_in_sidebar,
+            color: self.color.map(|color| color.to_lowercase()),
+            is_mentionable: self.is_mentionable,
+            show_in_sidebar: self.show_in_sidebar,
         }
     }
 }

@@ -76,6 +76,15 @@ impl<T: Role> RolesList<T> {
     }
 }
 
+impl RolesList<ExistingRole> {
+    pub fn find_by_id(&self, id: &str) -> &ExistingRole {
+        self.roles
+            .iter()
+            .find(|role| role.id == id)
+            .unwrap_or_else(|| panic!("Could not find role with id {}", &id))
+    }
+}
+
 impl<T: Role> From<Vec<T>> for RolesList<T> {
     fn from(roles: Vec<T>) -> Self {
         let mut role_names: HashSet<String> = HashSet::new();

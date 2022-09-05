@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    category::ExistingCategory,
+    category::{CategoryRolePermissions, ExistingCategory},
     channel::{ChannelType, ExistingChannel},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
+    permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 
@@ -29,6 +30,8 @@ impl GuildQuerier for DiscordClient {
             .map(|value| value.into())
             .collect();
 
+        let roles_list = RolesList::from(roles);
+
         let channel_responses = self.api.list_channels(guild_id).unwrap();
 
         let categories: Vec<ExistingCategory> = channel_responses
@@ -37,12 +40,21 @@ impl GuildQuerier for DiscordClient {
                 4 => Some(ExistingCategory {
                     id: response.id.clone(),
                     name: response.name.clone(),
+                    permissions: response.permission_overwrites.as_ref().map(|overwrites| {
+                        overwrites
+                            .iter()
+                            .map(|permissions| CategoryRolePermissions {
+                                role: roles_list.find_by_id(&permissions.role_id).clone(),
+                                allow: PermissionsList::from(permissions.allow.as_str()),
+                                deny: PermissionsList::from(permissions.deny.as_str()),
+                            })
+                            .collect()
+                    }),
                 }),
                 _ => None,
             })
             .collect();
 
-        // let channels = Vec::new();
         let channels: Vec<ExistingChannel> = channel_responses
             .iter()
             .filter_map(|response| {
@@ -53,21 +65,18 @@ impl GuildQuerier for DiscordClient {
                     other => panic!("Channel type {other} not supported."),
                 };
 
-                return match channel_type {
-                    Some(channel_type) => Some(ExistingChannel {
-                        id: response.id.clone(),
-                        name: response.name.clone(),
-                        channel_type,
-                        category: None, // TODO
-                        topic: response.topic.clone(),
-                    }),
-                    None => None,
-                };
+                channel_type.map(|channel_type| ExistingChannel {
+                    id: response.id.clone(),
+                    name: response.name.clone(),
+                    channel_type,
+                    category: None, // TODO
+                    topic: response.topic.clone(),
+                })
             })
             .collect();
 
         ExistingGuild {
-            roles: RolesList::from(roles),
+            roles: roles_list,
             categories,
             channels,
         }
