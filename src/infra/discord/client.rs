@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    category::{AwaitingCategory, CategoryRolePermissions, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, CategoryRolePermissions, ExistingCategory},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -79,7 +79,7 @@ impl GuildQuerier for DiscordClient {
 
         ExistingGuild {
             roles: roles_list,
-            categories,
+            categories: CategoriesList::from(categories),
             // channels,
         }
     }

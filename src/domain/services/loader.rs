@@ -15,7 +15,7 @@ impl AwaitingGuildLoader {
 
     pub fn load_awaiting_guild(&self, file_path: &Path) -> AwaitingGuild {
         println!(
-            "Loading guild config from '{}'...",
+            "🛠️  Loading guild config from '{}'...",
             &file_path.as_os_str().to_str().unwrap()
         );
 

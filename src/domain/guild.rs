@@ -1,5 +1,5 @@
 use super::{
-    category::{AwaitingCategory, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 
@@ -25,13 +25,13 @@ pub trait GuildCommander {
 #[derive(Debug)]
 pub struct ExistingGuild {
     pub roles: RolesList<ExistingRole>,
-    pub categories: Vec<ExistingCategory>,
+    pub categories: CategoriesList<ExistingCategory>,
     // pub channels: Vec<ExistingChannel>,
 }
 
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
-    pub categories: Vec<AwaitingCategory>,
+    pub categories: CategoriesList<AwaitingCategory>,
 }
 
 pub struct GuildSummary {

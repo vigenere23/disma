@@ -58,7 +58,7 @@ impl PartialEq<ExistingRole> for AwaitingRole {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RolesList<T>
 where
     T: Role,

@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use crate::domain::{
     commands::{
+        category::AddCategory,
         roles::{AddRole, DeleteRole, UpdateRole},
         GuildCommand,
     },
@@ -17,10 +18,10 @@ impl DiffCalculator {
         Self { guild_commander }
     }
 
-    pub fn create_commands(
+    pub fn create_role_commands(
         &self,
-        existing_guild: ExistingGuild,
-        awaiting_guild: AwaitingGuild,
+        existing_guild: &ExistingGuild,
+        awaiting_guild: &AwaitingGuild,
     ) -> Vec<Arc<dyn GuildCommand>> {
         let mut commands: Vec<Arc<dyn GuildCommand>> = Vec::new();
 
@@ -51,6 +52,33 @@ impl DiffCalculator {
             {
                 let command = DeleteRole::new(self.guild_commander.clone(), existing_role.clone());
                 commands.push(Arc::from(command));
+            }
+        }
+
+        commands
+    }
+
+    pub fn create_category_commands(
+        &self,
+        existing_guild: &ExistingGuild,
+        awaiting_guild: &AwaitingGuild,
+    ) -> Vec<Arc<dyn GuildCommand>> {
+        let mut commands: Vec<Arc<dyn GuildCommand>> = Vec::new();
+
+        for awaiting_category in awaiting_guild.categories.items() {
+            match existing_guild
+                .categories
+                .find_by_name(&awaiting_category.name)
+            {
+                Some(_) => {}
+                None => {
+                    let command = AddCategory::new(
+                        self.guild_commander.clone(),
+                        awaiting_category.clone(),
+                        existing_guild.roles.clone(),
+                    );
+                    commands.push(Arc::from(command));
+                }
             }
         }
 

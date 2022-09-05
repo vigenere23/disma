@@ -11,7 +11,7 @@ use super::permissions::PermissionOverwritesDto;
 pub struct ChannelRequest {
     pub name: String,
     pub topic: String,
-    #[serde(alias = "type")]
+    #[serde(rename = "type")]
     pub _type: u8,
     pub parent_id: Option<String>,
     pub permission_overwrites: Option<Vec<PermissionOverwritesDto>>,
@@ -50,7 +50,7 @@ pub struct ChannelResponse {
     pub id: String,
     pub name: String,
     pub topic: Option<String>,
-    #[serde(alias = "type")]
+    #[serde(rename = "type")]
     pub _type: u8,
     pub parent_id: Option<String>,
     pub permission_overwrites: Option<Vec<PermissionOverwritesDto>>,

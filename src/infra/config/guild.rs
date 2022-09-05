@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
+    category::{AwaitingCategory, CategoriesList},
     guild::{AwaitingGuild, ExistingGuild},
     role::{AwaitingRole, RolesList},
 };
@@ -17,7 +18,12 @@ impl From<&ExistingGuild> for GuildConfig {
     fn from(guild: &ExistingGuild) -> Self {
         let roles = guild.roles.items().iter().map(|role| role.into()).collect();
 
-        let categories = guild.categories.iter().map(CategoryConfig::from).collect();
+        let categories = guild
+            .categories
+            .items()
+            .iter()
+            .map(CategoryConfig::from)
+            .collect();
 
         Self { roles, categories }
     }
@@ -33,7 +39,7 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         let roles_list = RolesList::from(roles);
 
-        let categories = self
+        let categories: Vec<AwaitingCategory> = self
             .categories
             .into_iter()
             .map(|category| category.into(&roles_list))
@@ -41,7 +47,7 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         AwaitingGuild {
             roles: roles_list,
-            categories,
+            categories: CategoriesList::from(categories),
         }
     }
 }

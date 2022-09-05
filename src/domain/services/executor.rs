@@ -15,11 +15,11 @@ impl CommandsExecutor {
         force: bool,
     ) {
         if commands.is_empty() {
-            println!("\n✨ No change to be applied.");
+            println!("✨ No change to be applied.");
             return;
         }
 
-        println!("\n📜 Changes to be applied :");
+        println!("📜 Changes to be applied :");
 
         for command in &commands {
             println!(" - {}", command.describe());

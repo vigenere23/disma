@@ -156,7 +156,7 @@ impl RequestBuilder {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Request {
     method: Method,
     url: String,
@@ -199,10 +199,11 @@ impl Request {
     }
 }
 
+#[derive(Debug)]
 pub struct Response {
-    request: Request,
-    status: StatusCode,
-    content: String,
+    pub request: Request,
+    pub status: StatusCode,
+    pub content: String,
 }
 
 impl Response {

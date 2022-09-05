@@ -67,12 +67,17 @@ impl DiscordApi {
 
     pub fn add_channel(&self, guild_id: &str, body: ChannelRequest) {
         let url = format!("/guilds/{}/channels", guild_id);
-        self.client
+        let response = self
+            .client
             .post(&url)
             .json_body(body)
             .unwrap()
             .send()
             .unwrap();
+
+        if response.status != 201 {
+            panic!("Error while adding channel. Response: {:#?}", response)
+        }
     }
 
     pub fn update_channel(&self, guild_id: &str, id: &str, body: ChannelRequest) {
