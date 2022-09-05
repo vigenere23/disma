@@ -12,6 +12,14 @@ pub trait GuildCommander {
     fn add_role(&self, role: &AwaitingRole);
     fn update_role(&self, id: &str, role: &AwaitingRole);
     fn delete_role(&self, id: &str);
+    fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>);
+    fn update_category(
+        &self,
+        id: &str,
+        category: &AwaitingCategory,
+        roles: &RolesList<ExistingRole>,
+    );
+    fn delete_category(&self, id: &str);
 }
 
 #[derive(Debug)]

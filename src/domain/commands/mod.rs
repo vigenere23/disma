@@ -1,3 +1,4 @@
+pub mod category;
 pub mod roles;
 
 pub trait GuildCommand {

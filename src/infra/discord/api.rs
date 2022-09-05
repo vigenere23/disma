@@ -65,7 +65,7 @@ impl DiscordApi {
         self.client.get(&url).send().unwrap().parsed_body()
     }
 
-    pub fn _add_channel(&self, guild_id: &str, body: ChannelRequest) {
+    pub fn add_channel(&self, guild_id: &str, body: ChannelRequest) {
         let url = format!("/guilds/{}/channels", guild_id);
         self.client
             .post(&url)
@@ -75,7 +75,7 @@ impl DiscordApi {
             .unwrap();
     }
 
-    pub fn _update_channel(&self, guild_id: &str, id: &str, body: ChannelRequest) {
+    pub fn update_channel(&self, guild_id: &str, id: &str, body: ChannelRequest) {
         let url = format!("/guilds/{}/channels/{}", guild_id, id);
         self.client
             .patch(&url)
@@ -85,7 +85,7 @@ impl DiscordApi {
             .unwrap();
     }
 
-    pub fn _delete_channel(&self, guild_id: &str, id: &str) {
+    pub fn delete_channel(&self, guild_id: &str, id: &str) {
         let url = format!("/guilds/{}/channels/{}", guild_id, id);
         self.client.delete(&url).send().unwrap();
     }

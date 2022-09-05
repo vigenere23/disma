@@ -1,13 +1,16 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    category::{CategoryRolePermissions, ExistingCategory},
+    category::{AwaitingCategory, CategoryRolePermissions, ExistingCategory},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 
-use super::{api::DiscordApi, dtos::role::RoleRequest};
+use super::{
+    api::DiscordApi,
+    dtos::{channel::ChannelRequest, role::RoleRequest},
+};
 
 pub struct DiscordClient {
     api: Arc<DiscordApi>,
@@ -117,5 +120,24 @@ impl GuildCommander for DiscordGuildClient {
 
     fn delete_role(&self, id: &str) {
         self.api.delete_role(&self.guild_id, id);
+    }
+
+    fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
+        self.api
+            .add_channel(&self.guild_id, ChannelRequest::from(category, roles));
+    }
+
+    fn update_category(
+        &self,
+        id: &str,
+        category: &AwaitingCategory,
+        roles: &RolesList<ExistingRole>,
+    ) {
+        self.api
+            .update_channel(&self.guild_id, id, ChannelRequest::from(category, roles));
+    }
+
+    fn delete_category(&self, id: &str) {
+        self.api.delete_channel(&self.guild_id, id);
     }
 }
