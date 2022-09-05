@@ -9,10 +9,10 @@ pub trait Category: Clone {
     fn name(&self) -> String;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AwaitingCategory {
     pub name: String,
-    pub permission_overwrites: Option<Vec<CategoryRolePermissions<AwaitingRole>>>,
+    pub permissions: Option<Vec<CategoryRolePermissions<AwaitingRole>>>,
     // pub channels: Vec<AwaitingChannel>,
 }
 
@@ -35,6 +35,41 @@ impl Category for ExistingCategory {
     }
 }
 
+impl PartialEq<ExistingCategory> for AwaitingCategory {
+    fn eq(&self, other: &ExistingCategory) -> bool {
+        if self.name != other.name {
+            return false;
+        }
+
+        return match (&self.permissions, &other.permissions) {
+            (None, None) => true,
+            (Some(permissions), Some(other_permissions)) => {
+                if permissions.len() != other_permissions.len() {
+                    return false;
+                }
+
+                permissions
+                    .clone()
+                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
+                other_permissions
+                    .clone()
+                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
+
+                for (permission, other_permission) in
+                    permissions.iter().zip(other_permissions.iter())
+                {
+                    if permission != other_permission {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            _ => false,
+        };
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CategoryRolePermissions<T>
 where
@@ -43,6 +78,18 @@ where
     pub role: T,
     pub allow: PermissionsList,
     pub deny: PermissionsList,
+}
+
+impl<T, U> PartialEq<CategoryRolePermissions<T>> for CategoryRolePermissions<U>
+where
+    T: Role,
+    U: Role,
+{
+    fn eq(&self, other: &CategoryRolePermissions<T>) -> bool {
+        self.role.name() == other.role.name()
+            && self.allow == other.allow
+            && self.deny == other.deny
+    }
 }
 
 #[derive(Debug)]

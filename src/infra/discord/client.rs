@@ -134,10 +134,10 @@ impl GuildCommander for DiscordGuildClient {
         roles: &RolesList<ExistingRole>,
     ) {
         self.api
-            .update_channel(&self.guild_id, id, ChannelRequest::from(category, roles));
+            .update_channel(id, ChannelRequest::from(category, roles));
     }
 
     fn delete_category(&self, id: &str) {
-        self.api.delete_channel(&self.guild_id, id);
+        self.api.delete_channel(id);
     }
 }

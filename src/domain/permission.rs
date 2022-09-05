@@ -123,8 +123,8 @@ impl PermissionsList {
         format!("{}", code)
     }
 
-    pub fn items(&self) -> &HashSet<Permission> {
-        &self.permissions
+    pub fn items(&self) -> Vec<&Permission> {
+        self.permissions.iter().collect()
     }
 }
 

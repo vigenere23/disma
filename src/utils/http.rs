@@ -77,7 +77,7 @@ impl Client {
         if self.base_url.is_empty() {
             url_suffix.to_string()
         } else {
-            format!("{}/{}", &self.base_url, &url_suffix)
+            format!("{}{}", &self.base_url, &url_suffix)
         }
     }
 }

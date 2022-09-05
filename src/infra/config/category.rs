@@ -31,7 +31,7 @@ impl CategoryConfig {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
         AwaitingCategory {
             name: self.name,
-            permission_overwrites: self.permissions.map(|permissions| {
+            permissions: self.permissions.map(|permissions| {
                 permissions
                     .into_iter()
                     .map(|permission| CategoryRolePermissions {

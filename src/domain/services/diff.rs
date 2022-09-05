@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::domain::{
     commands::{
-        category::AddCategory,
+        category::{AddCategory, DeleteCategory, UpdateCategory},
         roles::{AddRole, DeleteRole, UpdateRole},
         GuildCommand,
     },
@@ -70,7 +70,17 @@ impl DiffCalculator {
                 .categories
                 .find_by_name(&awaiting_category.name)
             {
-                Some(_) => {}
+                Some(category) => {
+                    if awaiting_category != category {
+                        let command = UpdateCategory::new(
+                            self.guild_commander.clone(),
+                            category.clone(),
+                            awaiting_category.clone(),
+                            existing_guild.roles.clone(),
+                        );
+                        commands.push(Arc::from(command));
+                    }
+                }
                 None => {
                     let command = AddCategory::new(
                         self.guild_commander.clone(),
@@ -79,6 +89,18 @@ impl DiffCalculator {
                     );
                     commands.push(Arc::from(command));
                 }
+            }
+        }
+
+        for existing_category in existing_guild.categories.items() {
+            if awaiting_guild
+                .categories
+                .find_by_name(&existing_category.name)
+                .is_none()
+            {
+                let command =
+                    DeleteCategory::new(self.guild_commander.clone(), existing_category.clone());
+                commands.push(Arc::from(command));
             }
         }
 

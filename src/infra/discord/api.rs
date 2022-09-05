@@ -80,18 +80,27 @@ impl DiscordApi {
         }
     }
 
-    pub fn update_channel(&self, guild_id: &str, id: &str, body: ChannelRequest) {
-        let url = format!("/guilds/{}/channels/{}", guild_id, id);
-        self.client
+    pub fn update_channel(&self, id: &str, body: ChannelRequest) {
+        let url = format!("/channels/{}", id);
+        let response = self
+            .client
             .patch(&url)
             .json_body(body)
             .unwrap()
             .send()
             .unwrap();
+
+        if response.status != 200 {
+            panic!("Error while updating channel. Response: {:#?}", response)
+        }
     }
 
-    pub fn delete_channel(&self, guild_id: &str, id: &str) {
-        let url = format!("/guilds/{}/channels/{}", guild_id, id);
-        self.client.delete(&url).send().unwrap();
+    pub fn delete_channel(&self, id: &str) {
+        let url = format!("/channels/{}", id);
+        let response = self.client.delete(&url).send().unwrap();
+
+        if response.status != 200 {
+            panic!("Error while deleting channel. Response: {:#?}", response)
+        }
     }
 }
