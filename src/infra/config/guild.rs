@@ -31,8 +31,17 @@ impl Into<AwaitingGuild> for GuildConfig {
             .map(|role_config| role_config.into())
             .collect();
 
+        let roles_list = RolesList::from(roles);
+
+        let categories = self
+            .categories
+            .into_iter()
+            .map(|category| category.into(&roles_list))
+            .collect();
+
         AwaitingGuild {
-            roles: RolesList::from(roles),
+            roles: roles_list,
+            categories,
         }
     }
 }

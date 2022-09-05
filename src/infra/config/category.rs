@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    category::{CategoryRolePermissions, ExistingCategory},
-    role::Role,
+    category::{AwaitingCategory, CategoryRolePermissions, ExistingCategory},
+    permission::PermissionsList,
+    role::{AwaitingRole, Role, RolesList},
 };
 
 #[derive(Serialize, Deserialize)]
@@ -26,6 +27,29 @@ impl From<&ExistingCategory> for CategoryConfig {
     }
 }
 
+impl CategoryConfig {
+    pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
+        AwaitingCategory {
+            name: self.name,
+            permission_overwrites: self.permissions.map(|permissions| {
+                permissions
+                    .into_iter()
+                    .map(|permission| CategoryRolePermissions {
+                        role: roles
+                            .find_by_name(&permission.role)
+                            .unwrap_or_else(|| {
+                                panic!("No role found with name {}", &permission.role)
+                            })
+                            .clone(),
+                        allow: PermissionsList::from(&permission.allow),
+                        deny: PermissionsList::from(&permission.deny),
+                    })
+                    .collect()
+            }),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct CategoryRolePermissionsConfig {
     pub role: String,
@@ -33,8 +57,11 @@ pub struct CategoryRolePermissionsConfig {
     pub deny: Vec<String>,
 }
 
-impl CategoryRolePermissionsConfig {
-    pub fn from<T: Role>(permissions: &CategoryRolePermissions<T>) -> Self {
+impl<T> From<&CategoryRolePermissions<T>> for CategoryRolePermissionsConfig
+where
+    T: Role,
+{
+    fn from(permissions: &CategoryRolePermissions<T>) -> Self {
         Self {
             role: permissions.role.name(),
             allow: permissions

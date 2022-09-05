@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use crate::domain::{
     category::{CategoryRolePermissions, ExistingCategory},
-    channel::{ChannelType, ExistingChannel},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -55,30 +54,30 @@ impl GuildQuerier for DiscordClient {
             })
             .collect();
 
-        let channels: Vec<ExistingChannel> = channel_responses
-            .iter()
-            .filter_map(|response| {
-                let channel_type = match response._type {
-                    0 => Some(ChannelType::Text),
-                    2 => Some(ChannelType::Voice),
-                    4 => None,
-                    other => panic!("Channel type {other} not supported."),
-                };
+        // let channels: Vec<ExistingChannel> = channel_responses
+        //     .iter()
+        //     .filter_map(|response| {
+        //         let channel_type = match response._type {
+        //             0 => Some(ChannelType::Text),
+        //             2 => Some(ChannelType::Voice),
+        //             4 => None,
+        //             other => panic!("Channel type {other} not supported."),
+        //         };
 
-                channel_type.map(|channel_type| ExistingChannel {
-                    id: response.id.clone(),
-                    name: response.name.clone(),
-                    channel_type,
-                    category: None, // TODO
-                    topic: response.topic.clone(),
-                })
-            })
-            .collect();
+        //         channel_type.map(|channel_type| ExistingChannel {
+        //             id: response.id.clone(),
+        //             name: response.name.clone(),
+        //             channel_type,
+        //             category: None, // TODO
+        //             topic: response.topic.clone(),
+        //         })
+        //     })
+        //     .collect();
 
         ExistingGuild {
             roles: roles_list,
             categories,
-            channels,
+            // channels,
         }
     }
 

@@ -1,13 +1,13 @@
-// pub struct AwaitingCategory {
-//     name: String,
-//     channels: Vec<AwaitingChannel>,
-//     //permission_overwrites: Option<Vec<PermissionOverwritesDto>>,
-// }
-
 use super::{
     permission::PermissionsList,
-    role::{ExistingRole, Role},
+    role::{AwaitingRole, ExistingRole, Role},
 };
+
+pub struct AwaitingCategory {
+    pub name: String,
+    pub permission_overwrites: Option<Vec<CategoryRolePermissions<AwaitingRole>>>,
+    // pub channels: Vec<AwaitingChannel>,
+}
 
 #[derive(Debug)]
 pub struct ExistingCategory {
