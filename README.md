@@ -157,26 +157,6 @@ roles:
     template: team
   - name: team-03
     template: team
-
-templates:
-  roles:
-    - name: team
-      permissions:
-        - CHANGE_NICKNAME
-        - VIEW_CHANNEL
-        - CONNECT
-        - SPEAK
-        - USE_VAD
-        - STREAM
-        - REQUEST_TO_SPEAK
-        - SEND_MESSAGES
-        - READ_MESSAGE_HISTORY
-        - CREATE_PUBLIC_THREADS
-        - SEND_MESSAGES_IN_THREADS
-        - ADD_REACTIONS
-        - ATTACH_FILES
-      show_in_sidebar: true
-      is_mentionable: true
 ```
 
 </details>
