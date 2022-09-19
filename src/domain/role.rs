@@ -58,7 +58,7 @@ impl PartialEq<ExistingRole> for AwaitingRole {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RolesList<T>
 where
     T: Role,
@@ -73,6 +73,15 @@ impl<T: Role> RolesList<T> {
 
     pub fn items(&self) -> &Vec<T> {
         &self.roles
+    }
+}
+
+impl RolesList<ExistingRole> {
+    pub fn find_by_id(&self, id: &str) -> &ExistingRole {
+        self.roles
+            .iter()
+            .find(|role| role.id == id)
+            .unwrap_or_else(|| panic!("Could not find role with id {}", &id))
     }
 }
 

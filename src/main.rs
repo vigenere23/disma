@@ -3,6 +3,7 @@ mod cli;
 mod domain;
 mod infra;
 mod injector;
+mod ui;
 mod utils;
 
 use std::sync::Arc;

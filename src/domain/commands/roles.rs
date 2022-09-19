@@ -31,30 +31,6 @@ impl GuildCommand for AddRole {
     }
 }
 
-pub struct DeleteRole {
-    guild_commander: Arc<dyn GuildCommander>,
-    role: ExistingRole,
-}
-
-impl DeleteRole {
-    pub fn new(guild: Arc<dyn GuildCommander>, role: ExistingRole) -> Self {
-        Self {
-            guild_commander: guild,
-            role,
-        }
-    }
-}
-
-impl GuildCommand for DeleteRole {
-    fn execute(&self) {
-        self.guild_commander.delete_role(&self.role.id);
-    }
-
-    fn describe(&self) -> String {
-        format!("🗑️  Deleting role {}", &self.role.name)
-    }
-}
-
 pub struct UpdateRole {
     guild_commander: Arc<dyn GuildCommander>,
     existing_role: ExistingRole,
@@ -86,5 +62,29 @@ impl GuildCommand for UpdateRole {
             "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
             &self.existing_role.name, &self.existing_role, &self.awaiting_role
         )
+    }
+}
+
+pub struct DeleteRole {
+    guild_commander: Arc<dyn GuildCommander>,
+    role: ExistingRole,
+}
+
+impl DeleteRole {
+    pub fn new(guild: Arc<dyn GuildCommander>, role: ExistingRole) -> Self {
+        Self {
+            guild_commander: guild,
+            role,
+        }
+    }
+}
+
+impl GuildCommand for DeleteRole {
+    fn execute(&self) {
+        self.guild_commander.delete_role(&self.role.id);
+    }
+
+    fn describe(&self) -> String {
+        format!("🗑️  Deleting role {}", &self.role.name)
     }
 }

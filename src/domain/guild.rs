@@ -1,4 +1,7 @@
-use super::role::{AwaitingRole, ExistingRole, RolesList};
+use super::{
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
+    role::{AwaitingRole, ExistingRole, RolesList},
+};
 
 pub trait GuildQuerier {
     fn get_guild(&self, guild_id: &str) -> ExistingGuild;
@@ -9,15 +12,26 @@ pub trait GuildCommander {
     fn add_role(&self, role: &AwaitingRole);
     fn update_role(&self, id: &str, role: &AwaitingRole);
     fn delete_role(&self, id: &str);
+    fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>);
+    fn update_category(
+        &self,
+        id: &str,
+        category: &AwaitingCategory,
+        roles: &RolesList<ExistingRole>,
+    );
+    fn delete_category(&self, id: &str);
 }
 
 #[derive(Debug)]
 pub struct ExistingGuild {
     pub roles: RolesList<ExistingRole>,
+    pub categories: CategoriesList<ExistingCategory>,
+    // pub channels: Vec<ExistingChannel>,
 }
 
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
+    pub categories: CategoriesList<AwaitingCategory>,
 }
 
 pub struct GuildSummary {

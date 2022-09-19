@@ -77,7 +77,7 @@ impl Client {
         if self.base_url.is_empty() {
             url_suffix.to_string()
         } else {
-            format!("{}/{}", &self.base_url, &url_suffix)
+            format!("{}{}", &self.base_url, &url_suffix)
         }
     }
 }
@@ -156,7 +156,7 @@ impl RequestBuilder {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Request {
     method: Method,
     url: String,
@@ -199,10 +199,11 @@ impl Request {
     }
 }
 
+#[derive(Debug)]
 pub struct Response {
-    request: Request,
-    status: StatusCode,
-    content: String,
+    pub request: Request,
+    pub status: StatusCode,
+    pub content: String,
 }
 
 impl Response {

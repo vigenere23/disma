@@ -15,6 +15,8 @@
   - [`apply`](#apply)
 - [Server configuration file](#server-configuration-file)
   - [`roles`](#roles)
+  - [`categories`](#categories)
+  - [Types](#types)
 
 ## Prerequesites
 
@@ -46,7 +48,6 @@ If you don't have created a bot yet, here's how to do it :
    - :warning: **Don't forget to save the token** (in the environment variable `DAC_DISCORD_BOT_TOKEN` for dac).
 
 > P.S.: The same bot can be used for all of your Discord servers :wink:
-
 
 ### Add a bot to a Discord server (guild)
 
@@ -115,72 +116,7 @@ Apply changes to a server based on a configuration file.
 
 The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild).
 
-<details>
-<summary>Configuration file example (click to reveal)</summary>
-
-```yaml
-roles:
-  - name: '@everyone'
-    permissions:
-      - CHANGE_NICKNAME
-      - VIEW_CHANNEL
-      - CONNECT
-      - SPEAK
-      - USE_VAD
-      - STREAM
-      - REQUEST_TO_SPEAK
-      - SEND_MESSAGES
-      - READ_MESSAGE_HISTORY
-      - CREATE_PUBLIC_THREADS
-      - SEND_MESSAGES_IN_THREADS
-      - ADD_REACTIONS
-      - ATTACH_FILES
-    show_in_sidebar: true
-    is_mentionable: true
-
-  - name: admin
-    permissions:
-      - ADMINISTRATOR
-    color: 36AF6D
-    show_in_sidebar: false
-    is_mentionable: false
-
-  - name: dac
-    permissions:
-      - MANAGE_ROLES
-    color: 98ADF3
-    show_in_sidebar: false
-    is_mentionable: false
-
-  - name: team-01
-    template: team
-  - name: team-02
-    template: team
-  - name: team-03
-    template: team
-
-templates:
-  roles:
-    - name: team
-      permissions:
-        - CHANGE_NICKNAME
-        - VIEW_CHANNEL
-        - CONNECT
-        - SPEAK
-        - USE_VAD
-        - STREAM
-        - REQUEST_TO_SPEAK
-        - SEND_MESSAGES
-        - READ_MESSAGE_HISTORY
-        - CREATE_PUBLIC_THREADS
-        - SEND_MESSAGES_IN_THREADS
-        - ADD_REACTIONS
-        - ATTACH_FILES
-      show_in_sidebar: true
-      is_mentionable: true
-```
-
-</details>
+Some examples can be found [here](./docs/examples).
 
 ### `roles`
 
@@ -191,3 +127,17 @@ templates:
 - `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
 - `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
+
+### `categories`
+
+**Fields**
+
+- `name` (`string`) : Name of the category. :Warning: **Every category needs to have a unique name**.
+- `permissions_overwrites` ([`PermissionsOverwrite[]`](#types)) : List of permissions overwrites. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permission-overwrites).
+
+### Types
+
+- `PermissionsOverwrite` :
+  - `role` (`string`) : Role to apply overwrites to.
+  - `allow` (`string[]`) : Specifically allowed permissions overwrites for the role.
+  - `deny` (`deny[]`) : Specifically denied permissions overwrites for the role.

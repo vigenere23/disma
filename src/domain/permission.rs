@@ -1,6 +1,6 @@
 #![allow(non_camel_case_types)]
 
-use std::collections::HashSet;
+use std::{collections::HashSet, str::FromStr};
 
 use strum::{EnumIter, EnumString, IntoEnumIterator};
 
@@ -123,8 +123,8 @@ impl PermissionsList {
         format!("{}", code)
     }
 
-    pub fn items(&self) -> &HashSet<Permission> {
-        &self.permissions
+    pub fn items(&self) -> Vec<&Permission> {
+        self.permissions.iter().collect()
     }
 }
 
@@ -163,6 +163,17 @@ impl From<&Vec<Permission>> for PermissionsList {
         Self {
             permissions: HashSet::from_iter(permissions.iter().cloned()),
         }
+    }
+}
+
+impl From<&Vec<String>> for PermissionsList {
+    fn from(permission_names: &Vec<String>) -> Self {
+        let permissions: Vec<Permission> = permission_names
+            .iter()
+            .map(|permission_name| Permission::from_str(permission_name).unwrap())
+            .collect();
+
+        Self::from(&permissions)
     }
 }
 

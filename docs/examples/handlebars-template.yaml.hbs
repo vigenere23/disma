@@ -1,0 +1,112 @@
+# This template uses the variables defined in variables.yaml
+
+roles:
+- name: '@everyone'
+  permissions:
+  - VIEW_CHANNEL
+  - SEND_MESSAGES
+  - CHANGE_NICKNAME
+  show_in_sidebar: false
+  mentionable: false
+
+- name: dac # the bot
+  permissions: # does not need more permissions
+  - MANAGE_CHANNELS
+  - MANAGE_ROLES
+  show_in_sidebar: false
+  mentionable: false
+
+- name: staff
+  color: e91e63
+  permissions:
+  - VIEW_CHANNEL
+  - SEND_MESSAGES
+  - ADD_REACTIONS
+  - ATTACH_FILES
+  - CREATE_PUBLIC_THREADS
+  - SEND_MESSAGES_IN_THREADS
+  - READ_MESSAGE_HISTORY
+  - CHANGE_NICKNAME
+  - REQUEST_TO_SPEAK
+  - CONNECT
+  - SPEAK
+  - STREAM
+  - USE_VAD
+  - USE_APPLICATION_COMMANDS
+  - MANAGE_CHANNELS
+  - MANAGE_THREADS
+  - MANAGE_MESSAGES
+  - MANAGE_NICKNAMES
+  - MOVE_MEMBERS
+  - MUTE_MEMBERS
+  - MODERATE_MEMBERS
+  show_in_sidebar: true
+  is_mentionable: false
+
+- name: student
+  color: 4287f5
+  permissions:
+  - VIEW_CHANNEL
+  - SEND_MESSAGES
+  - ADD_REACTIONS
+  - ATTACH_FILES
+  - CREATE_PUBLIC_THREADS
+  - SEND_MESSAGES_IN_THREADS
+  - READ_MESSAGE_HISTORY
+  - CHANGE_NICKNAME
+  - REQUEST_TO_SPEAK
+  - CONNECT
+  - SPEAK
+  - STREAM
+  - USE_VAD
+  show_in_sidebar: false
+  mentionable: false
+
+{{#each teams}}
+- name: team-{{this}}
+  permissions: []
+  show_in_sidebar: false
+  mentionable: false
+{{/each}}
+
+categories:
+- name: staff only
+  permissions_overwrites:
+  - role: '@everyone'
+    allow: []
+    deny:
+    - VIEW_CHANNEL
+    - CONNECT
+  - role: staff
+    allow:
+    - VIEW_CHANNEL
+    - CONNECT
+    deny: []
+  - role: dac # important to allow bot to edit channels
+    allow:
+    - VIEW_CHANNEL
+    deny: []
+
+{{#each teams}}
+- name: team-{{this}}
+  permissions_overwrites:
+  - role: '@everyone'
+    allow: []
+    deny:
+    - VIEW_CHANNEL
+    - CONNECT
+  - role: dac # important to allow bot to edit channels
+    allow:
+    - VIEW_CHANNEL
+    deny: []
+  - role: staff
+    allow:
+    - VIEW_CHANNEL
+    - CONNECT
+    deny: []
+  - role: team-{{this}}
+    allow:
+    - VIEW_CHANNEL
+    - CONNECT
+    deny: []
+{{/each}}
