@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::domain::{
-    category::{AwaitingCategory, CategoryRolePermissions, ExistingCategory},
+    category::{AwaitingCategory, CategoryPermissionsOverwrites, ExistingCategory},
     permission::PermissionsList,
     role::{AwaitingRole, Role, RolesList},
 };
@@ -10,14 +10,14 @@ use crate::domain::{
 pub struct CategoryConfig {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub permissions: Option<Vec<CategoryRolePermissionsConfig>>,
+    pub permissions_overwrites: Option<Vec<CategoryRolePermissionsConfig>>,
 }
 
 impl From<&ExistingCategory> for CategoryConfig {
     fn from(category: &ExistingCategory) -> Self {
         Self {
             name: category.name.clone(),
-            permissions: category.permissions.as_ref().map(|permissions| {
+            permissions_overwrites: category.permissions_overwrites.as_ref().map(|permissions| {
                 permissions
                     .iter()
                     .map(CategoryRolePermissionsConfig::from)
@@ -31,10 +31,10 @@ impl CategoryConfig {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
         AwaitingCategory {
             name: self.name,
-            permissions: self.permissions.map(|permissions| {
+            permissions_overwrites: self.permissions_overwrites.map(|permissions| {
                 permissions
                     .into_iter()
-                    .map(|permission| CategoryRolePermissions {
+                    .map(|permission| CategoryPermissionsOverwrites {
                         role: roles
                             .find_by_name(&permission.role)
                             .unwrap_or_else(|| {
@@ -57,11 +57,11 @@ pub struct CategoryRolePermissionsConfig {
     pub deny: Vec<String>,
 }
 
-impl<T> From<&CategoryRolePermissions<T>> for CategoryRolePermissionsConfig
+impl<T> From<&CategoryPermissionsOverwrites<T>> for CategoryRolePermissionsConfig
 where
     T: Role,
 {
-    fn from(permissions: &CategoryRolePermissions<T>) -> Self {
+    fn from(permissions: &CategoryPermissionsOverwrites<T>) -> Self {
         Self {
             role: permissions.role.name(),
             allow: permissions

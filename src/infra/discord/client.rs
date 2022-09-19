@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    category::{AwaitingCategory, CategoriesList, CategoryRolePermissions, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, CategoryPermissionsOverwrites, ExistingCategory},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -42,16 +42,18 @@ impl GuildQuerier for DiscordClient {
                 4 => Some(ExistingCategory {
                     id: response.id.clone(),
                     name: response.name.clone(),
-                    permissions: response.permission_overwrites.as_ref().map(|overwrites| {
-                        overwrites
-                            .iter()
-                            .map(|permissions| CategoryRolePermissions {
-                                role: roles_list.find_by_id(&permissions.role_id).clone(),
-                                allow: PermissionsList::from(permissions.allow.as_str()),
-                                deny: PermissionsList::from(permissions.deny.as_str()),
-                            })
-                            .collect()
-                    }),
+                    permissions_overwrites: response.permission_overwrites.as_ref().map(
+                        |overwrites| {
+                            overwrites
+                                .iter()
+                                .map(|permissions| CategoryPermissionsOverwrites {
+                                    role: roles_list.find_by_id(&permissions.role_id).clone(),
+                                    allow: PermissionsList::from(permissions.allow.as_str()),
+                                    deny: PermissionsList::from(permissions.deny.as_str()),
+                                })
+                                .collect()
+                        },
+                    ),
                 }),
                 _ => None,
             })

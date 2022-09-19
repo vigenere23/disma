@@ -19,7 +19,7 @@ pub struct ChannelRequest {
 
 impl ChannelRequest {
     pub fn from(category: &AwaitingCategory, roles: &RolesList<ExistingRole>) -> Self {
-        let permission_overwrites = category.permissions.as_ref().map(|permissions| {
+        let permission_overwrites = category.permissions_overwrites.as_ref().map(|permissions| {
             permissions
                 .iter()
                 .map(|permission| PermissionOverwritesDto {

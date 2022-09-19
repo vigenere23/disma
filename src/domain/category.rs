@@ -12,7 +12,7 @@ pub trait Category: Clone {
 #[derive(Clone, Debug)]
 pub struct AwaitingCategory {
     pub name: String,
-    pub permissions: Option<Vec<CategoryRolePermissions<AwaitingRole>>>,
+    pub permissions_overwrites: Option<Vec<CategoryPermissionsOverwrites<AwaitingRole>>>,
     // pub channels: Vec<AwaitingChannel>,
 }
 
@@ -26,7 +26,7 @@ impl Category for AwaitingCategory {
 pub struct ExistingCategory {
     pub id: String,
     pub name: String,
-    pub permissions: Option<Vec<CategoryRolePermissions<ExistingRole>>>,
+    pub permissions_overwrites: Option<Vec<CategoryPermissionsOverwrites<ExistingRole>>>,
 }
 
 impl Category for ExistingCategory {
@@ -41,7 +41,7 @@ impl PartialEq<ExistingCategory> for AwaitingCategory {
             return false;
         }
 
-        return match (&self.permissions, &other.permissions) {
+        return match (&self.permissions_overwrites, &other.permissions_overwrites) {
             (None, None) => true,
             (Some(permissions), Some(other_permissions)) => {
                 if permissions.len() != other_permissions.len() {
@@ -71,7 +71,7 @@ impl PartialEq<ExistingCategory> for AwaitingCategory {
 }
 
 #[derive(Debug, Clone)]
-pub struct CategoryRolePermissions<T>
+pub struct CategoryPermissionsOverwrites<T>
 where
     T: Role,
 {
@@ -80,12 +80,12 @@ where
     pub deny: PermissionsList,
 }
 
-impl<T, U> PartialEq<CategoryRolePermissions<T>> for CategoryRolePermissions<U>
+impl<T, U> PartialEq<CategoryPermissionsOverwrites<T>> for CategoryPermissionsOverwrites<U>
 where
     T: Role,
     U: Role,
 {
-    fn eq(&self, other: &CategoryRolePermissions<T>) -> bool {
+    fn eq(&self, other: &CategoryPermissionsOverwrites<T>) -> bool {
         self.role.name() == other.role.name()
             && self.allow == other.allow
             && self.deny == other.deny

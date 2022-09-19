@@ -1,7 +1,7 @@
 use std::{path::Path, sync::Arc};
 
 use crate::{
-    domain::guild::AwaitingGuild, infra::config::guild::GuildConfig, utils::io::Deserializer,
+    domain::guild::AwaitingGuild, ui::config::guild::GuildConfig, utils::io::Deserializer,
 };
 
 pub struct AwaitingGuildLoader {
