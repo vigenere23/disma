@@ -1,11 +1,20 @@
+# This template uses the variables defined in variables.yaml
+
 roles:
 - name: '@everyone'
-  show_in_sidebar: false
-  mentionable: false
   permissions:
   - VIEW_CHANNEL
   - SEND_MESSAGES
   - CHANGE_NICKNAME
+  show_in_sidebar: false
+  mentionable: false
+
+- name: dac # the bot
+  permissions: # does not need more permissions
+  - MANAGE_CHANNELS
+  - MANAGE_ROLES
+  show_in_sidebar: false
+  mentionable: false
 
 - name: staff
   color: e91e63
@@ -35,8 +44,7 @@ roles:
   is_mentionable: false
 
 - name: student
-  show_in_sidebar: false
-  mentionable: false
+  color: 4287f5
   permissions:
   - VIEW_CHANNEL
   - SEND_MESSAGES
@@ -51,15 +59,19 @@ roles:
   - SPEAK
   - STREAM
   - USE_VAD
-
-- name: team-01
   show_in_sidebar: false
   mentionable: false
+
+{{#each teams}}
+- name: team-{{this}}
   permissions: []
+  show_in_sidebar: false
+  mentionable: false
+{{/each}}
 
 categories:
 - name: staff only
-  permissions:
+  permissions_overwrites:
   - role: '@everyone'
     allow: []
     deny:
@@ -69,22 +81,32 @@ categories:
     allow:
     - VIEW_CHANNEL
     - CONNECT
+    deny: []
+  - role: dac # important to allow bot to edit channels
+    allow:
+    - VIEW_CHANNEL
     deny: []
 
-- name: team-01
-  permissions:
+{{#each teams}}
+- name: team-{{this}}
+  permissions_overwrites:
   - role: '@everyone'
     allow: []
     deny:
     - VIEW_CHANNEL
     - CONNECT
+  - role: dac # important to allow bot to edit channels
+    allow:
+    - VIEW_CHANNEL
+    deny: []
   - role: staff
     allow:
     - VIEW_CHANNEL
     - CONNECT
     deny: []
-  - role: team-01
+  - role: team-{{this}}
     allow:
     - VIEW_CHANNEL
     - CONNECT
     deny: []
+{{/each}}
