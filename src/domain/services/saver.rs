@@ -1,14 +1,15 @@
 use std::{path::Path, sync::Arc};
 
 use crate::{
+    application::config::guild::GuildConfig,
     domain::guild::ExistingGuild,
-    ui::config::guild::GuildConfig,
     utils::{
         input::{abort, ask_user_confirmation},
         io::Serializer,
     },
 };
 
+// TODO This should be an interface (FileAwaitingGuildSaver)
 pub struct ExistingGuildSaver {
     serializer: Arc<Serializer>,
 }

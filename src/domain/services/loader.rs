@@ -1,9 +1,10 @@
 use std::{path::Path, sync::Arc};
 
 use crate::{
-    domain::guild::AwaitingGuild, ui::config::guild::GuildConfig, utils::io::Deserializer,
+    application::config::guild::GuildConfig, domain::guild::AwaitingGuild, utils::io::Deserializer,
 };
 
+// TODO This should be an interface (FileAwaitingGuildLoader)
 pub struct AwaitingGuildLoader {
     deserializer: Arc<Deserializer>,
 }
