@@ -1,23 +1,45 @@
 use std::{path::Path, sync::Arc};
 
-use crate::domain::{guild::GuildQuerier, services::saver::ExistingGuildSaver};
+use crate::interfaces::cli::{
+    infra::config::guild::GuildConfig,
+    utils::{
+        input::{abort, ask_user_confirmation},
+        io::Serializer,
+    },
+};
+use dac::domain::guild::GuildQuerier;
 
 pub struct SaveExistingGuild {
     guild_querier: Arc<dyn GuildQuerier>,
-    guild_saver: Arc<ExistingGuildSaver>,
+    serializer: Arc<Serializer>,
 }
 
 impl SaveExistingGuild {
-    pub fn new(guild_querier: Arc<dyn GuildQuerier>, guild_saver: Arc<ExistingGuildSaver>) -> Self {
+    pub fn new(guild_querier: Arc<dyn GuildQuerier>, serializer: Arc<Serializer>) -> Self {
         Self {
             guild_querier,
-            guild_saver,
+            serializer,
         }
     }
 
-    pub fn run(&self, guild_id: &str, file_path: &str, force: bool) {
+    pub fn run(&self, guild_id: &str, file: &str, force: bool) {
         let guild = self.guild_querier.get_guild(guild_id);
-        self.guild_saver
-            .save_existing_guild(Path::new(file_path), &guild, force);
+
+        let config = GuildConfig::from(&guild);
+        let file_path = Path::new(file);
+
+        println!("\n💾 Saving current guild config to '{}'...", file);
+
+        if !force && file_path.exists() {
+            println!("A file named '{}' already exists.", file);
+
+            if !ask_user_confirmation() {
+                abort();
+            }
+        }
+
+        self.serializer.serialize(&config, file_path);
+
+        println!("\n✨ DONE.");
     }
 }

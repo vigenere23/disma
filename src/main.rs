@@ -1,9 +1,4 @@
-mod application;
-mod domain;
-mod infra;
-mod injector;
-mod interfaces;
-mod utils;
+pub mod interfaces;
 
 use interfaces::cli::main::execute;
 

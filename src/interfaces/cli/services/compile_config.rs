@@ -3,7 +3,7 @@ use std::{fs, path::Path, sync::Arc};
 use handlebars::Handlebars;
 use serde_yaml::Value;
 
-use crate::utils::{
+use crate::interfaces::cli::utils::{
     input::{abort, ask_user_confirmation},
     io::Deserializer,
 };

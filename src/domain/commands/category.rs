@@ -9,29 +9,19 @@ use crate::domain::{
 use super::GuildCommand;
 
 pub struct AddCategory {
-    guild_commander: Arc<dyn GuildCommander>,
     category: AwaitingCategory,
     roles: RolesList<ExistingRole>,
 }
 
 impl AddCategory {
-    pub fn new(
-        guild_commander: Arc<dyn GuildCommander>,
-        category: AwaitingCategory,
-        roles: RolesList<ExistingRole>,
-    ) -> Self {
-        Self {
-            guild_commander,
-            category,
-            roles,
-        }
+    pub fn new(category: AwaitingCategory, roles: RolesList<ExistingRole>) -> Self {
+        Self { category, roles }
     }
 }
 
 impl GuildCommand for AddCategory {
-    fn execute(&self) {
-        self.guild_commander
-            .add_category(&self.category, &self.roles);
+    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+        guild.add_category(&self.category, &self.roles);
     }
 
     fn describe(&self) -> String {
@@ -40,7 +30,6 @@ impl GuildCommand for AddCategory {
 }
 
 pub struct UpdateCategory {
-    guild_commander: Arc<dyn GuildCommander>,
     existing_category: ExistingCategory,
     awaiting_category: AwaitingCategory,
     roles: RolesList<ExistingRole>,
@@ -48,13 +37,11 @@ pub struct UpdateCategory {
 
 impl UpdateCategory {
     pub fn new(
-        guild_commander: Arc<dyn GuildCommander>,
         existing_category: ExistingCategory,
         awaiting_category: AwaitingCategory,
         roles: RolesList<ExistingRole>,
     ) -> Self {
         Self {
-            guild_commander,
             existing_category,
             awaiting_category,
             roles,
@@ -63,8 +50,8 @@ impl UpdateCategory {
 }
 
 impl GuildCommand for UpdateCategory {
-    fn execute(&self) {
-        self.guild_commander.update_category(
+    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+        guild.update_category(
             &self.existing_category.id,
             &self.awaiting_category,
             &self.roles,
@@ -80,22 +67,18 @@ impl GuildCommand for UpdateCategory {
 }
 
 pub struct DeleteCategory {
-    guild_commander: Arc<dyn GuildCommander>,
     category: ExistingCategory,
 }
 
 impl DeleteCategory {
-    pub fn new(guild_commander: Arc<dyn GuildCommander>, category: ExistingCategory) -> Self {
-        Self {
-            guild_commander,
-            category,
-        }
+    pub fn new(category: ExistingCategory) -> Self {
+        Self { category }
     }
 }
 
 impl GuildCommand for DeleteCategory {
-    fn execute(&self) {
-        self.guild_commander.delete_category(&self.category.id);
+    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+        guild.delete_category(&self.category.id);
     }
 
     fn describe(&self) -> String {
