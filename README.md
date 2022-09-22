@@ -4,23 +4,26 @@
 
 👨🏼‍🔧 Manage Discord server settings with a repeatable, versionable config file.
 
-- [Prerequesites](#prerequesites)
-  - [Install the executable](#install-the-executable)
-  - [Create and get a Discord bot token](#create-and-get-a-discord-bot-token)
-  - [Add a bot to a Discord server (guild)](#add-a-bot-to-a-discord-server-guild)
-- [Commands](#commands)
+> ⚠️ **WARNING** : While the library is now publicly available, it is still greatly unstable : files can be moved or renamed anytime.
+> On the other hand, the CLI is future proof and the configuration format should not change much.
+
+- [☑️ Prerequesites](#️-prerequesites)
+  - [1. Install the CLI](#1-install-the-cli)
+  - [2. Create and get a Discord bot token](#2-create-and-get-a-discord-bot-token)
+  - [3. Add a bot to a Discord server (guild)](#3-add-a-bot-to-a-discord-server-guild)
+- [🚀 Commands](#-commands)
   - [`list`](#list)
   - [`compile`](#compile)
   - [`save`](#save)
   - [`apply`](#apply)
-- [Server configuration file](#server-configuration-file)
+- [⚙️ Guild configuration file](#️-guild-configuration-file)
   - [`roles`](#roles)
   - [`categories`](#categories)
   - [Types](#types)
 
-## Prerequesites
+## ☑️ Prerequesites
 
-### Install the executable
+### 1. Install the CLI
 
 #### Method 1 : with `cargo`
 
@@ -38,7 +41,7 @@ dac
 
 Not yet available.
 
-### Create and get a Discord bot token
+### 2. Create and get a Discord bot token
 
 If you don't have created a bot yet, here's how to do it :
 
@@ -49,7 +52,7 @@ If you don't have created a bot yet, here's how to do it :
 
 > P.S.: The same bot can be used for all of your Discord servers :wink:
 
-### Add a bot to a Discord server (guild)
+### 3. Add a bot to a Discord server (guild)
 
 If your bot hasn't been already added to the server that you want to manage with dac, here's how do add it :
 
@@ -71,7 +74,8 @@ To validate the bot's read access, run :
 dac list
 ```
 
-## Commands
+
+## 🚀 Commands
 
 :warning: All commands needs the evironment variable `DAC_DISCORD_BOT_TOKEN` to be set.
 
@@ -111,8 +115,7 @@ Apply changes to a server based on a configuration file.
 - `--force, -f` : Bypass the user confirmation step.
 
 
-
-## Server configuration file
+## ⚙️ Guild configuration file
 
 The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild).
 

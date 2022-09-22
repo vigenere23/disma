@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 
-use crate::domain::{
+use dac::domain::{
     permission::{Permission, PermissionsList},
     role::{AwaitingRole, ExistingRole},
 };

@@ -1,23 +1,30 @@
 use std::{env, sync::Arc};
 
-use crate::{
-    application::{
-        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
-        save_guild::SaveExistingGuild,
-    },
+use dac::{
+    application::changes::ChangesService,
     domain::{
-        guild::GuildQuerier,
-        services::{
-            diff::DiffCalculator, executor::CommandsExecutor, loader::AwaitingGuildLoader,
-            saver::ExistingGuildSaver,
-        },
+        guild::{GuildCommander, GuildQuerier},
+        services::{diff::DiffCalculator, executor::CommandsExecutor},
     },
     infra::discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
     },
-    utils::io::{Deserializer, Serializer},
 };
+
+use crate::{
+    interfaces::cli::services::{
+        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        save_guild::SaveExistingGuild,
+    },
+    interfaces::cli::utils::io::{Deserializer, Serializer},
+};
+
+use super::infra::executor::CliCommandsExecutor;
+
+pub trait Get<T> {
+    fn get(&self) -> T;
+}
 
 pub struct Injector {
     guild_id: Option<String>,
@@ -27,10 +34,6 @@ impl Injector {
     pub fn new(guild_id: Option<String>) -> Self {
         Self { guild_id }
     }
-}
-
-pub trait Get<T> {
-    fn get(&self) -> T;
 }
 
 impl Get<Arc<DiscordApi>> for Injector {
@@ -57,26 +60,36 @@ impl Get<Arc<DiscordGuildClient>> for Injector {
 
 impl Get<Arc<DiffCalculator>> for Injector {
     fn get(&self) -> Arc<DiffCalculator> {
-        let discord_guild: Arc<DiscordGuildClient> = self.get();
-        Arc::from(DiffCalculator::new(discord_guild))
+        Arc::from(DiffCalculator {})
     }
 }
 
-impl Get<Arc<CommandsExecutor>> for Injector {
-    fn get(&self) -> Arc<CommandsExecutor> {
-        Arc::from(CommandsExecutor())
+impl Get<Arc<dyn CommandsExecutor>> for Injector {
+    fn get(&self) -> Arc<dyn CommandsExecutor> {
+        Arc::from(CliCommandsExecutor())
     }
 }
 
-impl Get<Arc<ExistingGuildSaver>> for Injector {
-    fn get(&self) -> Arc<ExistingGuildSaver> {
-        Arc::from(ExistingGuildSaver::new(self.get()))
+impl Get<Arc<dyn GuildQuerier>> for Injector {
+    fn get(&self) -> Arc<dyn GuildQuerier> {
+        <Self as Get<Arc<DiscordClient>>>::get(self)
     }
 }
 
-impl Get<Arc<AwaitingGuildLoader>> for Injector {
-    fn get(&self) -> Arc<AwaitingGuildLoader> {
-        Arc::from(AwaitingGuildLoader::new(self.get()))
+impl Get<Arc<dyn GuildCommander>> for Injector {
+    fn get(&self) -> Arc<dyn GuildCommander> {
+        <Self as Get<Arc<DiscordGuildClient>>>::get(self)
+    }
+}
+
+impl Get<Arc<ChangesService>> for Injector {
+    fn get(&self) -> Arc<ChangesService> {
+        Arc::from(ChangesService::new(
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+        ))
     }
 }
 
@@ -92,22 +105,9 @@ impl Get<Arc<Serializer>> for Injector {
     }
 }
 
-impl Get<Arc<dyn GuildQuerier>> for Injector {
-    fn get(&self) -> Arc<dyn GuildQuerier> {
-        <Self as Get<Arc<DiscordClient>>>::get(self)
-    }
-}
-
 impl Get<Arc<ApplyChanges>> for Injector {
     fn get(&self) -> Arc<ApplyChanges> {
-        let querier: Arc<dyn GuildQuerier> = self.get();
-
-        Arc::from(ApplyChanges::new(
-            querier,
-            self.get(),
-            self.get(),
-            self.get(),
-        ))
+        Arc::from(ApplyChanges::new(self.get(), self.get()))
     }
 }
 

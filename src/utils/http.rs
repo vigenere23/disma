@@ -12,6 +12,7 @@ pub struct ClientBuilder {
     base_headers: HeaderMap,
 }
 
+// TODO Client should be it's own builder
 impl ClientBuilder {
     pub fn new() -> Self {
         Self {
@@ -33,6 +34,12 @@ impl ClientBuilder {
 
     pub fn build(&self) -> Client {
         Client::new(&self.base_url, self.base_headers.clone())
+    }
+}
+
+impl Default for ClientBuilder {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -89,6 +96,7 @@ pub struct RequestBuilder {
     body: Option<String>,
 }
 
+// TODO Request should be it's own builder
 impl RequestBuilder {
     pub fn new(method: Method, url: &str) -> Self {
         Self {
