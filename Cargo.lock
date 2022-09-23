@@ -139,21 +139,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dac"
-version = "0.5.0"
-dependencies = [
- "clap",
- "handlebars",
- "reqwest",
- "serde",
- "serde_json",
- "serde_yaml",
- "strum",
- "yaml-merge-keys",
- "yaml-rust",
-]
-
-[[package]]
 name = "digest"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -161,6 +146,30 @@ checksum = "f2fb860ca6fafa5552fb6d0e816a69c8e49f0908bf524e30a90d97c85892d506"
 dependencies = [
  "block-buffer",
  "crypto-common",
+]
+
+[[package]]
+name = "disma"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+ "serde",
+ "serde_json",
+ "strum",
+]
+
+[[package]]
+name = "disma-cli"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "disma",
+ "handlebars",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "yaml-merge-keys",
+ "yaml-rust",
 ]
 
 [[package]]
