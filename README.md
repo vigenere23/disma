@@ -3,7 +3,7 @@
 # Disma
 
 [![CI](https://github.com/vigenere23/dac/actions/workflows/ci.yml/badge.svg)](https://github.com/vigenere23/dac/actions/workflows/ci.yml)
-![Crates.io](https://img.shields.io/crates/v/disma)
+[![Crates.io](https://img.shields.io/crates/v/disma)](https://crates.io/crates/disma)
 
 👨🏼‍🔧 Discord server management has never been easier!
 

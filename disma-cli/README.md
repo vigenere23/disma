@@ -1,5 +1,7 @@
 # Disma - Command line tool
 
+[![disma-cli](https://img.shields.io/crates/v/disma-cli)](https://crates.io/crates/disma-cli)
+
 - [☑️ Prerequisites](#️-prerequisites)
 - [🚀 Commands](#-commands)
 - [⚙️ Guild configuration file](#️-guild-configuration-file)

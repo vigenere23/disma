@@ -1,7 +1,1 @@
-# Disma - Core library
-
-## Installing
-
-```
-cargo add disma
-```
+../README.md
