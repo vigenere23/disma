@@ -1,146 +1,25 @@
+<div align="center">
+
+# Disma
+
 [![CI](https://github.com/vigenere23/dac/actions/workflows/ci.yml/badge.svg)](https://github.com/vigenere23/dac/actions/workflows/ci.yml)
+![Crates.io](https://img.shields.io/crates/v/disma)
 
-# Discord as Config (dac)
+👨🏼‍🔧 Discord server management has never been easier!
 
-👨🏼‍🔧 Manage Discord server settings with a repeatable, versionable config file.
+</div>
 
-> ⚠️ **WARNING** : While the library is now publicly available, it is still greatly unstable : files can be moved or renamed anytime.
-> On the other hand, the CLI is future proof and the configuration format should not change much.
+## ⁉️ Why?
 
-- [☑️ Prerequesites](#️-prerequesites)
-  - [1. Install the CLI](#1-install-the-cli)
-  - [2. Create and get a Discord bot token](#2-create-and-get-a-discord-bot-token)
-  - [3. Add a bot to a Discord server (guild)](#3-add-a-bot-to-a-discord-server-guild)
-- [🚀 Commands](#-commands)
-  - [`list`](#list)
-  - [`compile`](#compile)
-  - [`save`](#save)
-  - [`apply`](#apply)
-- [⚙️ Guild configuration file](#️-guild-configuration-file)
-  - [`roles`](#roles)
-  - [`categories`](#categories)
-  - [Types](#types)
+In the new context of the pandemic, many educational institutions have shifted their courses online, with the use of communication platforms like Discord. However, managing multiple roles and channels across a Discord server is challenging : there are no way to centrally visualize the information nor to apply synchronized permissions updates. This tool allows you to define a single configuration file to be applied to a server, and it will automatically find the changes that needs to be made, ensuring that your Discord will always be in synch with your config.
 
-## ☑️ Prerequesites
+## ⭐ Features
 
-### 1. Install the CLI
+- 📜 **Diff current Discord server config with your desired one**
+- 🏗️ **Apply large scale changes to your Discord server**
+- ⚡ **Fast, secure and reliable**
 
-#### Method 1 : with `cargo`
+## Modules
 
-```shell
-cargo install dac
-```
-
-To validate installation, run :
-
-```shell
-dac
-```
-
-#### Method 2 : standalone
-
-Not yet available.
-
-### 2. Create and get a Discord bot token
-
-If you don't have created a bot yet, here's how to do it :
-
-1. Go to <https://discord.com/developers/applications>, login and create an application.
-2. Go to the created application, click on `Bot` on the sidebar and create a bot.
-3. Go to the created Bot page and copy the token (might need to create it first).
-   - :warning: **Don't forget to save the token** (in the environment variable `DAC_DISCORD_BOT_TOKEN` for dac).
-
-> P.S.: The same bot can be used for all of your Discord servers :wink:
-
-### 3. Add a bot to a Discord server (guild)
-
-If your bot hasn't been already added to the server that you want to manage with dac, here's how do add it :
-
-1. On your bot's application page, go to `OAuth2` on the sidebar
-2. In the `General` section, add a placeholder Redirect URL (can be `http://localhost`) and Save
-3. In the `URL Generator` section, select the `identify` scope. A new section for the redirect URL will appear, make sur to select one.
-4. Then also select the `bot` scope. A new pannel with Permissions will appear. dac only needs the `Manage Roles` and `Manage Channels` permissions, so you can select those.
-   - If you only want to test the bot for saving configs, you can leave all permissions unselected.
-5. Navigate to the generated URL at the bottom of the page. This will bring you to an auth page, asking you to choose which server to add your bot to.
-6. Confirm and your bot should have been added to your server!
-
-> P.S.: You will need to redo those steps for every server
-
-> P.P.S.: You can change the bot's permissions directly in the Server Settings without redoing all those steps :wink:
-
-To validate the bot's read access, run :
-
-```shell
-dac list
-```
-
-
-## 🚀 Commands
-
-:warning: All commands needs the evironment variable `DAC_DISCORD_BOT_TOKEN` to be set.
-
-### `list`
-
-List bot's accessible servers. If you don't see access to your server, make sure to [add your bot to it](#add-a-bot-to-a-discord-server-guild).
-
-### `compile`
-
-Compile a template config to a full config file. Only the handlebars format is supported for now. Will compile to the original format (JSON or YAML).
-
-**Arguments**
-
-- `--template, -t <TEMPLATE_FILE>` : File to use as a template (contains handlebars tokens).
-- `--vars, -v <VARS_FILE>` : File containing variables that populates the template. can be either YAML or JSON.
-- `--output, -o <OUTPUT_FILE>` : Compiled config output file.
-- `--force, -f` : Bypass the user confirmation step.
-
-### `save`
-
-Save a server (guild) configuration.
-
-**Arguments**:
-
-- `--guild, -g <GUILD_ID>` : Id of the guild to save. To find your guild id, use [`list`](#list).
-- `--output, -o <OUTPUT_FILE>` : Output file path. Both `.json` and `.yaml`/`.yml` files are supported.
-- `--force, -f` : Bypass the user confirmation step.
-
-### `apply`
-
-Apply changes to a server based on a configuration file.
-
-**Arguments**
-
-- `--guild, -g <GUILD_ID>` : Id of the guild to save. To find your guild id, use [`list`](#list).
-- `--input, -i <INPUT_FILE>` : Configuration file to use. Both `.json` and `.yaml`/`.yml` files are supported. Make sure to correctly follow the [configuration file schemas](#server-configuration-file).
-- `--force, -f` : Bypass the user confirmation step.
-
-
-## ⚙️ Guild configuration file
-
-The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild).
-
-Some examples can be found [here](./docs/examples).
-
-### `roles`
-
-**Fields**
-
-- `name` (`string`) : Name of the role. :warning: **Every role needs to have a unique name**.
-- `permissions` (`string[]`) : List of permissions by name. You can read more about Discord's permissions on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions).
-- `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
-- `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
-- `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
-
-### `categories`
-
-**Fields**
-
-- `name` (`string`) : Name of the category. :Warning: **Every category needs to have a unique name**.
-- `permissions_overwrites` ([`PermissionsOverwrite[]`](#types)) : List of permissions overwrites. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permission-overwrites).
-
-### Types
-
-- `PermissionsOverwrite` :
-  - `role` (`string`) : Role to apply overwrites to.
-  - `allow` (`string[]`) : Specifically allowed permissions overwrites for the role.
-  - `deny` (`deny[]`) : Specifically denied permissions overwrites for the role.
+- [disma-core](./disma-core) : Core Rust library for defining configuration as code and controlling your own orchestrations and implementations.
+- [disma-cli](./disma-cli) : A stable and easy to use command line interface for defining configuration as simple YAML files. Still allows for templating to simplify the configuration.
