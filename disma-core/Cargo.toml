@@ -2,9 +2,9 @@
 name = "disma"
 authors = ["Gab St-Pierre <lolgab1@hotmail.com>"]
 description = "Discord server management has never been easier!"
-version = "0.1.0"
+version = "0.6.0"
 edition = "2021"
-license-file = "LICENSE"
+license-file = "../LICENSE"
 homepage = "https://github.com/vigenere23/disma"
 repository = "https://github.com/vigenere23/disma"
 readme = "README.md"
