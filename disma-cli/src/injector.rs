@@ -1,8 +1,11 @@
 use std::sync::Arc;
 
 use disma::{
-    diff::{DiffEventListenerRef, GuildDiffService, NullDiffEventListener},
-    diffs::differ::{GuildDiffer, GuildDifferRef},
+    diff::{
+        differ::{GuildDiffer, GuildDifferRef},
+        event::{DiffEventListenerRef, NullDiffEventListener},
+    },
+    diff_service::GuildDiffService,
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
@@ -12,7 +15,7 @@ use disma::{
 
 use crate::{
     services::{
-        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
     },
     utils::{
@@ -102,9 +105,9 @@ impl Get<Arc<Serializer>> for Injector {
     }
 }
 
-impl Get<Arc<ApplyChanges>> for Injector {
-    fn get(&self) -> Arc<ApplyChanges> {
-        Arc::from(ApplyChanges::new(self.get(), self.get()))
+impl Get<Arc<ApplyDiffs>> for Injector {
+    fn get(&self) -> Arc<ApplyDiffs> {
+        Arc::from(ApplyDiffs::new(self.get(), self.get()))
     }
 }
 

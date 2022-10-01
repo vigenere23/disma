@@ -1,2 +1,2 @@
-pub mod diffs;
+pub mod diff;
 pub mod entities;

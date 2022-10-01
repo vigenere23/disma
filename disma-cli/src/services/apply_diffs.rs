@@ -1,7 +1,5 @@
 use std::{path::Path, sync::Arc};
 
-use disma::diff::GuildDiffService;
-
 use crate::{
     infra::config::guild::GuildConfig,
     utils::{
@@ -9,16 +7,18 @@ use crate::{
         io::Deserializer,
     },
 };
+use disma::diff::base::Diff;
+use disma::diff_service::GuildDiffService;
 
-pub struct ApplyChanges {
-    changes_service: Arc<GuildDiffService>,
+pub struct ApplyDiffs {
+    diff_service: Arc<GuildDiffService>,
     deserializer: Arc<Deserializer>,
 }
 
-impl ApplyChanges {
-    pub fn new(changes_service: Arc<GuildDiffService>, deserializer: Arc<Deserializer>) -> Self {
+impl ApplyDiffs {
+    pub fn new(diff_service: Arc<GuildDiffService>, deserializer: Arc<Deserializer>) -> Self {
         Self {
-            changes_service,
+            diff_service,
             deserializer,
         }
     }
@@ -31,7 +31,7 @@ impl ApplyChanges {
         let awaiting_guild = config.into();
 
         println!("\n🔎 Looking for changes...");
-        let diffs = self.changes_service.list_diffs(guild_id, &awaiting_guild);
+        let diffs = self.diff_service.list_diffs(guild_id, &awaiting_guild);
 
         if diffs.is_empty() {
             println!("✨ No change to be applied.");
@@ -40,7 +40,12 @@ impl ApplyChanges {
 
         println!("\n📜 Found the following changes :");
         for diff in diffs {
-            println!(" - {}", &diff.summary);
+            match diff {
+                // TODO use DiffPresenter (recursive, adds indents)
+                Diff::Add(desc) => println!(" - 🆕 Creating {}", &desc),
+                Diff::Update(desc, _) => println!(" - 🔄 Updating {}", &desc),
+                Diff::Remove(desc) => println!(" - 🗑️  Deleting {}", &desc),
+            };
         }
 
         if dry_run {
@@ -52,6 +57,6 @@ impl ApplyChanges {
         }
 
         println!("\n🚀 Applying changes...");
-        self.changes_service.apply_diffs(guild_id, &awaiting_guild);
+        self.diff_service.apply_diffs(guild_id, &awaiting_guild);
     }
 }

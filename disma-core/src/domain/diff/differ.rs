@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    diffs::{
+    diff::{
         category::{AddCategory, DeleteCategory, UpdateCategory},
         roles::{AddRole, DeleteRole, UpdateRole},
     },
     entities::guild::{AwaitingGuild, ExistingGuild},
 };
 
-use super::base::DiffRef;
+use super::base::DiffCommandRef;
 
 pub struct GuildDiffer {}
 pub type GuildDifferRef = Arc<GuildDiffer>;
@@ -18,7 +18,7 @@ impl GuildDiffer {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<DiffRef> {
+    ) -> Vec<DiffCommandRef> {
         let role_diffs = self.calculate_role_diffs(existing_guild, awaiting_guild);
         let category_diffs = self.calculate_category_diffs(existing_guild, awaiting_guild);
 
@@ -32,8 +32,8 @@ impl GuildDiffer {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<DiffRef> {
-        let mut diffs: Vec<DiffRef> = Vec::new();
+    ) -> Vec<DiffCommandRef> {
+        let mut diffs: Vec<DiffCommandRef> = Vec::new();
 
         for awaiting_role in awaiting_guild.roles.items() {
             match existing_guild.roles.find_by_name(&awaiting_role.name) {
@@ -68,8 +68,8 @@ impl GuildDiffer {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<DiffRef> {
-        let mut diffs: Vec<DiffRef> = Vec::new();
+    ) -> Vec<DiffCommandRef> {
+        let mut diffs: Vec<DiffCommandRef> = Vec::new();
 
         for awaiting_category in awaiting_guild.categories.items() {
             match existing_guild

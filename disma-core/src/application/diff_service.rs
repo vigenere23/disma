@@ -1,20 +1,7 @@
-use std::sync::Arc;
-
 use crate::{
-    diffs::{base::DiffDescription, differ::GuildDifferRef},
+    diff::{base::Diff, differ::GuildDifferRef, event::DiffEventListenerRef},
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
 };
-
-pub trait DiffEventListener {
-    fn handle_diff_execution(&self, diff_description: DiffDescription);
-}
-pub type DiffEventListenerRef = Arc<dyn DiffEventListener>;
-
-pub struct NullDiffEventListener {}
-
-impl DiffEventListener for NullDiffEventListener {
-    fn handle_diff_execution(&self, _diff_description: DiffDescription) {}
-}
 
 pub struct GuildDiffService {
     guild_commander: GuildCommanderRef,
@@ -38,11 +25,7 @@ impl GuildDiffService {
         }
     }
 
-    pub fn list_diffs(
-        &self,
-        guild_id: &str,
-        awaiting_guild: &AwaitingGuild,
-    ) -> Vec<DiffDescription> {
+    pub fn list_diffs(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) -> Vec<Diff> {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
         let diffs = self
@@ -60,9 +43,9 @@ impl GuildDiffService {
             .calculate_diffs(&existing_guild, awaiting_guild);
 
         for diff in diffs {
-            diff.execute(self.guild_commander.clone());
+            diff.execute(&self.guild_commander);
             self.diff_event_listener
-                .handle_diff_execution(diff.describe());
+                .after_diff_executed(diff.describe());
         }
     }
 }
