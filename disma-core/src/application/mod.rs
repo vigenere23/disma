@@ -1,1 +1,1 @@
-pub mod changes;
+pub mod diff;

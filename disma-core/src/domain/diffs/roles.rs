@@ -5,7 +5,7 @@ use crate::domain::entities::{
     role::{AwaitingRole, ExistingRole},
 };
 
-use super::GuildCommand;
+use super::base::{Diff, DiffDescription};
 
 pub struct AddRole {
     role: AwaitingRole,
@@ -17,13 +17,16 @@ impl AddRole {
     }
 }
 
-impl GuildCommand for AddRole {
+impl Diff for AddRole {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.add_role(&self.role);
     }
 
-    fn describe(&self) -> String {
-        format!("🆕 Adding role {}", &self.role.name)
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!("🆕 Adding role {}", &self.role.name),
+            details: vec![],
+        }
     }
 }
 
@@ -41,16 +44,19 @@ impl UpdateRole {
     }
 }
 
-impl GuildCommand for UpdateRole {
+impl Diff for UpdateRole {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.update_role(&self.existing_role.id, &self.awaiting_role);
     }
 
-    fn describe(&self) -> String {
-        format!(
-            "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
-            &self.existing_role.name, &self.existing_role, &self.awaiting_role
-        )
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!(
+                "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
+                &self.existing_role.name, &self.existing_role, &self.awaiting_role
+            ),
+            details: vec![],
+        }
     }
 }
 
@@ -64,12 +70,15 @@ impl DeleteRole {
     }
 }
 
-impl GuildCommand for DeleteRole {
+impl Diff for DeleteRole {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.delete_role(&self.role.id);
     }
 
-    fn describe(&self) -> String {
-        format!("🗑️  Deleting role {}", &self.role.name)
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!("🗑️  Deleting role {}", &self.role.name),
+            details: vec![],
+        }
     }
 }

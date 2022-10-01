@@ -3,8 +3,8 @@ use std::{
     process::exit,
 };
 
-pub fn ask_user_confirmation() -> bool {
-    print!("\n❔ Do you still want to proceeed? (y/N) ");
+pub fn ask_user_confirmation(message: &str) -> bool {
+    print!("\n❔ {message} (y/N) ");
     let _ = io::stdout().flush();
     let mut input = String::new();
     io::stdin()

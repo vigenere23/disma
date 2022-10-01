@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
 use disma::{
-    changes::ChangesService,
-    diff::DiffCalculator,
+    diff::{DiffEventListenerRef, GuildDiffService, NullDiffEventListener},
+    diffs::differ::{GuildDiffer, GuildDifferRef},
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
     },
-    executor::CommandsExecutor,
     guild::{GuildCommander, GuildQuerier},
 };
 
@@ -21,8 +20,6 @@ use crate::{
         io::{Deserializer, Serializer},
     },
 };
-
-use super::infra::executor::CliCommandsExecutor;
 
 pub trait Get<T> {
     fn get(&self) -> T;
@@ -58,15 +55,9 @@ impl Get<Arc<DiscordGuildClient>> for Injector {
     }
 }
 
-impl Get<Arc<DiffCalculator>> for Injector {
-    fn get(&self) -> Arc<DiffCalculator> {
-        Arc::from(DiffCalculator {})
-    }
-}
-
-impl Get<Arc<dyn CommandsExecutor>> for Injector {
-    fn get(&self) -> Arc<dyn CommandsExecutor> {
-        Arc::from(CliCommandsExecutor())
+impl Get<GuildDifferRef> for Injector {
+    fn get(&self) -> GuildDifferRef {
+        Arc::from(GuildDiffer {})
     }
 }
 
@@ -82,9 +73,15 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
     }
 }
 
-impl Get<Arc<ChangesService>> for Injector {
-    fn get(&self) -> Arc<ChangesService> {
-        Arc::from(ChangesService::new(
+impl Get<DiffEventListenerRef> for Injector {
+    fn get(&self) -> DiffEventListenerRef {
+        Arc::from(NullDiffEventListener {})
+    }
+}
+
+impl Get<Arc<GuildDiffService>> for Injector {
+    fn get(&self) -> Arc<GuildDiffService> {
+        Arc::from(GuildDiffService::new(
             self.get(),
             self.get(),
             self.get(),

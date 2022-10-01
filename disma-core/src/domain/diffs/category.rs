@@ -6,7 +6,7 @@ use crate::domain::entities::{
     role::{ExistingRole, RolesList},
 };
 
-use super::GuildCommand;
+use super::base::{Diff, DiffDescription};
 
 pub struct AddCategory {
     category: AwaitingCategory,
@@ -19,13 +19,16 @@ impl AddCategory {
     }
 }
 
-impl GuildCommand for AddCategory {
+impl Diff for AddCategory {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.add_category(&self.category, &self.roles);
     }
 
-    fn describe(&self) -> String {
-        format!("🆕 Adding category {}", &self.category.name)
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!("🆕 Adding category {}", &self.category.name),
+            details: vec![],
+        }
     }
 }
 
@@ -49,7 +52,7 @@ impl UpdateCategory {
     }
 }
 
-impl GuildCommand for UpdateCategory {
+impl Diff for UpdateCategory {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.update_category(
             &self.existing_category.id,
@@ -58,11 +61,14 @@ impl GuildCommand for UpdateCategory {
         );
     }
 
-    fn describe(&self) -> String {
-        format!(
-            "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
-            &self.existing_category.name, &self.existing_category, &self.awaiting_category
-        )
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!(
+                "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
+                &self.existing_category.name, &self.existing_category, &self.awaiting_category
+            ),
+            details: vec![],
+        }
     }
 }
 
@@ -76,12 +82,15 @@ impl DeleteCategory {
     }
 }
 
-impl GuildCommand for DeleteCategory {
+impl Diff for DeleteCategory {
     fn execute(&self, guild: Arc<dyn GuildCommander>) {
         guild.delete_category(&self.category.id);
     }
 
-    fn describe(&self) -> String {
-        format!("🗑️  Deleting category {}", &self.category.name)
+    fn describe(&self) -> DiffDescription {
+        DiffDescription {
+            summary: format!("🗑️  Deleting category {}", &self.category.name),
+            details: vec![],
+        }
     }
 }

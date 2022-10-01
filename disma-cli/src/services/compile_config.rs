@@ -40,7 +40,7 @@ impl CompileConfig {
         if !force && output_path.exists() {
             println!("A file named '{}' already exists.", output_file);
 
-            if !ask_user_confirmation() {
+            if !ask_user_confirmation("Do you still want to proceeed?") {
                 abort();
             }
         }

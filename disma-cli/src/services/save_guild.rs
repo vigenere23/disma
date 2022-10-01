@@ -33,7 +33,7 @@ impl SaveExistingGuild {
         if !force && file_path.exists() {
             println!("A file named '{}' already exists.", file);
 
-            if !ask_user_confirmation() {
+            if !ask_user_confirmation("Do you still want to proceeed?") {
                 abort();
             }
         }

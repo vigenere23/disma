@@ -1,35 +1,51 @@
 use std::sync::Arc;
 
 use crate::domain::{
-    commands::{
+    diffs::{
         category::{AddCategory, DeleteCategory, UpdateCategory},
         roles::{AddRole, DeleteRole, UpdateRole},
-        GuildCommand,
     },
     entities::guild::{AwaitingGuild, ExistingGuild},
 };
 
-pub struct DiffCalculator {}
+use super::base::DiffRef;
 
-impl DiffCalculator {
-    pub fn create_role_commands(
+pub struct GuildDiffer {}
+pub type GuildDifferRef = Arc<GuildDiffer>;
+
+impl GuildDiffer {
+    pub fn calculate_diffs(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<Arc<dyn GuildCommand>> {
-        let mut commands: Vec<Arc<dyn GuildCommand>> = Vec::new();
+    ) -> Vec<DiffRef> {
+        let role_diffs = self.calculate_role_diffs(existing_guild, awaiting_guild);
+        let category_diffs = self.calculate_category_diffs(existing_guild, awaiting_guild);
+
+        role_diffs
+            .into_iter()
+            .chain(category_diffs.into_iter())
+            .collect()
+    }
+
+    fn calculate_role_diffs(
+        &self,
+        existing_guild: &ExistingGuild,
+        awaiting_guild: &AwaitingGuild,
+    ) -> Vec<DiffRef> {
+        let mut diffs: Vec<DiffRef> = Vec::new();
 
         for awaiting_role in awaiting_guild.roles.items() {
             match existing_guild.roles.find_by_name(&awaiting_role.name) {
                 Some(role) => {
                     if awaiting_role != role {
                         let command = UpdateRole::new(role.clone(), awaiting_role.clone());
-                        commands.push(Arc::from(command));
+                        diffs.push(Arc::from(command));
                     }
                 }
                 None => {
                     let command = AddRole::new(awaiting_role.clone());
-                    commands.push(Arc::from(command));
+                    diffs.push(Arc::from(command));
                 }
             }
         }
@@ -41,19 +57,19 @@ impl DiffCalculator {
                 .is_none()
             {
                 let command = DeleteRole::new(existing_role.clone());
-                commands.push(Arc::from(command));
+                diffs.push(Arc::from(command));
             }
         }
 
-        commands
+        diffs
     }
 
-    pub fn create_category_commands(
+    fn calculate_category_diffs(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<Arc<dyn GuildCommand>> {
-        let mut commands: Vec<Arc<dyn GuildCommand>> = Vec::new();
+    ) -> Vec<DiffRef> {
+        let mut diffs: Vec<DiffRef> = Vec::new();
 
         for awaiting_category in awaiting_guild.categories.items() {
             match existing_guild
@@ -67,13 +83,13 @@ impl DiffCalculator {
                             awaiting_category.clone(),
                             existing_guild.roles.clone(),
                         );
-                        commands.push(Arc::from(command));
+                        diffs.push(Arc::from(command));
                     }
                 }
                 None => {
                     let command =
                         AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
-                    commands.push(Arc::from(command));
+                    diffs.push(Arc::from(command));
                 }
             }
         }
@@ -85,10 +101,10 @@ impl DiffCalculator {
                 .is_none()
             {
                 let command = DeleteCategory::new(existing_category.clone());
-                commands.push(Arc::from(command));
+                diffs.push(Arc::from(command));
             }
         }
 
-        commands
+        diffs
     }
 }

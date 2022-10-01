@@ -1,3 +1,2 @@
-pub mod commands;
+pub mod diffs;
 pub mod entities;
-pub mod services;
