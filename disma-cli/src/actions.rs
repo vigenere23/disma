@@ -3,14 +3,14 @@ use std::sync::Arc;
 use super::{
     injector::{Get, Injector},
     services::{
-        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
     },
 };
 
 pub fn apply_changes(guild_id: &str, file_path: &str, dry_run: bool, force: bool) {
     let injector = Injector::new(Some(guild_id.to_string()));
-    let service: Arc<ApplyChanges> = injector.get();
+    let service: Arc<ApplyDiffs> = injector.get();
     service.run(guild_id, file_path, dry_run, force);
 }
 

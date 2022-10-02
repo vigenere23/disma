@@ -1,0 +1,58 @@
+roles:
+- name: '@everyone'
+  permissions:
+  - CHANGE_NICKNAME
+  - SPEAK
+  - ATTACH_FILES
+  - READ_MESSAGE_HISTORY
+  - ADD_REACTIONS
+  - SEND_MESSAGES
+  - CONNECT
+  - VIEW_CHANNEL
+  - REQUEST_TO_SPEAK
+  - CREATE_PUBLIC_THREADS
+  - SEND_MESSAGES_IN_THREADS
+  - STREAM
+  show_in_sidebar: false
+  is_mentionable: false
+- name: dac
+  permissions:
+  - MANAGE_ROLES
+  - MANAGE_CHANNELS
+  show_in_sidebar: false
+  is_mentionable: false
+- name: private
+  permissions:
+  - USE_VAD
+  - REQUEST_TO_SPEAK
+  - SPEAK
+  - CREATE_PUBLIC_THREADS
+  - SEND_MESSAGES_IN_THREADS
+  - ATTACH_FILES
+  - CHANGE_NICKNAME
+  - VIEW_CHANNEL
+  - SEND_MESSAGES
+  - STREAM
+  - READ_MESSAGE_HISTORY
+  - ADD_REACTIONS
+  - CONNECT
+  show_in_sidebar: false
+  is_mentionable: false
+- name: team-01
+  permissions:
+  - REQUEST_TO_SPEAK
+  show_in_sidebar: false
+  is_mentionable: false
+categories:
+- name: team-01
+  permissions_overwrites:
+  - role: '@everyone'
+    allow: []
+    deny:
+    - CONNECT
+    - VIEW_CHANNEL
+  - role: team-01
+    allow:
+    - VIEW_CHANNEL
+    - CONNECT
+    deny: []

@@ -1,12 +1,12 @@
-use std::sync::Arc;
-
-use crate::domain::entities::{
-    category::{AwaitingCategory, ExistingCategory},
-    guild::GuildCommander,
-    role::{ExistingRole, RolesList},
+use crate::{
+    domain::entities::{
+        category::{AwaitingCategory, ExistingCategory},
+        role::{ExistingRole, RolesList},
+    },
+    guild::GuildCommanderRef,
 };
 
-use super::GuildCommand;
+use super::base::{Diff, DiffCommand};
 
 pub struct AddCategory {
     category: AwaitingCategory,
@@ -19,13 +19,13 @@ impl AddCategory {
     }
 }
 
-impl GuildCommand for AddCategory {
-    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+impl DiffCommand for AddCategory {
+    fn execute(&self, guild: &GuildCommanderRef) {
         guild.add_category(&self.category, &self.roles);
     }
 
-    fn describe(&self) -> String {
-        format!("🆕 Adding category {}", &self.category.name)
+    fn describe(&self) -> Diff {
+        Diff::Add(format!("Category {}", &self.category.name))
     }
 }
 
@@ -49,8 +49,8 @@ impl UpdateCategory {
     }
 }
 
-impl GuildCommand for UpdateCategory {
-    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+impl DiffCommand for UpdateCategory {
+    fn execute(&self, guild: &GuildCommanderRef) {
         guild.update_category(
             &self.existing_category.id,
             &self.awaiting_category,
@@ -58,10 +58,13 @@ impl GuildCommand for UpdateCategory {
         );
     }
 
-    fn describe(&self) -> String {
-        format!(
-            "🔄 Updating role {}\nfrom :{:#?}\nto :{:#?}",
-            &self.existing_category.name, &self.existing_category, &self.awaiting_category
+    fn describe(&self) -> Diff {
+        Diff::Update(
+            format!("Category {}", &self.existing_category.name),
+            vec![
+                Diff::Remove(format!("{:#?}", &self.existing_category)), // TODO more granular diffs
+                Diff::Add(format!("{:#?}", &self.awaiting_category)),
+            ],
         )
     }
 }
@@ -76,12 +79,12 @@ impl DeleteCategory {
     }
 }
 
-impl GuildCommand for DeleteCategory {
-    fn execute(&self, guild: Arc<dyn GuildCommander>) {
+impl DiffCommand for DeleteCategory {
+    fn execute(&self, guild: &GuildCommanderRef) {
         guild.delete_category(&self.category.id);
     }
 
-    fn describe(&self) -> String {
-        format!("🗑️  Deleting category {}", &self.category.name)
+    fn describe(&self) -> Diff {
+        Diff::Remove(format!("Category {}", &self.category.name))
     }
 }

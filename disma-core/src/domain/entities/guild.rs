@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -7,6 +9,7 @@ pub trait GuildQuerier {
     fn get_guild(&self, guild_id: &str) -> ExistingGuild;
     fn list_guilds(&self) -> Vec<GuildSummary>;
 }
+pub type GuildQuerierRef = Arc<dyn GuildQuerier>;
 
 pub trait GuildCommander {
     fn add_role(&self, role: &AwaitingRole);
@@ -21,6 +24,7 @@ pub trait GuildCommander {
     );
     fn delete_category(&self, id: &str);
 }
+pub type GuildCommanderRef = Arc<dyn GuildCommander>;
 
 #[derive(Debug)]
 pub struct ExistingGuild {

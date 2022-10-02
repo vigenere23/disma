@@ -1,19 +1,21 @@
 use std::sync::Arc;
 
 use disma::{
-    changes::ChangesService,
-    diff::DiffCalculator,
+    diff::{
+        differ::{GuildDiffer, GuildDifferRef},
+        event::{DiffEventListenerRef, NullDiffEventListener},
+    },
+    diff_service::GuildDiffService,
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
     },
-    executor::CommandsExecutor,
     guild::{GuildCommander, GuildQuerier},
 };
 
 use crate::{
     services::{
-        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
     },
     utils::{
@@ -21,8 +23,6 @@ use crate::{
         io::{Deserializer, Serializer},
     },
 };
-
-use super::infra::executor::CliCommandsExecutor;
 
 pub trait Get<T> {
     fn get(&self) -> T;
@@ -58,15 +58,9 @@ impl Get<Arc<DiscordGuildClient>> for Injector {
     }
 }
 
-impl Get<Arc<DiffCalculator>> for Injector {
-    fn get(&self) -> Arc<DiffCalculator> {
-        Arc::from(DiffCalculator {})
-    }
-}
-
-impl Get<Arc<dyn CommandsExecutor>> for Injector {
-    fn get(&self) -> Arc<dyn CommandsExecutor> {
-        Arc::from(CliCommandsExecutor())
+impl Get<GuildDifferRef> for Injector {
+    fn get(&self) -> GuildDifferRef {
+        Arc::from(GuildDiffer {})
     }
 }
 
@@ -82,9 +76,15 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
     }
 }
 
-impl Get<Arc<ChangesService>> for Injector {
-    fn get(&self) -> Arc<ChangesService> {
-        Arc::from(ChangesService::new(
+impl Get<DiffEventListenerRef> for Injector {
+    fn get(&self) -> DiffEventListenerRef {
+        Arc::from(NullDiffEventListener {})
+    }
+}
+
+impl Get<Arc<GuildDiffService>> for Injector {
+    fn get(&self) -> Arc<GuildDiffService> {
+        Arc::from(GuildDiffService::new(
             self.get(),
             self.get(),
             self.get(),
@@ -105,9 +105,9 @@ impl Get<Arc<Serializer>> for Injector {
     }
 }
 
-impl Get<Arc<ApplyChanges>> for Injector {
-    fn get(&self) -> Arc<ApplyChanges> {
-        Arc::from(ApplyChanges::new(self.get(), self.get()))
+impl Get<Arc<ApplyDiffs>> for Injector {
+    fn get(&self) -> Arc<ApplyDiffs> {
+        Arc::from(ApplyDiffs::new(self.get(), self.get()))
     }
 }
 
