@@ -1,3 +1,4 @@
+use colored::Colorize;
 use std::{path::Path, sync::Arc};
 
 use crate::{
@@ -30,22 +31,25 @@ impl ApplyDiffs {
     }
 
     pub fn run(&self, guild_id: &str, file: &str, dry_run: bool, force: bool) {
-        let file_path = Path::new(file);
         println!();
+        let file_path = Path::new(file);
 
-        println!("🡲 🛠️  Loading guild config from '{}'...", &file);
+        println!(
+            "{}",
+            format!("🡲 🛠️  Loading guild config from '{}'...", &file).bold()
+        );
         let config = self.deserializer.deserialize::<GuildConfig>(file_path);
         let awaiting_guild = config.into();
 
-        println!("🡲 🔎 Looking for changes...");
+        println!("{}", "🡲 🔎 Looking for changes...".bold());
         let diffs = self.diff_service.list_diffs(guild_id, &awaiting_guild);
 
         if diffs.is_empty() {
-            println!("✨ No change to be applied.");
+            println!("{}", "🡲 ✨ No change to be applied.".bold());
             return;
         }
 
-        println!("🡲 📜 Found the following changes :\n");
+        println!("{}", "🡲 📜 Found the following changes :\n".bold());
 
         for diff in diffs {
             match diff {

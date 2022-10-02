@@ -1,6 +1,6 @@
-use std::sync::Arc;
-
+use colored::Colorize;
 use disma::guild::GuildQuerier;
+use std::sync::Arc;
 
 pub struct ListGuilds {
     guild_querier: Arc<dyn GuildQuerier>,
@@ -12,7 +12,8 @@ impl ListGuilds {
     }
 
     pub fn run(&self) {
-        println!("Listing guilds...");
+        println!();
+        println!("{}", "🡲 ✅ Listing accessible guilds...".bold());
 
         let guilds = self.guild_querier.list_guilds();
 
