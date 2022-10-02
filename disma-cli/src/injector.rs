@@ -14,6 +14,7 @@ use disma::{
 };
 
 use crate::{
+    infra::diff::formatter::{DiffFormater, DiffFormaterRef},
     services::{
         apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
@@ -105,9 +106,15 @@ impl Get<Arc<Serializer>> for Injector {
     }
 }
 
+impl Get<DiffFormaterRef> for Injector {
+    fn get(&self) -> DiffFormaterRef {
+        Arc::from(DiffFormater::new())
+    }
+}
+
 impl Get<Arc<ApplyDiffs>> for Injector {
     fn get(&self) -> Arc<ApplyDiffs> {
-        Arc::from(ApplyDiffs::new(self.get(), self.get()))
+        Arc::from(ApplyDiffs::new(self.get(), self.get(), self.get()))
     }
 }
 

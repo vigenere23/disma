@@ -1,25 +1,30 @@
 use std::{path::Path, sync::Arc};
 
 use crate::{
-    infra::config::guild::GuildConfig,
+    infra::{config::guild::GuildConfig, diff::formatter::DiffFormaterRef},
     utils::{
         input::{abort, ask_user_confirmation},
         io::Deserializer,
     },
 };
-use disma::diff::base::Diff;
 use disma::diff_service::GuildDiffService;
 
 pub struct ApplyDiffs {
     diff_service: Arc<GuildDiffService>,
     deserializer: Arc<Deserializer>,
+    formatter: DiffFormaterRef,
 }
 
 impl ApplyDiffs {
-    pub fn new(diff_service: Arc<GuildDiffService>, deserializer: Arc<Deserializer>) -> Self {
+    pub fn new(
+        diff_service: Arc<GuildDiffService>,
+        deserializer: Arc<Deserializer>,
+        formatter: DiffFormaterRef,
+    ) -> Self {
         Self {
             diff_service,
             deserializer,
+            formatter,
         }
     }
 
@@ -39,13 +44,9 @@ impl ApplyDiffs {
         }
 
         println!("\n📜 Found the following changes :");
+
         for diff in diffs {
-            match diff {
-                // TODO use DiffPresenter (recursive, adds indents)
-                Diff::Add(desc) => println!(" - 🆕 Creating {}", &desc),
-                Diff::Update(desc, _) => println!(" - 🔄 Updating {}", &desc),
-                Diff::Remove(desc) => println!(" - 🗑️  Deleting {}", &desc),
-            };
+            println!("{}", self.formatter.format(&diff));
         }
 
         if dry_run {
