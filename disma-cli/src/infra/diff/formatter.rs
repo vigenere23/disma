@@ -20,10 +20,10 @@ impl DiffFormater {
 
         match diff {
             Diff::Add(desc) => {
-                text.push_str(&self.indent_lines(" + ", indent, &desc).green().to_string())
+                text.push_str(&self.indent_lines(" + ", indent, desc).green().to_string())
             }
             Diff::Remove(desc) => {
-                text.push_str(&self.indent_lines(" - ", indent, &desc).red().to_string())
+                text.push_str(&self.indent_lines(" - ", indent, desc).red().to_string())
             }
             Diff::Update(desc, diffs) => {
                 text.push_str(&self.indent_lines("   ", indent, desc));

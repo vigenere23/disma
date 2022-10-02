@@ -49,7 +49,7 @@ impl ApplyDiffs {
             return;
         }
 
-        println!("{}", "🡲 📜 Found the following changes :\n".bold());
+        println!("{}", "🡲 📜 Found the following changes :".bold());
 
         for diff in diffs {
             match diff {
@@ -72,7 +72,8 @@ impl ApplyDiffs {
             abort();
         }
 
-        println!("\n🚀 Applying changes...");
+        println!("{}", "🡲 🚀 Applying changes...".bold());
+        // TODO BUG: changes are not applied...
         self.diff_service.apply_diffs(guild_id, &awaiting_guild);
     }
 }

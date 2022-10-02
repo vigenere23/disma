@@ -3,7 +3,7 @@ use std::sync::Arc;
 use disma::{
     diff::{
         differ::{GuildDiffer, GuildDifferRef},
-        event::{DiffEventListenerRef, NullDiffEventListener},
+        event::DiffEventListenerRef,
     },
     diff_service::GuildDiffService,
     discord::{
@@ -14,7 +14,10 @@ use disma::{
 };
 
 use crate::{
-    infra::diff::formatter::{DiffFormater, DiffFormaterRef},
+    infra::diff::{
+        event::CliDiffEventListener,
+        formatter::{DiffFormater, DiffFormaterRef},
+    },
     services::{
         apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
@@ -79,7 +82,7 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
 
 impl Get<DiffEventListenerRef> for Injector {
     fn get(&self) -> DiffEventListenerRef {
-        Arc::from(NullDiffEventListener {})
+        Arc::from(CliDiffEventListener {})
     }
 }
 

@@ -10,7 +10,7 @@ pub fn ask_user_confirmation(message: &str) -> bool {
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input)
-        .expect(&"🡲 ❌ Unable to read user input".bold());
+        .unwrap_or_else(|_| panic!("{}", "🡲 ❌ Unable to read user input".bold()));
 
     input.trim().to_lowercase() == "y"
 }
