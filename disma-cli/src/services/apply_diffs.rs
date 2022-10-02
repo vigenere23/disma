@@ -8,7 +8,7 @@ use crate::{
         io::Deserializer,
     },
 };
-use disma::diff::base::Diff;
+use disma::diff::base::EntityChange;
 use disma::diff_service::GuildDiffService;
 
 pub struct ApplyDiffs {
@@ -53,10 +53,14 @@ impl ApplyDiffs {
 
         for diff in diffs {
             match diff {
-                Diff::Add(desc) => println!("● 🆕 Adding {}", desc),
-                Diff::Remove(desc) => println!("● 🗑️  Removing {}", desc),
-                Diff::Update(desc, diffs) => {
-                    println!("● 🔄 Updating {} with diffs:", desc);
+                EntityChange::Create(entity, name) => {
+                    println!("\n● 🆕 Adding {:?} {name}", entity)
+                }
+                EntityChange::Delete(entity, name) => {
+                    println!("\n● 🗑️  Removing {:?} {name}", entity)
+                }
+                EntityChange::Update(entity, name, diffs) => {
+                    println!("\n● 🔄 Updating {:?} {name} with diffs:", entity);
                     for diff in diffs {
                         print!("{}", self.formatter.format(&diff));
                     }
