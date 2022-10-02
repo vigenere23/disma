@@ -25,7 +25,7 @@ impl DiffCommand for AddCategory {
     }
 
     fn describe(&self) -> Diff {
-        Diff::Add(format!("Category {}", &self.category.name))
+        Diff::Add(format!("category \"{}\"", &self.category.name))
     }
 }
 
@@ -60,7 +60,7 @@ impl DiffCommand for UpdateCategory {
 
     fn describe(&self) -> Diff {
         Diff::Update(
-            format!("Category {}", &self.existing_category.name),
+            format!("category \"{}\"", &self.existing_category.name),
             vec![
                 Diff::Remove(format!("{:#?}", &self.existing_category)), // TODO more granular diffs
                 Diff::Add(format!("{:#?}", &self.awaiting_category)),
@@ -85,6 +85,6 @@ impl DiffCommand for DeleteCategory {
     }
 
     fn describe(&self) -> Diff {
-        Diff::Remove(format!("Category {}", &self.category.name))
+        Diff::Remove(format!("category \"{}\"", &self.category.name))
     }
 }

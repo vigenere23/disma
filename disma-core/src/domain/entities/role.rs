@@ -47,7 +47,6 @@ impl Role for AwaitingRole {
     }
 }
 
-// TODO : change to .diff_with(other) -> List<Diff>
 impl PartialEq<ExistingRole> for AwaitingRole {
     fn eq(&self, other: &ExistingRole) -> bool {
         self.name == other.name

@@ -7,6 +7,7 @@ use crate::{
         io::Deserializer,
     },
 };
+use disma::diff::base::Diff;
 use disma::diff_service::GuildDiffService;
 
 pub struct ApplyDiffs {
@@ -30,12 +31,13 @@ impl ApplyDiffs {
 
     pub fn run(&self, guild_id: &str, file: &str, dry_run: bool, force: bool) {
         let file_path = Path::new(file);
+        println!();
 
-        println!("🛠️  Loading guild config from '{}'...", &file);
+        println!("🡲 🛠️  Loading guild config from '{}'...", &file);
         let config = self.deserializer.deserialize::<GuildConfig>(file_path);
         let awaiting_guild = config.into();
 
-        println!("\n🔎 Looking for changes...");
+        println!("🡲 🔎 Looking for changes...");
         let diffs = self.diff_service.list_diffs(guild_id, &awaiting_guild);
 
         if diffs.is_empty() {
@@ -43,10 +45,19 @@ impl ApplyDiffs {
             return;
         }
 
-        println!("\n📜 Found the following changes :");
+        println!("🡲 📜 Found the following changes :\n");
 
         for diff in diffs {
-            println!("{}", self.formatter.format(&diff));
+            match diff {
+                Diff::Add(desc) => println!("● 🆕 Adding {}", desc),
+                Diff::Remove(desc) => println!("● 🗑️  Removing {}", desc),
+                Diff::Update(desc, diffs) => {
+                    println!("● 🔄 Updating {} with diffs:", desc);
+                    for diff in diffs {
+                        print!("{}", self.formatter.format(&diff));
+                    }
+                }
+            }
         }
 
         if dry_run {

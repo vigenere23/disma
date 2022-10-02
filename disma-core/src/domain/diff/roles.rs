@@ -21,7 +21,7 @@ impl DiffCommand for AddRole {
     }
 
     fn describe(&self) -> Diff {
-        Diff::Add(format!("Role {}", &self.role.name))
+        Diff::Add(format!("role \"{}\"", &self.role.name))
     }
 }
 
@@ -46,7 +46,7 @@ impl DiffCommand for UpdateRole {
 
     fn describe(&self) -> Diff {
         Diff::Update(
-            format!("Role {}", &self.existing_role.name),
+            format!("role \"{}\"", &self.existing_role.name),
             vec![
                 Diff::Remove(format!("{:#?}", &self.existing_role)), // TODO more granular diffs
                 Diff::Add(format!("{:#?}", &self.awaiting_role)),
@@ -71,6 +71,6 @@ impl DiffCommand for DeleteRole {
     }
 
     fn describe(&self) -> Diff {
-        Diff::Remove(format!("Role {}", &self.role.name))
+        Diff::Remove(format!("role \"{}\"", &self.role.name))
     }
 }

@@ -43,22 +43,19 @@ impl PartialEq<ExistingCategory> for AwaitingCategory {
 
         match (&self.permissions_overwrites, &other.permissions_overwrites) {
             (None, None) => true,
-            (Some(permissions), Some(other_permissions)) => {
-                if permissions.len() != other_permissions.len() {
+            (Some(overwrites), Some(other_overwrites)) => {
+                if overwrites.len() != other_overwrites.len() {
                     return false;
                 }
 
-                permissions
-                    .clone()
-                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
-                other_permissions
-                    .clone()
-                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
+                let mut overwrites = overwrites.clone();
+                overwrites.sort_by(|a, b| a.role.name.cmp(&b.role.name));
 
-                for (permission, other_permission) in
-                    permissions.iter().zip(other_permissions.iter())
-                {
-                    if permission != other_permission {
+                let mut other_overwrited = other_overwrites.clone();
+                other_overwrited.sort_by(|a, b| a.role.name.cmp(&b.role.name));
+
+                for (overwrite, other_overwrite) in overwrites.iter().zip(other_overwrited.iter()) {
+                    if overwrite != other_overwrite {
                         return false;
                     }
                 }

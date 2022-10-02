@@ -19,16 +19,16 @@ impl DiffFormater {
         let mut text = String::new();
 
         match diff {
-            Diff::Add(diff) => {
-                text.push_str(&self.indent_lines('+', indent, &diff).green().to_string())
+            Diff::Add(desc) => {
+                text.push_str(&self.indent_lines(" + ", indent, &desc).green().to_string())
             }
-            Diff::Remove(diff) => {
-                text.push_str(&self.indent_lines('-', indent, &diff).red().to_string())
+            Diff::Remove(desc) => {
+                text.push_str(&self.indent_lines(" - ", indent, &desc).red().to_string())
             }
-            Diff::Update(diff, sub_diffs) => {
-                text.push_str(&self.indent_lines(' ', indent, diff));
-                for sub_diff in sub_diffs {
-                    text.push_str(&self.format_with_indent(indent + 2, sub_diff));
+            Diff::Update(desc, diffs) => {
+                text.push_str(&self.indent_lines("   ", indent, desc));
+                for diff in diffs {
+                    text.push_str(&self.format_with_indent(indent + 2, diff));
                 }
             }
         }
@@ -36,11 +36,11 @@ impl DiffFormater {
         text
     }
 
-    fn indent_lines(&self, character: char, indent: usize, text: &str) -> String {
+    fn indent_lines(&self, prefix: &str, indent: usize, text: &str) -> String {
         let indent_text = " ".repeat(indent);
 
         text.split('\n')
-            .map(|line| format!("{character} {indent_text}{line}\n"))
+            .map(|line| format!("{prefix}{indent_text}{line}\n"))
             .collect()
     }
 }
@@ -59,7 +59,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "+ Something\n".green().to_string());
+        assert_eq!(formatted, " + Something\n".green().to_string());
     }
 
     #[test]
@@ -69,7 +69,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "+ Something\n+ new\n".green().to_string());
+        assert_eq!(formatted, " + Something\n + new\n".green().to_string());
     }
 
     #[test]
@@ -79,7 +79,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "- Something\n".red().to_string());
+        assert_eq!(formatted, " - Something\n".red().to_string());
     }
 
     #[test]
@@ -89,7 +89,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "- Something\n- new\n".red().to_string());
+        assert_eq!(formatted, " - Something\n - new\n".red().to_string());
     }
 
     #[test]
@@ -99,7 +99,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "  Something\n");
+        assert_eq!(formatted, "   Something\n");
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "  Something\n  new\n");
+        assert_eq!(formatted, "   Something\n   new\n");
     }
 
     #[test]
@@ -127,10 +127,10 @@ mod tests {
 
         let expected_text = format!(
             "{}{}{}{}",
-            "  Something\n",
-            "+   Another\n".green(),
-            "    Yet\n",
-            "-     Wow\n".red()
+            "   Something\n",
+            " +   Another\n".green(),
+            "     Yet\n",
+            " -     Wow\n".red()
         );
         assert_eq!(formatted, expected_text);
     }
@@ -153,10 +153,10 @@ mod tests {
 
         let expected_text = format!(
             "{}{}{}{}",
-            concat!("  Something\n", "  new\n"),
-            concat!("+   Another\n", "+   thing\n").green(),
-            concat!("    Yet\n", "    possible\n"),
-            concat!("-     Wow\n", "-     nice\n").red()
+            concat!("   Something\n", "   new\n"),
+            concat!(" +   Another\n", " +   thing\n").green(),
+            concat!("     Yet\n", "     possible\n"),
+            concat!(" -     Wow\n", " -     nice\n").red()
         );
         assert_eq!(formatted, expected_text);
     }

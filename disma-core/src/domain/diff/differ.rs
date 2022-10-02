@@ -13,22 +13,13 @@ use super::base::DiffCommandRef;
 pub struct GuildDiffer {}
 pub type GuildDifferRef = Arc<GuildDiffer>;
 
+pub struct DiffCommands {
+    pub role: Vec<DiffCommandRef>,
+    pub category: Vec<DiffCommandRef>,
+}
+
 impl GuildDiffer {
-    pub fn calculate_diffs(
-        &self,
-        existing_guild: &ExistingGuild,
-        awaiting_guild: &AwaitingGuild,
-    ) -> Vec<DiffCommandRef> {
-        let role_diffs = self.calculate_role_diffs(existing_guild, awaiting_guild);
-        let category_diffs = self.calculate_category_diffs(existing_guild, awaiting_guild);
-
-        role_diffs
-            .into_iter()
-            .chain(category_diffs.into_iter())
-            .collect()
-    }
-
-    fn calculate_role_diffs(
+    pub fn calculate_role_diffs(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
@@ -37,9 +28,9 @@ impl GuildDiffer {
 
         for awaiting_role in awaiting_guild.roles.items() {
             match existing_guild.roles.find_by_name(&awaiting_role.name) {
-                Some(role) => {
-                    if awaiting_role != role {
-                        let command = UpdateRole::new(role.clone(), awaiting_role.clone());
+                Some(existing_role) => {
+                    if awaiting_role != existing_role {
+                        let command = UpdateRole::new(existing_role.clone(), awaiting_role.clone());
                         diffs.push(Arc::from(command));
                     }
                 }
@@ -64,7 +55,7 @@ impl GuildDiffer {
         diffs
     }
 
-    fn calculate_category_diffs(
+    pub fn calculate_category_diffs(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
@@ -76,10 +67,10 @@ impl GuildDiffer {
                 .categories
                 .find_by_name(&awaiting_category.name)
             {
-                Some(category) => {
-                    if awaiting_category != category {
+                Some(existing_category) => {
+                    if awaiting_category != existing_category {
                         let command = UpdateCategory::new(
-                            category.clone(),
+                            existing_category.clone(),
                             awaiting_category.clone(),
                             existing_guild.roles.clone(),
                         );
