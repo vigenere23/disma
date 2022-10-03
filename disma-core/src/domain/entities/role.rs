@@ -1,8 +1,10 @@
 use std::collections::HashSet;
 
-use crate::diff::base::{diffs_between, option_diffs_between, Diff};
-
 use super::permission::PermissionsList;
+use crate::{
+    diff::base::{Diff, Differ},
+    utils::misc::IfThen,
+};
 
 pub trait Role: Clone {
     fn name(&self) -> String;
@@ -19,38 +21,34 @@ pub struct ExistingRole {
 }
 
 impl ExistingRole {
-    pub fn diffs_with(&self, awaiting_role: &AwaitingRole) -> Vec<Diff> {
-        let mut diffs = vec![];
+    pub fn diffs_with(&self, awaiting: &AwaitingRole) -> Vec<Diff> {
+        let mut all_diffs = vec![];
 
-        let permissions_diffs = self.permissions.diffs_with(&awaiting_role.permissions);
+        self.permissions.diffs_with(&awaiting.permissions).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("permissions".into(), diffs)),
+        );
 
-        if !permissions_diffs.is_empty() {
-            diffs.push(Diff::Update("permissions".into(), permissions_diffs));
-        }
+        self.is_mentionable
+            .diffs_with(&awaiting.is_mentionable)
+            .if_then(
+                |diffs| !diffs.is_empty(),
+                |diffs| all_diffs.push(Diff::Update("is_mentionable".into(), diffs)),
+            );
 
-        let is_mentionable_diffs = diffs_between(self.is_mentionable, awaiting_role.is_mentionable);
+        self.show_in_sidebar
+            .diffs_with(&awaiting.show_in_sidebar)
+            .if_then(
+                |diffs| !diffs.is_empty(),
+                |diffs| all_diffs.push(Diff::Update("show_in_sidebar".into(), diffs)),
+            );
 
-        if !is_mentionable_diffs.is_empty() {
-            diffs.push(Diff::Update("is_mentionable".into(), is_mentionable_diffs));
-        }
+        self.color.diffs_with(&awaiting.color).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("color".into(), diffs)),
+        );
 
-        let show_in_sidebar_diffs =
-            diffs_between(self.show_in_sidebar, awaiting_role.show_in_sidebar);
-
-        if !show_in_sidebar_diffs.is_empty() {
-            diffs.push(Diff::Update(
-                "show_in_sidebar".into(),
-                show_in_sidebar_diffs,
-            ));
-        }
-
-        let color_diffs = option_diffs_between(self.color.as_ref(), awaiting_role.color.as_ref());
-
-        if !color_diffs.is_empty() {
-            diffs.push(Diff::Update("color".into(), color_diffs));
-        }
-
-        diffs
+        all_diffs
     }
 }
 
@@ -96,34 +94,34 @@ impl PartialEq<ExistingRole> for AwaitingRole {
 }
 
 #[derive(Debug, Clone)]
-pub struct RolesList<T>
+pub struct RolesList<R>
 where
-    T: Role,
+    R: Role,
 {
-    roles: Vec<T>,
+    items: Vec<R>,
 }
 
-impl<T: Role> RolesList<T> {
-    pub fn find_by_name(&self, name: &str) -> Option<&T> {
-        self.roles.iter().find(|role| role.name() == name)
+impl<R: Role> RolesList<R> {
+    pub fn find_by_name(&self, name: &str) -> Option<&R> {
+        self.items.iter().find(|role| role.name() == name)
     }
 
-    pub fn items(&self) -> &Vec<T> {
-        &self.roles
+    pub fn items(&self) -> &Vec<R> {
+        &self.items
     }
 }
 
 impl RolesList<ExistingRole> {
     pub fn find_by_id(&self, id: &str) -> &ExistingRole {
-        self.roles
+        self.items
             .iter()
             .find(|role| role.id == id)
             .unwrap_or_else(|| panic!("Could not find role with id {}", &id))
     }
 }
 
-impl<T: Role> From<Vec<T>> for RolesList<T> {
-    fn from(roles: Vec<T>) -> Self {
+impl<R: Role> From<Vec<R>> for RolesList<R> {
+    fn from(roles: Vec<R>) -> Self {
         let mut role_names: HashSet<String> = HashSet::new();
 
         for role in roles.iter() {
@@ -134,6 +132,6 @@ impl<T: Role> From<Vec<T>> for RolesList<T> {
             role_names.insert(role.name().clone());
         }
 
-        Self { roles }
+        Self { items: roles }
     }
 }

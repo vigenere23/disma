@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{fmt::Display, sync::Arc};
 
 use crate::guild::GuildCommanderRef;
 
@@ -27,40 +27,66 @@ pub enum Diff {
     Update(String, Vec<Diff>),
 }
 
-pub fn vec_diffs_between<T>(origin: Vec<T>, target: Vec<T>) -> Vec<Diff>
-where
-    T: PartialEq<T> + ToString,
-{
-    let mut diffs = vec![];
-
-    for item in origin.iter() {
-        if !target.contains(item) {
-            diffs.push(Diff::Remove(item.to_string()))
-        }
-    }
-
-    for item in target.iter() {
-        if !origin.contains(item) {
-            diffs.push(Diff::Add(item.to_string()))
-        }
-    }
-
-    diffs
+pub trait Differ<T> {
+    fn diffs_with(&self, target: &T) -> Vec<Diff>;
 }
 
-pub fn option_diffs_between<T>(origin: Option<T>, target: Option<T>) -> Vec<Diff>
-where
-    T: PartialEq<T> + ToString,
-{
-    match (origin, target) {
-        (None, None) => vec![],
-        (Some(origin), None) => vec![Diff::Remove(origin.to_string())],
-        (None, Some(target)) => vec![Diff::Add(target.to_string())],
-        (Some(origin), Some(target)) => diffs_between(origin, target),
+impl Differ<bool> for bool {
+    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+        diffs_between(self, target)
     }
 }
 
-pub fn diffs_between<T>(origin: T, target: T) -> Vec<Diff>
+impl Differ<String> for String {
+    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+        diffs_between(self, target)
+    }
+}
+
+impl<'a, 'b> Differ<&'b str> for &'a str {
+    fn diffs_with(&self, target: &&'b str) -> Vec<Diff> {
+        diffs_between(self, target)
+    }
+}
+
+impl<T> Differ<Option<T>> for Option<T>
+where
+    T: PartialEq<T> + Display,
+{
+    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+        match (self, target) {
+            (None, None) => vec![],
+            (Some(origin), None) => vec![Diff::Remove(origin.to_string())],
+            (None, Some(target)) => vec![Diff::Add(target.to_string())],
+            (Some(origin), Some(target)) => diffs_between(origin, target),
+        }
+    }
+}
+
+impl<T> Differ<Vec<T>> for Vec<T>
+where
+    T: PartialEq<T> + ToString,
+{
+    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+        let mut diffs = vec![];
+
+        for item in self.iter() {
+            if !target.contains(item) {
+                diffs.push(Diff::Remove(item.to_string()))
+            }
+        }
+
+        for item in target.iter() {
+            if !self.contains(item) {
+                diffs.push(Diff::Add(item.to_string()))
+            }
+        }
+
+        diffs
+    }
+}
+
+fn diffs_between<T>(origin: T, target: T) -> Vec<Diff>
 where
     T: PartialEq<T> + ToString,
 {
@@ -77,14 +103,14 @@ where
 #[cfg(test)]
 mod tests {
     mod vec_diffs {
-        use crate::diff::base::{vec_diffs_between, Diff};
+        use crate::diff::base::{Diff, Differ};
 
         #[test]
         fn it_calculates_additions() {
             let origin = vec!["hello"];
             let target = vec!["hello", "world!"];
 
-            let diffs = vec_diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             let expected_diffs = vec![Diff::Add("world!".into())];
             assert_eq!(diffs, expected_diffs);
@@ -95,7 +121,7 @@ mod tests {
             let origin = vec!["hello", "world!"];
             let target = vec!["hello"];
 
-            let diffs = vec_diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             let expected_diffs = vec![Diff::Remove("world!".into())];
             assert_eq!(diffs, expected_diffs);
@@ -106,7 +132,7 @@ mod tests {
             let origin = vec!["super", "mario"];
             let target = vec!["hello", "world!"];
 
-            let diffs = vec_diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             let expected_diffs = vec![
                 Diff::Remove("super".into()),
@@ -122,21 +148,21 @@ mod tests {
             let origin = vec!["hello", "world!"];
             let target = vec!["hello", "world!"];
 
-            let diffs = vec_diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             assert_eq!(diffs.len(), 0);
         }
     }
 
     mod str_diffs {
-        use crate::diff::base::{diffs_between, Diff};
+        use crate::diff::base::{Diff, Differ};
 
         #[test]
         fn given_same_str_returns_no_diff() {
             let origin = "hello";
             let target = "hello";
 
-            let diffs = diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             assert_eq!(diffs.len(), 0);
         }
@@ -146,7 +172,7 @@ mod tests {
             let origin = "hello";
             let target = "world!";
 
-            let diffs = diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             let expected_diffs = vec![Diff::Remove("hello".into()), Diff::Add("world!".into())];
             assert_eq!(diffs, expected_diffs);
@@ -157,7 +183,7 @@ mod tests {
             let origin = true;
             let target = false;
 
-            let diffs = diffs_between(origin, target);
+            let diffs = origin.diffs_with(&target);
 
             let expected_diffs = vec![Diff::Remove("true".into()), Diff::Add("false".into())];
             assert_eq!(diffs, expected_diffs);

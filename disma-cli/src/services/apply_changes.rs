@@ -8,18 +8,18 @@ use crate::{
         io::Deserializer,
     },
 };
+use disma::changes::ChangesService;
 use disma::diff::base::EntityChange;
-use disma::diff_service::GuildDiffService;
 
-pub struct ApplyDiffs {
-    diff_service: Arc<GuildDiffService>,
+pub struct ApplyChanges {
+    diff_service: Arc<ChangesService>,
     deserializer: Arc<Deserializer>,
     formatter: DiffFormaterRef,
 }
 
-impl ApplyDiffs {
+impl ApplyChanges {
     pub fn new(
-        diff_service: Arc<GuildDiffService>,
+        diff_service: Arc<ChangesService>,
         deserializer: Arc<Deserializer>,
         formatter: DiffFormaterRef,
     ) -> Self {
@@ -42,7 +42,7 @@ impl ApplyDiffs {
         let awaiting_guild = config.into();
 
         println!("{}", "🡲 🔎 Looking for changes...".bold());
-        let diffs = self.diff_service.list_diffs(guild_id, &awaiting_guild);
+        let diffs = self.diff_service.list_changes(guild_id, &awaiting_guild);
 
         if diffs.is_empty() {
             println!("{}", "🡲 ✨ No change to be applied.".bold());
@@ -82,6 +82,6 @@ impl ApplyDiffs {
 
         println!("{}", "🡲 🚀 Applying changes...".bold());
         // TODO BUG: changes are not applied...
-        self.diff_service.apply_diffs(guild_id, &awaiting_guild);
+        self.diff_service.apply_changes(guild_id, &awaiting_guild);
     }
 }

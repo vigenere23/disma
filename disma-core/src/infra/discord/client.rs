@@ -1,10 +1,13 @@
 use std::sync::Arc;
 
-use crate::domain::entities::{
-    category::{AwaitingCategory, CategoriesList, CategoryPermissionsOverwrites, ExistingCategory},
-    guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-    permission::PermissionsList,
-    role::{AwaitingRole, ExistingRole, RolesList},
+use crate::{
+    domain::entities::{
+        category::{AwaitingCategory, CategoriesList, ExistingCategory},
+        guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
+        permission::PermissionsList,
+        role::{AwaitingRole, ExistingRole, RolesList},
+    },
+    overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
 };
 
 use super::{
@@ -42,17 +45,16 @@ impl GuildQuerier for DiscordClient {
                 4 => Some(ExistingCategory {
                     id: response.id.clone(),
                     name: response.name.clone(),
-                    permissions_overwrites: response.permission_overwrites.as_ref().map(
-                        |overwrites| {
-                            overwrites
-                                .iter()
-                                .map(|permissions| CategoryPermissionsOverwrites {
-                                    role: roles_list.find_by_id(&permissions.role_id).clone(),
-                                    allow: PermissionsList::from(permissions.allow.as_str()),
-                                    deny: PermissionsList::from(permissions.deny.as_str()),
-                                })
-                                .collect()
-                        },
+                    overwrites: PermissionsOverwritesList::from(
+                        response
+                            .permission_overwrites
+                            .iter()
+                            .map(|permissions| PermissionsOverwrites {
+                                role: roles_list.find_by_id(&permissions.role_id).clone(),
+                                allow: PermissionsList::from(permissions.allow.as_str()),
+                                deny: PermissionsList::from(permissions.deny.as_str()),
+                            })
+                            .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
                     ),
                 }),
                 _ => None,

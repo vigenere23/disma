@@ -10,16 +10,11 @@ use crate::domain::{
 
 use super::base::DiffCommandRef;
 
-pub struct GuildDiffer {}
-pub type GuildDifferRef = Arc<GuildDiffer>;
+pub struct DiffCommandFactory {}
+pub type DiffCommandFactoryRef = Arc<DiffCommandFactory>;
 
-pub struct DiffCommands {
-    pub role: Vec<DiffCommandRef>,
-    pub category: Vec<DiffCommandRef>,
-}
-
-impl GuildDiffer {
-    pub fn calculate_role_diffs(
+impl DiffCommandFactory {
+    pub fn for_roles(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
@@ -59,7 +54,7 @@ impl GuildDiffer {
         diffs
     }
 
-    pub fn calculate_category_diffs(
+    pub fn for_categories(
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,

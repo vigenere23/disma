@@ -4,7 +4,7 @@ use std::{collections::HashSet, str::FromStr};
 
 use strum::{Display, EnumIter, EnumString, IntoEnumIterator};
 
-use crate::diff::base::{vec_diffs_between, Diff};
+use crate::diff::base::{Diff, Differ};
 
 #[derive(Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter, EnumString)]
 pub enum Permission {
@@ -122,9 +122,11 @@ impl PermissionsList {
     pub fn items(&self) -> Vec<&Permission> {
         self.permissions.iter().collect()
     }
+}
 
-    pub fn diffs_with(&self, other: &PermissionsList) -> Vec<Diff> {
-        vec_diffs_between(self.items(), other.items())
+impl Differ<PermissionsList> for PermissionsList {
+    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+        self.items().diffs_with(&target.items())
     }
 }
 

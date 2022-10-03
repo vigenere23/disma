@@ -64,9 +64,11 @@ impl DiffCommand for UpdateCategory {
             Entity::Category,
             self.existing_category.name.clone(),
             vec![
-                Diff::Remove(format!("{:#?}", &self.existing_category)), // TODO more granular diffs
+                Diff::Remove(format!("{:#?}", &self.existing_category)),
                 Diff::Add(format!("{:#?}", &self.awaiting_category)),
             ],
+            // TODO more granular diffs with
+            // self.existing_category.diffs_with(&self.awaiting_category),
         )
     }
 }
