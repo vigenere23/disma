@@ -51,7 +51,7 @@ impl Into<ExistingRole> for RoleResponse {
             name: self.name,
             permissions: PermissionsList::from(self.permissions.as_str()),
             color,
-            is_mentionalbe: self.mentionable,
+            is_mentionable: self.mentionable,
             show_in_sidebar: self.hoist,
         }
     }

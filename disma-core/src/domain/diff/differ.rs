@@ -30,7 +30,11 @@ impl GuildDiffer {
             match existing_guild.roles.find_by_name(&awaiting_role.name) {
                 Some(existing_role) => {
                     if awaiting_role != existing_role {
-                        let command = UpdateRole::new(existing_role.clone(), awaiting_role.clone());
+                        let command = UpdateRole::new(
+                            existing_role.clone(),
+                            awaiting_role.clone(),
+                            existing_role.diffs_with(awaiting_role),
+                        );
                         diffs.push(Arc::from(command));
                     }
                 }

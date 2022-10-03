@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use crate::diff::base::{diffs_between, option_diffs_between, Diff};
+
 use super::permission::PermissionsList;
 
 pub trait Role: Clone {
@@ -12,8 +14,44 @@ pub struct ExistingRole {
     pub name: String,
     pub permissions: PermissionsList,
     pub color: Option<String>,
-    pub is_mentionalbe: bool,
+    pub is_mentionable: bool,
     pub show_in_sidebar: bool,
+}
+
+impl ExistingRole {
+    pub fn diffs_with(&self, awaiting_role: &AwaitingRole) -> Vec<Diff> {
+        let mut diffs = vec![];
+
+        let permissions_diffs = self.permissions.diffs_with(&awaiting_role.permissions);
+
+        if !permissions_diffs.is_empty() {
+            diffs.push(Diff::Update("permissions".into(), permissions_diffs));
+        }
+
+        let is_mentionable_diffs = diffs_between(self.is_mentionable, awaiting_role.is_mentionable);
+
+        if !is_mentionable_diffs.is_empty() {
+            diffs.push(Diff::Update("is_mentionable".into(), is_mentionable_diffs));
+        }
+
+        let show_in_sidebar_diffs =
+            diffs_between(self.show_in_sidebar, awaiting_role.show_in_sidebar);
+
+        if !show_in_sidebar_diffs.is_empty() {
+            diffs.push(Diff::Update(
+                "show_in_sidebar".into(),
+                show_in_sidebar_diffs,
+            ));
+        }
+
+        let color_diffs = option_diffs_between(self.color.as_ref(), awaiting_role.color.as_ref());
+
+        if !color_diffs.is_empty() {
+            diffs.push(Diff::Update("color".into(), color_diffs));
+        }
+
+        diffs
+    }
 }
 
 impl Role for ExistingRole {
@@ -27,7 +65,7 @@ impl PartialEq<AwaitingRole> for ExistingRole {
         self.name == other.name
             && self.permissions == other.permissions
             && self.color == other.color
-            && self.is_mentionalbe == other.is_mentionable
+            && self.is_mentionable == other.is_mentionable
             && self.show_in_sidebar == other.show_in_sidebar
     }
 }
@@ -50,7 +88,7 @@ impl Role for AwaitingRole {
 impl PartialEq<ExistingRole> for AwaitingRole {
     fn eq(&self, other: &ExistingRole) -> bool {
         self.name == other.name
-            && self.is_mentionable == other.is_mentionalbe
+            && self.is_mentionable == other.is_mentionable
             && self.color == other.color
             && self.show_in_sidebar == other.show_in_sidebar
             && self.permissions == other.permissions

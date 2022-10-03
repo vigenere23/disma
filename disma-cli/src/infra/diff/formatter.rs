@@ -26,7 +26,7 @@ impl DiffFormater {
                 text.push_str(&self.indent_lines(" - ", indent, desc).red().to_string())
             }
             Diff::Update(desc, diffs) => {
-                text.push_str(&self.indent_lines("   ", indent, desc));
+                text.push_str(&self.indent_lines("   ", indent, &format!("{desc}:")));
                 for diff in diffs {
                     text.push_str(&self.format_with_indent(indent + 2, diff));
                 }
@@ -99,7 +99,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "   Something\n");
+        assert_eq!(formatted, "   Something:\n");
     }
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
 
         let formatted = formatter.format(&diff);
 
-        assert_eq!(formatted, "   Something\n   new\n");
+        assert_eq!(formatted, "   Something\n   new:\n");
     }
 
     #[test]
@@ -127,9 +127,9 @@ mod tests {
 
         let expected_text = format!(
             "{}{}{}{}",
-            "   Something\n",
+            "   Something:\n",
             " +   Another\n".green(),
-            "     Yet\n",
+            "     Yet:\n",
             " -     Wow\n".red()
         );
         assert_eq!(formatted, expected_text);
@@ -153,9 +153,9 @@ mod tests {
 
         let expected_text = format!(
             "{}{}{}{}",
-            concat!("   Something\n", "   new\n"),
+            concat!("   Something\n", "   new:\n"),
             concat!(" +   Another\n", " +   thing\n").green(),
-            concat!("     Yet\n", "     possible\n"),
+            concat!("     Yet\n", "     possible:\n"),
             concat!(" -     Wow\n", " -     nice\n").red()
         );
         assert_eq!(formatted, expected_text);

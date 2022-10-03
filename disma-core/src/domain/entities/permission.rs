@@ -2,9 +2,11 @@
 
 use std::{collections::HashSet, str::FromStr};
 
-use strum::{EnumIter, EnumString, IntoEnumIterator};
+use strum::{Display, EnumIter, EnumString, IntoEnumIterator};
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash, EnumIter, EnumString)]
+use crate::diff::base::{vec_diffs_between, Diff};
+
+#[derive(Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter, EnumString)]
 pub enum Permission {
     CREATE_INSTANT_INVITE,
     KICK_MEMBERS,
@@ -97,12 +99,6 @@ impl Permission {
     }
 }
 
-impl ToString for Permission {
-    fn to_string(&self) -> String {
-        format!("{:?}", self)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PermissionsList {
     permissions: HashSet<Permission>,
@@ -125,6 +121,10 @@ impl PermissionsList {
 
     pub fn items(&self) -> Vec<&Permission> {
         self.permissions.iter().collect()
+    }
+
+    pub fn diffs_with(&self, other: &PermissionsList) -> Vec<Diff> {
+        vec_diffs_between(self.items(), other.items())
     }
 }
 

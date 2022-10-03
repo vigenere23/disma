@@ -28,13 +28,15 @@ impl DiffCommand for AddRole {
 pub struct UpdateRole {
     existing_role: ExistingRole,
     awaiting_role: AwaitingRole,
+    diffs: Vec<Diff>,
 }
 
 impl UpdateRole {
-    pub fn new(existing_role: ExistingRole, awaiting_role: AwaitingRole) -> Self {
+    pub fn new(existing_role: ExistingRole, awaiting_role: AwaitingRole, diffs: Vec<Diff>) -> Self {
         Self {
             existing_role,
             awaiting_role,
+            diffs,
         }
     }
 }
@@ -48,10 +50,7 @@ impl DiffCommand for UpdateRole {
         EntityChange::Update(
             Entity::Role,
             self.existing_role.name.clone(),
-            vec![
-                Diff::Remove(format!("{:#?}", &self.existing_role)), // TODO more granular diffs
-                Diff::Add(format!("{:#?}", &self.awaiting_role)),
-            ],
+            self.diffs.clone(),
         )
     }
 }

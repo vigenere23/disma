@@ -54,13 +54,17 @@ impl ApplyDiffs {
         for diff in diffs {
             match diff {
                 EntityChange::Create(entity, name) => {
-                    println!("\n● 🆕 Adding {:?} {name}", entity)
+                    println!("\n● 🆕 Adding {:?} {}", entity, name.bold().on_black())
                 }
                 EntityChange::Delete(entity, name) => {
-                    println!("\n● 🗑️  Removing {:?} {name}", entity)
+                    println!("\n● 🗑️  Removing {:?} {}", entity, name.bold().on_black())
                 }
                 EntityChange::Update(entity, name, diffs) => {
-                    println!("\n● 🔄 Updating {:?} {name} with diffs:", entity);
+                    println!(
+                        "\n● 🔄 Updating {:?} {} with diffs:",
+                        entity,
+                        name.bold().on_black()
+                    );
                     for diff in diffs {
                         print!("{}", self.formatter.format(&diff));
                     }
