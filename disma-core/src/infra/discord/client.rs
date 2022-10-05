@@ -114,21 +114,25 @@ impl DiscordGuildClient {
 
 impl GuildCommander for DiscordGuildClient {
     fn add_role(&self, role: &AwaitingRole) {
-        self.api.add_role(&self.guild_id, RoleRequest::from(role));
+        self.api
+            .add_role(&self.guild_id, RoleRequest::from(role))
+            .unwrap();
     }
 
     fn update_role(&self, id: &str, role: &AwaitingRole) {
         self.api
-            .update_role(&self.guild_id, id, RoleRequest::from(role));
+            .update_role(&self.guild_id, id, RoleRequest::from(role))
+            .unwrap();
     }
 
     fn delete_role(&self, id: &str) {
-        self.api.delete_role(&self.guild_id, id);
+        self.api.delete_role(&self.guild_id, id).unwrap();
     }
 
     fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
         self.api
-            .add_channel(&self.guild_id, ChannelRequest::from(category, roles));
+            .add_channel(&self.guild_id, ChannelRequest::from(category, roles))
+            .unwrap();
     }
 
     fn update_category(
@@ -138,10 +142,11 @@ impl GuildCommander for DiscordGuildClient {
         roles: &RolesList<ExistingRole>,
     ) {
         self.api
-            .update_channel(id, ChannelRequest::from(category, roles));
+            .update_channel(id, ChannelRequest::from(category, roles))
+            .unwrap();
     }
 
     fn delete_category(&self, id: &str) {
-        self.api.delete_channel(id);
+        self.api.delete_channel(id).unwrap();
     }
 }

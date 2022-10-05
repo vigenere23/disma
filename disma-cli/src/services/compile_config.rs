@@ -21,10 +21,10 @@ impl CompileConfig {
     }
 
     pub fn run(&self, template_file: &str, vars_file: &str, output_file: &str, force: bool) {
-        println!();
         let template = fs::read_to_string(template_file).unwrap();
         let context: Value = self.deserializer.deserialize(Path::new(vars_file));
 
+        println!();
         println!("{}", "🡲 ⚙️ Compiling guild config...".bold());
         let mut renderer = Handlebars::new();
         renderer

@@ -31,9 +31,9 @@ impl ApplyChanges {
     }
 
     pub fn run(&self, guild_id: &str, file: &str, dry_run: bool, force: bool) {
-        println!();
         let file_path = Path::new(file);
 
+        println!();
         println!(
             "{}",
             format!("🡲 🛠️  Loading guild config from '{}'...", &file).bold()
@@ -81,7 +81,6 @@ impl ApplyChanges {
         }
 
         println!("{}", "🡲 🚀 Applying changes...".bold());
-        // TODO BUG: changes are not applied...
         self.diff_service.apply_changes(guild_id, &awaiting_guild);
     }
 }

@@ -24,12 +24,12 @@ impl SaveExistingGuild {
     }
 
     pub fn run(&self, guild_id: &str, file: &str, force: bool) {
-        println!();
         let guild = self.guild_querier.get_guild(guild_id);
 
         let config = GuildConfig::from(&guild);
         let file_path = Path::new(file);
 
+        println!();
         println!(
             "{}",
             format!("🡲 💾 Saving current guild config to '{}'...", file).bold()
