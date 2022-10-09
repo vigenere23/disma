@@ -7,7 +7,7 @@ use crate::{
     guild::GuildCommanderRef,
 };
 
-use super::base::{Diff, DiffCommand, EntityChange};
+use super::base::{DiffCommand, EntityChange};
 
 pub struct AddCategory {
     category: AwaitingCategory,
@@ -63,12 +63,7 @@ impl DiffCommand for UpdateCategory {
         EntityChange::Update(
             Entity::Category,
             self.existing_category.name.clone(),
-            vec![
-                Diff::Remove(format!("{:#?}", &self.existing_category)),
-                Diff::Add(format!("{:#?}", &self.awaiting_category)),
-            ],
-            // TODO more granular diffs with
-            // self.existing_category.diffs_with(&self.awaiting_category),
+            self.existing_category.diffs_with(&self.awaiting_category),
         )
     }
 }

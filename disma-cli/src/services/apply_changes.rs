@@ -80,7 +80,7 @@ impl ApplyChanges {
             abort();
         }
 
-        println!("{}", "🡲 🚀 Applying changes...".bold());
+        println!("{}", "🡲 🚀 Applying changes...\n".bold());
         self.diff_service.apply_changes(guild_id, &awaiting_guild);
     }
 }
