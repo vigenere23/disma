@@ -50,7 +50,9 @@ impl GuildQuerier for DiscordClient {
                             .permission_overwrites
                             .iter()
                             .map(|permissions| PermissionsOverwrites {
-                                role: roles_list.find_by_id(&permissions.role_id).clone(),
+                                role: roles_list
+                                    .find_by_id(&permissions.role_or_member_id)
+                                    .clone(),
                                 allow: PermissionsList::from(permissions.allow.as_str()),
                                 deny: PermissionsList::from(permissions.deny.as_str()),
                             })
@@ -61,6 +63,7 @@ impl GuildQuerier for DiscordClient {
             })
             .collect();
 
+        // TODO
         // let channels: Vec<ExistingChannel> = channel_responses
         //     .iter()
         //     .filter_map(|response| {

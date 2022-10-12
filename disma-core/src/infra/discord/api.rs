@@ -1,4 +1,4 @@
-use crate::utils::http::{Client, ClientBuilder, Response};
+use crate::utils::http::{Client, Response};
 
 use reqwest::{
     header::{AUTHORIZATION, USER_AGENT},
@@ -17,22 +17,22 @@ pub struct DiscordApi {
 
 impl DiscordApi {
     pub fn from_bot(bot_token: &str) -> DiscordApi {
-        let client = ClientBuilder::new()
+        let client = Client::new()
             .base_url("https://discord.com/api/v9")
             .header(USER_AGENT, "")
-            .header(AUTHORIZATION, &format!("Bot {}", bot_token))
-            .build();
+            .header(AUTHORIZATION, &format!("Bot {}", bot_token));
         Self { client }
     }
 
     pub fn list_roles(&self, guild_id: &str) -> Result<Vec<RoleResponse>, String> {
         let url = format!("/guilds/{}/roles", guild_id);
-        self.client.get(&url).send().unwrap().parsed_body()
+        self.client.clone().get(&url).send().unwrap().parsed_body()
     }
 
     pub fn add_role(&self, guild_id: &str, body: RoleRequest) -> Result<RoleResponse, String> {
         let url = format!("/guilds/{}/roles", guild_id);
-        let response = self.handle_request(|| self.client.post(&url).json_body(body)?.send());
+        let response =
+            self.handle_request(|| self.client.clone().post(&url).json_body(body)?.send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
@@ -44,26 +44,27 @@ impl DiscordApi {
         body: RoleRequest,
     ) -> Result<RoleResponse, String> {
         let url = format!("/guilds/{}/roles/{}", guild_id, role_id);
-        let response = self.handle_request(|| self.client.patch(&url).json_body(body)?.send());
+        let response =
+            self.handle_request(|| self.client.clone().patch(&url).json_body(body)?.send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
 
     pub fn delete_role(&self, guild_id: &str, role_id: &str) -> Result<(), String> {
         let url = format!("/guilds/{}/roles/{}", guild_id, role_id);
-        let response = self.handle_request(|| self.client.delete(&url).send());
+        let response = self.handle_request(|| self.client.clone().delete(&url).send());
         self.handle_response(response).map(|_| ())
     }
 
     pub fn list_guilds(&self) -> Result<Vec<GuildResponse>, String> {
-        let response = self.handle_request(|| self.client.get("/users/@me/guilds").send());
+        let response = self.handle_request(|| self.client.clone().get("/users/@me/guilds").send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
 
     pub fn list_channels(&self, guild_id: &str) -> Result<Vec<ChannelResponse>, String> {
         let url = format!("/guilds/{}/channels", guild_id);
-        let response = self.handle_request(|| self.client.get(&url).send());
+        let response = self.handle_request(|| self.client.clone().get(&url).send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
@@ -74,7 +75,8 @@ impl DiscordApi {
         body: ChannelRequest,
     ) -> Result<ChannelResponse, String> {
         let url = format!("/guilds/{}/channels", guild_id);
-        let response = self.handle_request(|| self.client.post(&url).json_body(body)?.send());
+        let response =
+            self.handle_request(|| self.client.clone().post(&url).json_body(body)?.send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
@@ -85,14 +87,15 @@ impl DiscordApi {
         body: ChannelRequest,
     ) -> Result<ChannelResponse, String> {
         let url = format!("/channels/{}", id);
-        let response = self.handle_request(|| self.client.patch(&url).json_body(body)?.send());
+        let response =
+            self.handle_request(|| self.client.clone().patch(&url).json_body(body)?.send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
     }
 
     pub fn delete_channel(&self, id: &str) -> Result<(), String> {
         let url = format!("/channels/{}", id);
-        let response = self.handle_request(|| self.client.delete(&url).send());
+        let response = self.handle_request(|| self.client.clone().delete(&url).send());
         self.handle_response(response).map(|_| ())
     }
 
