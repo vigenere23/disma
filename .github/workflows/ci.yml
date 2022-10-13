@@ -17,6 +17,13 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.62.1
+          components: rustfmt, clippy
+
       - name: Lint
         run: ./ci/lint.sh
 
