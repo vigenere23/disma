@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use disma::{
-    category::{AwaitingCategory, CategoryPermissionsOverwrites, ExistingCategory},
+    category::{AwaitingCategory, ExistingCategory},
+    overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
     permission::PermissionsList,
     role::{AwaitingRole, Role, RolesList},
 };
@@ -17,12 +18,14 @@ impl From<&ExistingCategory> for CategoryConfig {
     fn from(category: &ExistingCategory) -> Self {
         Self {
             name: category.name.clone(),
-            permissions_overwrites: category.permissions_overwrites.as_ref().map(|permissions| {
-                permissions
+            permissions_overwrites: Option::from(
+                category
+                    .overwrites
+                    .items()
                     .iter()
                     .map(CategoryRolePermissionsConfig::from)
-                    .collect()
-            }),
+                    .collect::<Vec<CategoryRolePermissionsConfig>>(),
+            ),
         }
     }
 }
@@ -31,21 +34,25 @@ impl CategoryConfig {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
         AwaitingCategory {
             name: self.name,
-            permissions_overwrites: self.permissions_overwrites.map(|permissions| {
-                permissions
-                    .into_iter()
-                    .map(|permission| CategoryPermissionsOverwrites {
-                        role: roles
-                            .find_by_name(&permission.role)
-                            .unwrap_or_else(|| {
-                                panic!("No role found with name {}", &permission.role)
+            overwrites: PermissionsOverwritesList::from(
+                self.permissions_overwrites
+                    .map(|permissions| {
+                        permissions
+                            .into_iter()
+                            .map(|permission| PermissionsOverwrites {
+                                role: roles
+                                    .find_by_name(&permission.role)
+                                    .unwrap_or_else(|| {
+                                        panic!("No role found with name {}", &permission.role)
+                                    })
+                                    .clone(),
+                                allow: PermissionsList::from(&permission.allow),
+                                deny: PermissionsList::from(&permission.deny),
                             })
-                            .clone(),
-                        allow: PermissionsList::from(&permission.allow),
-                        deny: PermissionsList::from(&permission.deny),
+                            .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
                     })
-                    .collect()
-            }),
+                    .unwrap_or_default(),
+            ),
         }
     }
 }
@@ -57,11 +64,11 @@ pub struct CategoryRolePermissionsConfig {
     pub deny: Vec<String>,
 }
 
-impl<T> From<&CategoryPermissionsOverwrites<T>> for CategoryRolePermissionsConfig
+impl<T> From<&PermissionsOverwrites<T>> for CategoryRolePermissionsConfig
 where
     T: Role,
 {
-    fn from(permissions: &CategoryPermissionsOverwrites<T>) -> Self {
+    fn from(permissions: &PermissionsOverwrites<T>) -> Self {
         Self {
             role: permissions.role.name(),
             allow: permissions

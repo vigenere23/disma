@@ -1,2 +1,2 @@
 cargo check
-cargo clippy -- -A clippy::from_over_into -A clippy::upper_case_acronyms
+cargo clippy -- -A clippy::from_over_into -A clippy::upper_case_acronyms -A clippy::new_without_default

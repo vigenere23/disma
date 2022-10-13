@@ -31,7 +31,7 @@ impl From<&ExistingRole> for RoleConfig {
             permissions,
             color: role.color.clone(),
             show_in_sidebar: role.show_in_sidebar,
-            is_mentionable: role.is_mentionalbe,
+            is_mentionable: role.is_mentionable,
         }
     }
 }

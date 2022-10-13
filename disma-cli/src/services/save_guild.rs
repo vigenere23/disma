@@ -1,3 +1,4 @@
+use colored::Colorize;
 use std::{path::Path, sync::Arc};
 
 use crate::{
@@ -28,10 +29,17 @@ impl SaveExistingGuild {
         let config = GuildConfig::from(&guild);
         let file_path = Path::new(file);
 
-        println!("\n💾 Saving current guild config to '{}'...", file);
+        println!();
+        println!(
+            "{}",
+            format!("🡲 💾 Saving current guild config to '{}'...", file).bold()
+        );
 
         if !force && file_path.exists() {
-            println!("A file named '{}' already exists.", file);
+            println!(
+                "{}",
+                format!("🡲 ❗ A file named '{}' already exists.", file).bold()
+            );
 
             if !ask_user_confirmation("Do you still want to proceeed?") {
                 abort();
@@ -40,6 +48,6 @@ impl SaveExistingGuild {
 
         self.serializer.serialize(&config, file_path);
 
-        println!("\n✨ DONE.");
+        println!("{}", "🡲 ✨ DONE.".bold());
     }
 }

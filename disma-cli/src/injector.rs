@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use disma::{
+    changes::ChangesService,
     diff::{
-        differ::{GuildDiffer, GuildDifferRef},
-        event::{DiffEventListenerRef, NullDiffEventListener},
+        event::DiffEventListenerRef,
+        factory::{DiffCommandFactory, DiffCommandFactoryRef},
     },
-    diff_service::GuildDiffService,
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
@@ -14,8 +14,12 @@ use disma::{
 };
 
 use crate::{
+    infra::diff::{
+        event::CliDiffEventListener,
+        formatter::{DiffFormater, DiffFormaterRef},
+    },
     services::{
-        apply_diffs::ApplyDiffs, compile_config::CompileConfig, list_guilds::ListGuilds,
+        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
     },
     utils::{
@@ -58,9 +62,9 @@ impl Get<Arc<DiscordGuildClient>> for Injector {
     }
 }
 
-impl Get<GuildDifferRef> for Injector {
-    fn get(&self) -> GuildDifferRef {
-        Arc::from(GuildDiffer {})
+impl Get<DiffCommandFactoryRef> for Injector {
+    fn get(&self) -> DiffCommandFactoryRef {
+        Arc::from(DiffCommandFactory {})
     }
 }
 
@@ -78,13 +82,13 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
 
 impl Get<DiffEventListenerRef> for Injector {
     fn get(&self) -> DiffEventListenerRef {
-        Arc::from(NullDiffEventListener {})
+        Arc::from(CliDiffEventListener {})
     }
 }
 
-impl Get<Arc<GuildDiffService>> for Injector {
-    fn get(&self) -> Arc<GuildDiffService> {
-        Arc::from(GuildDiffService::new(
+impl Get<Arc<ChangesService>> for Injector {
+    fn get(&self) -> Arc<ChangesService> {
+        Arc::from(ChangesService::new(
             self.get(),
             self.get(),
             self.get(),
@@ -105,9 +109,15 @@ impl Get<Arc<Serializer>> for Injector {
     }
 }
 
-impl Get<Arc<ApplyDiffs>> for Injector {
-    fn get(&self) -> Arc<ApplyDiffs> {
-        Arc::from(ApplyDiffs::new(self.get(), self.get()))
+impl Get<DiffFormaterRef> for Injector {
+    fn get(&self) -> DiffFormaterRef {
+        Arc::from(DiffFormater::new())
+    }
+}
+
+impl Get<Arc<ApplyChanges>> for Injector {
+    fn get(&self) -> Arc<ApplyChanges> {
+        Arc::from(ApplyChanges::new(self.get(), self.get(), self.get()))
     }
 }
 

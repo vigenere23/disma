@@ -44,10 +44,12 @@ If your bot hasn't been already added to the server that you want to manage with
 1. On your bot's application page, go to `OAuth2` on the sidebar
 2. In the `General` section, add a placeholder Redirect URL (can be `http://localhost`) and Save
 3. In the `URL Generator` section, select the `identify` scope. A new section for the redirect URL will appear, make sur to select one.
-4. Then also select the `bot` scope. A new pannel with Permissions will appear. Disma only needs the `Manage Roles` and `Manage Channels` permissions, so you can select those.
+4. Then also select the `bot` scope. A new pannel with Permissions will appear. Disma **will need** the `Administrator` permission, since the `Manage Roles` one is not enough. See the note below \*.
    - If you only want to test the bot for saving configs, you can leave all permissions unselected.
 5. Navigate to the generated URL at the bottom of the page. This will bring you to an auth page, asking you to choose which server to add your bot to.
-6. Confirm and your bot should have been added to your server!
+6. When confirming, a blank page will open. Just close it and your bot should have been added to your server!
+
+> \* In Discord, a role with the Manage Roles permission also needs "higher" permissions that the role it is managing. To ensure that Disma can always manage every role, you will need to make it an Administrator.
 
 > P.S.: You will need to redo those steps for every server
 

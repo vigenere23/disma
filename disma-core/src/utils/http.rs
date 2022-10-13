@@ -7,13 +7,13 @@ use reqwest::{
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
 
-pub struct ClientBuilder {
+#[derive(Clone)]
+pub struct Client {
     base_url: String,
     base_headers: HeaderMap,
 }
 
-// TODO Client should be it's own builder
-impl ClientBuilder {
+impl Client {
     pub fn new() -> Self {
         Self {
             base_url: String::new(),
@@ -32,52 +32,28 @@ impl ClientBuilder {
         self
     }
 
-    pub fn build(&self) -> Client {
-        Client::new(&self.base_url, self.base_headers.clone())
-    }
-}
-
-impl Default for ClientBuilder {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct Client {
-    base_url: String,
-    base_headers: HeaderMap,
-}
-
-impl Client {
-    pub fn new(base_url: &str, base_headers: HeaderMap) -> Self {
-        Self {
-            base_url: base_url.to_string(),
-            base_headers,
-        }
-    }
-
-    pub fn get(&self, url: &str) -> RequestBuilder {
+    pub fn get(self, url: &str) -> Request {
         self.request(Method::GET, url)
     }
 
-    pub fn post(&self, url: &str) -> RequestBuilder {
+    pub fn post(self, url: &str) -> Request {
         self.request(Method::POST, url)
     }
 
-    pub fn patch(&self, url: &str) -> RequestBuilder {
+    pub fn patch(self, url: &str) -> Request {
         self.request(Method::PATCH, url)
     }
 
-    pub fn put(&self, url: &str) -> RequestBuilder {
+    pub fn put(self, url: &str) -> Request {
         self.request(Method::PUT, url)
     }
 
-    pub fn delete(&self, url: &str) -> RequestBuilder {
+    pub fn delete(self, url: &str) -> Request {
         self.request(Method::DELETE, url)
     }
 
-    pub fn request(&self, method: Method, url: &str) -> RequestBuilder {
-        RequestBuilder::new(method, &self.full_url(url)).headers(&self.base_headers)
+    pub fn request(self, method: Method, url: &str) -> Request {
+        Request::new(method, &self.full_url(url)).headers(&self.base_headers)
     }
 
     fn full_url(&self, url_suffix: &str) -> String {
@@ -89,15 +65,15 @@ impl Client {
     }
 }
 
-pub struct RequestBuilder {
+#[derive(Debug)]
+pub struct Request {
     method: Method,
     url: String,
     headers: HeaderMap,
     body: Option<String>,
 }
 
-// TODO Request should be it's own builder
-impl RequestBuilder {
+impl Request {
     pub fn new(method: Method, url: &str) -> Self {
         Self {
             method,
@@ -150,39 +126,7 @@ impl RequestBuilder {
         Ok(self.header(CONTENT_TYPE, "application/json"))
     }
 
-    pub fn build(&self) -> Request {
-        Request::new(
-            self.method.clone(),
-            &self.url,
-            self.headers.clone(),
-            self.body.clone(),
-        )
-    }
-
-    pub fn send(&self) -> Result<Response, String> {
-        self.build().send()
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct Request {
-    method: Method,
-    url: String,
-    headers: HeaderMap,
-    body: Option<String>,
-}
-
-impl Request {
-    pub fn new(method: Method, url: &str, headers: HeaderMap, body: Option<String>) -> Self {
-        Self {
-            method,
-            url: url.to_string(),
-            headers,
-            body,
-        }
-    }
-
-    pub fn send(&self) -> Result<Response, String> {
+    pub fn send(self) -> Result<Response, String> {
         let client = reqwest::blocking::Client::new();
         let mut request = client
             .request(self.method.clone(), self.url.clone())
@@ -202,7 +146,7 @@ impl Request {
             .text()
             .map_err(|error| format!("Could not fetch response text content. Error: {}", error))?;
 
-        let response = Response::new(self.clone(), status, &text_content);
+        let response = Response::new(self, status, &text_content);
         Ok(response)
     }
 }

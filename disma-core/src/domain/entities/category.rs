@@ -1,9 +1,12 @@
 use std::collections::HashSet;
 
-use super::{
-    permission::PermissionsList,
-    role::{AwaitingRole, ExistingRole, Role},
+use crate::{
+    diff::base::{Diff, Differ},
+    overwrites::PermissionsOverwritesList,
+    utils::misc::IfThen,
 };
+
+use super::role::{AwaitingRole, ExistingRole};
 
 pub trait Category: Clone {
     fn name(&self) -> String;
@@ -12,7 +15,7 @@ pub trait Category: Clone {
 #[derive(Clone, Debug)]
 pub struct AwaitingCategory {
     pub name: String,
-    pub permissions_overwrites: Option<Vec<CategoryPermissionsOverwrites<AwaitingRole>>>,
+    pub overwrites: PermissionsOverwritesList<AwaitingRole>,
     // pub channels: Vec<AwaitingChannel>,
 }
 
@@ -26,7 +29,20 @@ impl Category for AwaitingCategory {
 pub struct ExistingCategory {
     pub id: String,
     pub name: String,
-    pub permissions_overwrites: Option<Vec<CategoryPermissionsOverwrites<ExistingRole>>>,
+    pub overwrites: PermissionsOverwritesList<ExistingRole>,
+}
+
+impl ExistingCategory {
+    pub fn diffs_with(&self, awaiting: &AwaitingCategory) -> Vec<Diff> {
+        let mut all_diffs = vec![];
+
+        self.overwrites.diffs_with(&awaiting.overwrites).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("overwrites".into(), diffs)),
+        );
+
+        all_diffs
+    }
 }
 
 impl Category for ExistingCategory {
@@ -37,58 +53,7 @@ impl Category for ExistingCategory {
 
 impl PartialEq<ExistingCategory> for AwaitingCategory {
     fn eq(&self, other: &ExistingCategory) -> bool {
-        if self.name != other.name {
-            return false;
-        }
-
-        match (&self.permissions_overwrites, &other.permissions_overwrites) {
-            (None, None) => true,
-            (Some(permissions), Some(other_permissions)) => {
-                if permissions.len() != other_permissions.len() {
-                    return false;
-                }
-
-                permissions
-                    .clone()
-                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
-                other_permissions
-                    .clone()
-                    .sort_by(|a, b| a.role.name.cmp(&b.role.name));
-
-                for (permission, other_permission) in
-                    permissions.iter().zip(other_permissions.iter())
-                {
-                    if permission != other_permission {
-                        return false;
-                    }
-                }
-
-                true
-            }
-            _ => false,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct CategoryPermissionsOverwrites<T>
-where
-    T: Role,
-{
-    pub role: T,
-    pub allow: PermissionsList,
-    pub deny: PermissionsList,
-}
-
-impl<T, U> PartialEq<CategoryPermissionsOverwrites<T>> for CategoryPermissionsOverwrites<U>
-where
-    T: Role,
-    U: Role,
-{
-    fn eq(&self, other: &CategoryPermissionsOverwrites<T>) -> bool {
-        self.role.name() == other.role.name()
-            && self.allow == other.allow
-            && self.deny == other.deny
+        self.name == other.name && self.overwrites == other.overwrites
     }
 }
 

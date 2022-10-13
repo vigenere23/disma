@@ -1,10 +1,13 @@
 use std::sync::Arc;
 
-use crate::domain::entities::{
-    category::{AwaitingCategory, CategoriesList, CategoryPermissionsOverwrites, ExistingCategory},
-    guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-    permission::PermissionsList,
-    role::{AwaitingRole, ExistingRole, RolesList},
+use crate::{
+    domain::entities::{
+        category::{AwaitingCategory, CategoriesList, ExistingCategory},
+        guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
+        permission::PermissionsList,
+        role::{AwaitingRole, ExistingRole, RolesList},
+    },
+    overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
 };
 
 use super::{
@@ -42,23 +45,25 @@ impl GuildQuerier for DiscordClient {
                 4 => Some(ExistingCategory {
                     id: response.id.clone(),
                     name: response.name.clone(),
-                    permissions_overwrites: response.permission_overwrites.as_ref().map(
-                        |overwrites| {
-                            overwrites
-                                .iter()
-                                .map(|permissions| CategoryPermissionsOverwrites {
-                                    role: roles_list.find_by_id(&permissions.role_id).clone(),
-                                    allow: PermissionsList::from(permissions.allow.as_str()),
-                                    deny: PermissionsList::from(permissions.deny.as_str()),
-                                })
-                                .collect()
-                        },
+                    overwrites: PermissionsOverwritesList::from(
+                        response
+                            .permission_overwrites
+                            .iter()
+                            .map(|permissions| PermissionsOverwrites {
+                                role: roles_list
+                                    .find_by_id(&permissions.role_or_member_id)
+                                    .clone(),
+                                allow: PermissionsList::from(permissions.allow.as_str()),
+                                deny: PermissionsList::from(permissions.deny.as_str()),
+                            })
+                            .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
                     ),
                 }),
                 _ => None,
             })
             .collect();
 
+        // TODO
         // let channels: Vec<ExistingChannel> = channel_responses
         //     .iter()
         //     .filter_map(|response| {
@@ -112,21 +117,25 @@ impl DiscordGuildClient {
 
 impl GuildCommander for DiscordGuildClient {
     fn add_role(&self, role: &AwaitingRole) {
-        self.api.add_role(&self.guild_id, RoleRequest::from(role));
+        self.api
+            .add_role(&self.guild_id, RoleRequest::from(role))
+            .unwrap();
     }
 
     fn update_role(&self, id: &str, role: &AwaitingRole) {
         self.api
-            .update_role(&self.guild_id, id, RoleRequest::from(role));
+            .update_role(&self.guild_id, id, RoleRequest::from(role))
+            .unwrap();
     }
 
     fn delete_role(&self, id: &str) {
-        self.api.delete_role(&self.guild_id, id);
+        self.api.delete_role(&self.guild_id, id).unwrap();
     }
 
     fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
         self.api
-            .add_channel(&self.guild_id, ChannelRequest::from(category, roles));
+            .add_channel(&self.guild_id, ChannelRequest::from(category, roles))
+            .unwrap();
     }
 
     fn update_category(
@@ -136,10 +145,11 @@ impl GuildCommander for DiscordGuildClient {
         roles: &RolesList<ExistingRole>,
     ) {
         self.api
-            .update_channel(id, ChannelRequest::from(category, roles));
+            .update_channel(id, ChannelRequest::from(category, roles))
+            .unwrap();
     }
 
     fn delete_category(&self, id: &str) {
-        self.api.delete_channel(id);
+        self.api.delete_channel(id).unwrap();
     }
 }

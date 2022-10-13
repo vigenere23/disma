@@ -3,7 +3,7 @@ use crate::{
     guild::GuildCommanderRef,
 };
 
-use super::base::{Diff, DiffCommand};
+use super::base::{Diff, DiffCommand, Entity, EntityChange};
 
 pub struct AddRole {
     role: AwaitingRole,
@@ -20,21 +20,23 @@ impl DiffCommand for AddRole {
         guild.add_role(&self.role);
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Add(format!("Role {}", &self.role.name))
+    fn describe(&self) -> EntityChange {
+        EntityChange::Create(Entity::Role, self.role.name.clone())
     }
 }
 
 pub struct UpdateRole {
     existing_role: ExistingRole,
     awaiting_role: AwaitingRole,
+    diffs: Vec<Diff>,
 }
 
 impl UpdateRole {
-    pub fn new(existing_role: ExistingRole, awaiting_role: AwaitingRole) -> Self {
+    pub fn new(existing_role: ExistingRole, awaiting_role: AwaitingRole, diffs: Vec<Diff>) -> Self {
         Self {
             existing_role,
             awaiting_role,
+            diffs,
         }
     }
 }
@@ -44,13 +46,11 @@ impl DiffCommand for UpdateRole {
         guild.update_role(&self.existing_role.id, &self.awaiting_role);
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Update(
-            format!("Role {}", &self.existing_role.name),
-            vec![
-                Diff::Remove(format!("{:#?}", &self.existing_role)), // TODO more granular diffs
-                Diff::Add(format!("{:#?}", &self.awaiting_role)),
-            ],
+    fn describe(&self) -> EntityChange {
+        EntityChange::Update(
+            Entity::Role,
+            self.existing_role.name.clone(),
+            self.diffs.clone(),
         )
     }
 }
@@ -70,7 +70,7 @@ impl DiffCommand for DeleteRole {
         guild.delete_role(&self.role.id);
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Remove(format!("Role {}", &self.role.name))
+    fn describe(&self) -> EntityChange {
+        EntityChange::Delete(Entity::Role, self.role.name.clone())
     }
 }

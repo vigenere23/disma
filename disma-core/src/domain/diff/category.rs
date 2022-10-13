@@ -1,4 +1,5 @@
 use crate::{
+    diff::base::Entity,
     domain::entities::{
         category::{AwaitingCategory, ExistingCategory},
         role::{ExistingRole, RolesList},
@@ -6,7 +7,7 @@ use crate::{
     guild::GuildCommanderRef,
 };
 
-use super::base::{Diff, DiffCommand};
+use super::base::{DiffCommand, EntityChange};
 
 pub struct AddCategory {
     category: AwaitingCategory,
@@ -24,8 +25,8 @@ impl DiffCommand for AddCategory {
         guild.add_category(&self.category, &self.roles);
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Add(format!("Category {}", &self.category.name))
+    fn describe(&self) -> EntityChange {
+        EntityChange::Create(Entity::Category, self.category.name.clone())
     }
 }
 
@@ -58,13 +59,11 @@ impl DiffCommand for UpdateCategory {
         );
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Update(
-            format!("Category {}", &self.existing_category.name),
-            vec![
-                Diff::Remove(format!("{:#?}", &self.existing_category)), // TODO more granular diffs
-                Diff::Add(format!("{:#?}", &self.awaiting_category)),
-            ],
+    fn describe(&self) -> EntityChange {
+        EntityChange::Update(
+            Entity::Category,
+            self.existing_category.name.clone(),
+            self.existing_category.diffs_with(&self.awaiting_category),
         )
     }
 }
@@ -84,7 +83,7 @@ impl DiffCommand for DeleteCategory {
         guild.delete_category(&self.category.id);
     }
 
-    fn describe(&self) -> Diff {
-        Diff::Remove(format!("Category {}", &self.category.name))
+    fn describe(&self) -> EntityChange {
+        EntityChange::Delete(Entity::Category, self.category.name.clone())
     }
 }

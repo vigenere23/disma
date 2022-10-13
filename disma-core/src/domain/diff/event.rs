@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
-use super::base::Diff;
+use super::base::EntityChange;
 
 pub trait DiffEventListener {
-    fn after_diff_executed(&self, diff: Diff);
+    fn after_change_executed(&self, change: EntityChange);
 }
 pub type DiffEventListenerRef = Arc<dyn DiffEventListener>;
 
 pub struct NullDiffEventListener {}
 
 impl DiffEventListener for NullDiffEventListener {
-    fn after_diff_executed(&self, _diff: Diff) {}
+    fn after_change_executed(&self, _: EntityChange) {}
 }
