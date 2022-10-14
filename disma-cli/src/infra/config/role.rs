@@ -5,12 +5,14 @@ use serde::{Deserialize, Serialize};
 use disma::{
     permission::{Permission, PermissionsList},
     role::{AwaitingRole, ExistingRole},
+    utils::vec::Compress,
 };
 
 #[derive(Serialize, Deserialize)]
 pub struct RoleConfig {
     pub name: String,
-    pub permissions: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub permissions: Option<Vec<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Option<String>,
     pub show_in_sidebar: bool,
@@ -19,7 +21,7 @@ pub struct RoleConfig {
 
 impl From<&ExistingRole> for RoleConfig {
     fn from(role: &ExistingRole) -> Self {
-        let permissions = role
+        let permissions: Vec<String> = role
             .permissions
             .items()
             .iter()
@@ -28,7 +30,7 @@ impl From<&ExistingRole> for RoleConfig {
 
         Self {
             name: role.name.clone(),
-            permissions,
+            permissions: permissions.compress(),
             color: role.color.clone(),
             show_in_sidebar: role.show_in_sidebar,
             is_mentionable: role.is_mentionable,
@@ -40,6 +42,7 @@ impl Into<AwaitingRole> for RoleConfig {
     fn into(self) -> AwaitingRole {
         let permissions: Vec<Permission> = self
             .permissions
+            .unwrap_or_default()
             .iter()
             .map(|permission| Permission::from_str(permission).unwrap())
             .collect();

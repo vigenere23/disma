@@ -4,28 +4,34 @@ use disma::{
     category::{AwaitingCategory, CategoriesList},
     guild::{AwaitingGuild, ExistingGuild},
     role::{AwaitingRole, RolesList},
+    utils::vec::Compress,
 };
 
 use super::{category::CategoryConfig, role::RoleConfig};
 
 #[derive(Serialize, Deserialize)]
 pub struct GuildConfig {
-    roles: Vec<RoleConfig>,
-    categories: Vec<CategoryConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    roles: Option<Vec<RoleConfig>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    categories: Option<Vec<CategoryConfig>>,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
     fn from(guild: &ExistingGuild) -> Self {
-        let roles = guild.roles.items().iter().map(|role| role.into()).collect();
+        let roles: Vec<RoleConfig> = guild.roles.items().iter().map(|role| role.into()).collect();
 
-        let categories = guild
+        let categories: Vec<CategoryConfig> = guild
             .categories
             .items()
             .iter()
             .map(CategoryConfig::from)
             .collect();
 
-        Self { roles, categories }
+        Self {
+            roles: roles.compress(),
+            categories: categories.compress(),
+        }
     }
 }
 
@@ -33,6 +39,7 @@ impl Into<AwaitingGuild> for GuildConfig {
     fn into(self) -> AwaitingGuild {
         let roles: Vec<AwaitingRole> = self
             .roles
+            .unwrap_or_default()
             .into_iter()
             .map(|role_config| role_config.into())
             .collect();
@@ -41,6 +48,7 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         let categories: Vec<AwaitingCategory> = self
             .categories
+            .unwrap_or_default()
             .into_iter()
             .map(|category| category.into(&roles_list))
             .collect();
