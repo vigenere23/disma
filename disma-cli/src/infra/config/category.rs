@@ -5,6 +5,7 @@ use disma::{
     overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
     permission::PermissionsList,
     role::{AwaitingRole, Role, RolesList},
+    utils::vec::Compress,
 };
 
 #[derive(Serialize, Deserialize)]
@@ -46,8 +47,8 @@ impl CategoryConfig {
                                         panic!("No role found with name {}", &permission.role)
                                     })
                                     .clone(),
-                                allow: PermissionsList::from(&permission.allow),
-                                deny: PermissionsList::from(&permission.deny),
+                                allow: PermissionsList::from(&permission.allow.unwrap_or_default()),
+                                deny: PermissionsList::from(&permission.deny.unwrap_or_default()),
                             })
                             .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
                     })
@@ -60,8 +61,10 @@ impl CategoryConfig {
 #[derive(Serialize, Deserialize)]
 pub struct CategoryRolePermissionsConfig {
     pub role: String,
-    pub allow: Vec<String>,
-    pub deny: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allow: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub deny: Option<Vec<String>>,
 }
 
 impl<T> From<&PermissionsOverwrites<T>> for CategoryRolePermissionsConfig
@@ -69,20 +72,24 @@ where
     T: Role,
 {
     fn from(permissions: &PermissionsOverwrites<T>) -> Self {
+        let allowed_permissions: Vec<String> = permissions
+            .allow
+            .items()
+            .iter()
+            .map(|item| item.to_string())
+            .collect();
+
+        let denied_permissions: Vec<String> = permissions
+            .deny
+            .items()
+            .iter()
+            .map(|item| item.to_string())
+            .collect();
+
         Self {
             role: permissions.role.name(),
-            allow: permissions
-                .allow
-                .items()
-                .iter()
-                .map(|item| item.to_string())
-                .collect(),
-            deny: permissions
-                .deny
-                .items()
-                .iter()
-                .map(|item| item.to_string())
-                .collect(),
+            allow: allowed_permissions.compress(),
+            deny: denied_permissions.compress(),
         }
     }
 }

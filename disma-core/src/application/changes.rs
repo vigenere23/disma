@@ -55,6 +55,7 @@ impl ChangesService {
             .for_roles(&existing_guild, awaiting_guild);
 
         for diff in role_diffs {
+            self.event_listener.before_change_executed(diff.describe());
             diff.execute(&self.guild_commander);
             self.event_listener.after_change_executed(diff.describe());
         }
@@ -66,6 +67,7 @@ impl ChangesService {
             .for_categories(&existing_guild, awaiting_guild);
 
         for diff in category_diffs {
+            self.event_listener.before_change_executed(diff.describe());
             diff.execute(&self.guild_commander);
             self.event_listener.after_change_executed(diff.describe());
         }
