@@ -16,7 +16,6 @@ pub trait Category: Clone {
 pub struct AwaitingCategory {
     pub name: String,
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
-    // pub channels: Vec<AwaitingChannel>,
 }
 
 impl Category for AwaitingCategory {
@@ -90,5 +89,14 @@ impl<T: Category> From<Vec<T>> for CategoriesList<T> {
         }
 
         Self { categories }
+    }
+}
+
+impl CategoriesList<ExistingCategory> {
+    pub fn find_by_id(&self, id: &str) -> &ExistingCategory {
+        self.categories
+            .iter()
+            .find(|category| category.id == id)
+            .unwrap_or_else(|| panic!("Could not find category with id {}", &id))
     }
 }

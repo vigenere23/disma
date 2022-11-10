@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
+    channel::{ChannelType, ExistingChannel},
     domain::entities::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
@@ -63,31 +64,36 @@ impl GuildQuerier for DiscordClient {
             })
             .collect();
 
-        // TODO
-        // let channels: Vec<ExistingChannel> = channel_responses
-        //     .iter()
-        //     .filter_map(|response| {
-        //         let channel_type = match response._type {
-        //             0 => Some(ChannelType::Text),
-        //             2 => Some(ChannelType::Voice),
-        //             4 => None,
-        //             other => panic!("Channel type {other} not supported."),
-        //         };
+        let categories_list = CategoriesList::from(categories);
 
-        //         channel_type.map(|channel_type| ExistingChannel {
-        //             id: response.id.clone(),
-        //             name: response.name.clone(),
-        //             channel_type,
-        //             category: None, // TODO
-        //             topic: response.topic.clone(),
-        //         })
-        //     })
-        //     .collect();
+        let channels: Vec<ExistingChannel> = channel_responses
+            .iter()
+            .filter_map(|response| {
+                let channel_type = match response._type {
+                    0 => ChannelType::Text,
+                    2 => ChannelType::Voice,
+                    _ => return None,
+                };
+
+                let category = response
+                    .parent_id
+                    .as_ref()
+                    .map(|category_id| categories_list.find_by_id(category_id).clone());
+
+                Some(ExistingChannel {
+                    id: response.id.clone(),
+                    name: response.name.clone(),
+                    channel_type,
+                    category,
+                    topic: response.topic.clone(),
+                })
+            })
+            .collect();
 
         ExistingGuild {
             roles: roles_list,
-            categories: CategoriesList::from(categories),
-            // channels,
+            categories: categories_list,
+            channels,
         }
     }
 

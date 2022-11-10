@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use disma::{
     category::{AwaitingCategory, ExistingCategory},
-    overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
+    overwrites::PermissionsOverwrites,
     permission::PermissionsList,
     role::{AwaitingRole, Role, RolesList},
     utils::vec::Compress,
@@ -33,27 +33,28 @@ impl From<&ExistingCategory> for CategoryConfig {
 
 impl CategoryConfig {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
+        let overwrites = self
+            .permissions_overwrites
+            .map(|permissions| {
+                permissions
+                    .into_iter()
+                    .map(|permission| PermissionsOverwrites {
+                        role: roles
+                            .find_by_name(&permission.role)
+                            .unwrap_or_else(|| {
+                                panic!("No role found with name {}", &permission.role)
+                            })
+                            .clone(),
+                        allow: PermissionsList::from(&permission.allow.unwrap_or_default()),
+                        deny: PermissionsList::from(&permission.deny.unwrap_or_default()),
+                    })
+                    .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
+            })
+            .unwrap_or_default();
+
         AwaitingCategory {
             name: self.name,
-            overwrites: PermissionsOverwritesList::from(
-                self.permissions_overwrites
-                    .map(|permissions| {
-                        permissions
-                            .into_iter()
-                            .map(|permission| PermissionsOverwrites {
-                                role: roles
-                                    .find_by_name(&permission.role)
-                                    .unwrap_or_else(|| {
-                                        panic!("No role found with name {}", &permission.role)
-                                    })
-                                    .clone(),
-                                allow: PermissionsList::from(&permission.allow.unwrap_or_default()),
-                                deny: PermissionsList::from(&permission.deny.unwrap_or_default()),
-                            })
-                            .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
-                    })
-                    .unwrap_or_default(),
-            ),
+            overwrites: overwrites.into(),
         }
     }
 }

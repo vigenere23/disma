@@ -11,8 +11,8 @@ use super::permissions::{PermissionOverwriteType, PermissionOverwritesDto};
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum ChannelType {
-    // Text = 0,
-    // Voice = 2,
+    Text = 0,
+    Voice = 2,
     Category = 4,
 }
 
