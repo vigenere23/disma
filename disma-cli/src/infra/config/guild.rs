@@ -9,7 +9,7 @@ use disma::{
 
 use super::{category::CategoryConfig, channel::ChannelConfig, role::RoleConfig};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct GuildConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     roles: Option<Vec<RoleConfig>>,
@@ -62,9 +62,66 @@ impl Into<AwaitingGuild> for GuildConfig {
             .map(|category| category.into(&roles_list))
             .collect();
 
+        let categories_list = CategoriesList::from(categories);
+
+        let channels = self
+            .channels
+            .unwrap_or_default()
+            .into_iter()
+            .map(|channel| channel.into(&categories_list))
+            .collect();
+
         AwaitingGuild {
             roles: roles_list,
-            categories: CategoriesList::from(categories),
+            categories: categories_list,
+            channels,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use disma::{
+        category::CategoriesList,
+        guild::{AwaitingGuild, ExistingGuild},
+        role::RolesList,
+    };
+
+    use super::GuildConfig;
+
+    #[test]
+    pub fn nones_are_converted_to_empty_arrays() {
+        let config = GuildConfig {
+            roles: None,
+            categories: None,
+            channels: None,
+        };
+
+        let entity: AwaitingGuild = config.into();
+
+        let expected_entity = AwaitingGuild {
+            roles: RolesList::from(vec![]),
+            categories: CategoriesList::from(vec![]),
+            channels: vec![],
+        };
+        assert_eq!(entity, expected_entity);
+    }
+
+    #[test]
+    pub fn empty_arrays_are_converted_to_nones() {
+        let entity = ExistingGuild {
+            roles: RolesList::from(vec![]),
+            categories: CategoriesList::from(vec![]),
+            channels: vec![],
+        };
+
+        let config = GuildConfig::from(&entity);
+
+        let expected_config = GuildConfig {
+            roles: None,
+            categories: None,
+            channels: None,
+        };
+        assert_eq!(config, expected_config);
     }
 }

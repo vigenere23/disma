@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::channel::ExistingChannel;
+use crate::channel::{AwaitingChannel, ExistingChannel};
 
 use super::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
@@ -35,9 +35,11 @@ pub struct ExistingGuild {
     pub channels: Vec<ExistingChannel>,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
     pub categories: CategoriesList<AwaitingCategory>,
+    pub channels: Vec<AwaitingChannel>,
 }
 
 pub struct GuildSummary {

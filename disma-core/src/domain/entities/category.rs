@@ -56,7 +56,7 @@ impl PartialEq<ExistingCategory> for AwaitingCategory {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CategoriesList<T>
 where
     T: Category,
