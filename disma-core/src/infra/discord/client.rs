@@ -70,8 +70,8 @@ impl GuildQuerier for DiscordClient {
             .iter()
             .filter_map(|response| {
                 let channel_type = match response._type {
-                    0 => ChannelType::Text,
-                    2 => ChannelType::Voice,
+                    0 => ChannelType::TEXT,
+                    2 => ChannelType::VOICE,
                     _ => return None,
                 };
 

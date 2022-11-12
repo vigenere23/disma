@@ -68,7 +68,7 @@ impl PartialEq<AwaitingRole> for ExistingRole {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct AwaitingRole {
     pub name: String,
     pub permissions: PermissionsList,

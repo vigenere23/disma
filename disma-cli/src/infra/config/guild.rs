@@ -7,7 +7,7 @@ use disma::{
     utils::vec::Compress,
 };
 
-use super::{category::CategoryConfig, role::RoleConfig};
+use super::{category::CategoryConfig, channel::ChannelConfig, role::RoleConfig};
 
 #[derive(Serialize, Deserialize)]
 pub struct GuildConfig {
@@ -15,6 +15,8 @@ pub struct GuildConfig {
     roles: Option<Vec<RoleConfig>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     categories: Option<Vec<CategoryConfig>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    channels: Option<Vec<ChannelConfig>>,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
@@ -28,9 +30,16 @@ impl From<&ExistingGuild> for GuildConfig {
             .map(CategoryConfig::from)
             .collect();
 
+        let channels: Vec<ChannelConfig> = guild
+            .channels
+            .iter()
+            .map(|channel| channel.into())
+            .collect();
+
         Self {
             roles: roles.compress(),
             categories: categories.compress(),
+            channels: channels.compress(),
         }
     }
 }

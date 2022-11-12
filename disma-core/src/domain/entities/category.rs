@@ -12,7 +12,7 @@ pub trait Category: Clone {
     fn name(&self) -> String;
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct AwaitingCategory {
     pub name: String,
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,

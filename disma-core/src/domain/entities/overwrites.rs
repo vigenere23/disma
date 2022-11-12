@@ -47,7 +47,7 @@ impl Differ<PermissionsOverwrites<AwaitingRole>> for PermissionsOverwrites<Exist
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PermissionsOverwritesList<R>
 where
     R: Role,
