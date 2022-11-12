@@ -121,7 +121,6 @@ mod tests {
     #[test]
     fn can_convert_config_to_awaiting_entity_with_optionals() {
         let channel_name = "general".to_string();
-        let categories = given_awaiting_categories(vec![]);
 
         let config = ChannelConfig {
             name: channel_name.clone(),
@@ -130,7 +129,7 @@ mod tests {
             topic: None,
         };
 
-        let entity = config.into(&categories);
+        let entity = config.into(&CategoriesList::from(vec![]));
 
         let expected_entity = AwaitingChannel {
             name: channel_name.clone(),
