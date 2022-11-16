@@ -25,6 +25,20 @@ pub trait GuildCommander {
         roles: &RolesList<ExistingRole>,
     );
     fn delete_category(&self, id: &str);
+    fn add_channel(
+        &self,
+        channel: &AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    );
+    fn update_channel(
+        &self,
+        id: &str,
+        channel: &AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    );
+    fn delete_channel(&self, id: &str);
 }
 pub type GuildCommanderRef = Arc<dyn GuildCommander>;
 

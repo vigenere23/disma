@@ -1,19 +1,32 @@
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::domain::entities::{
-    category::AwaitingCategory,
-    role::{ExistingRole, RolesList},
+use crate::{
+    category::{CategoriesList, ExistingCategory},
+    channel::{AwaitingChannel, ChannelType},
+    domain::entities::{
+        category::AwaitingCategory,
+        role::{ExistingRole, RolesList},
+    },
 };
 
 use super::permissions::PermissionOverwritesDto;
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
-pub enum ChannelType {
+pub enum ChannelDtoType {
     Text = 0,
     Voice = 2,
     Category = 4,
+}
+
+impl From<ChannelType> for ChannelDtoType {
+    fn from(_type: ChannelType) -> Self {
+        match _type {
+            ChannelType::TEXT => ChannelDtoType::Text,
+            ChannelType::VOICE => ChannelDtoType::Voice,
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -21,13 +34,13 @@ pub struct ChannelRequest {
     pub name: String,
     pub topic: String,
     #[serde(rename = "type")]
-    pub _type: ChannelType,
+    pub _type: ChannelDtoType,
     pub parent_id: Option<String>,
     pub permission_overwrites: Vec<PermissionOverwritesDto>,
 }
 
 impl ChannelRequest {
-    pub fn from(category: &AwaitingCategory, roles: &RolesList<ExistingRole>) -> Self {
+    pub fn from_category(category: &AwaitingCategory, roles: &RolesList<ExistingRole>) -> Self {
         let permission_overwrites = category
             .overwrites
             .items()
@@ -38,8 +51,31 @@ impl ChannelRequest {
         Self {
             name: category.name.clone(),
             topic: String::new(),
-            _type: ChannelType::Category,
+            _type: ChannelDtoType::Category,
             parent_id: None,
+            permission_overwrites,
+        }
+    }
+
+    pub fn from_channel(
+        channel: &AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    ) -> Self {
+        let category = categories.find_by_name_panic(&channel.name);
+
+        let permission_overwrites = channel
+            .overwrites
+            .items()
+            .iter()
+            .map(|permission| PermissionOverwritesDto::from(permission, roles))
+            .collect();
+
+        Self {
+            name: channel.name.clone(),
+            topic: String::new(),
+            _type: ChannelDtoType::from(channel.channel_type),
+            parent_id: Some(category.id.clone()),
             permission_overwrites,
         }
     }

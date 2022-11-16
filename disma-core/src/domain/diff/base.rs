@@ -1,4 +1,4 @@
-use std::{fmt::Display, sync::Arc};
+use std::sync::Arc;
 
 use crate::guild::GuildCommanderRef;
 
@@ -18,6 +18,7 @@ pub enum EntityChange {
 pub enum Entity {
     Role,
     Category,
+    Channel,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -49,16 +50,17 @@ impl<'a, 'b> Differ<&'b str> for &'a str {
     }
 }
 
-impl<T> Differ<Option<T>> for Option<T>
+impl<T, U> Differ<Option<U>> for Option<T>
 where
-    T: PartialEq<T> + Display,
+    T: PartialEq<T> + ToString + Differ<U>,
+    U: PartialEq<U> + ToString,
 {
-    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
+    fn diffs_with(&self, target: &Option<U>) -> Vec<Diff> {
         match (self, target) {
             (None, None) => vec![],
             (Some(origin), None) => vec![Diff::Remove(origin.to_string())],
             (None, Some(target)) => vec![Diff::Add(target.to_string())],
-            (Some(origin), Some(target)) => diffs_between(origin, target),
+            (Some(origin), Some(target)) => origin.diffs_with(target),
         }
     }
 }

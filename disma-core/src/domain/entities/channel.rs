@@ -1,18 +1,26 @@
 use crate::{
     category::{AwaitingCategory, ExistingCategory},
+    diff::base::{Diff, Differ},
     overwrites::PermissionsOverwritesList,
     role::{AwaitingRole, ExistingRole},
+    utils::{misc::IfThen, option::OptionEq},
 };
 
 use strum::{Display, EnumString};
 
-#[derive(Debug, Display, EnumString, PartialEq)]
+#[derive(Debug, Display, EnumString, PartialEq, Clone)]
 pub enum ChannelType {
     TEXT,
     VOICE,
 }
 
-#[derive(Debug, PartialEq)]
+impl Differ<ChannelType> for ChannelType {
+    fn diffs_with(&self, target: &ChannelType) -> Vec<Diff> {
+        self.to_string().diffs_with(&target.to_string())
+    }
+}
+
+#[derive(Debug, PartialEq, Clone)]
 pub struct AwaitingChannel {
     pub name: String,
     pub topic: Option<String>,
@@ -29,6 +37,46 @@ pub struct ExistingChannel {
     pub channel_type: ChannelType,
     pub category: Option<ExistingCategory>,
     pub overwrites: PermissionsOverwritesList<ExistingRole>,
+}
+
+impl PartialEq<AwaitingChannel> for ExistingChannel {
+    fn eq(&self, other: &AwaitingChannel) -> bool {
+        self.name == other.name
+            && self.topic == other.topic
+            && self.channel_type == other.channel_type
+            && self.category.option_eq(&other.category)
+            && self.overwrites == other.overwrites
+    }
+}
+
+impl Differ<AwaitingChannel> for ExistingChannel {
+    fn diffs_with(&self, awaiting: &AwaitingChannel) -> Vec<Diff> {
+        let mut all_diffs = vec![];
+
+        self.topic.diffs_with(&awaiting.topic).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("topic".into(), diffs)),
+        );
+
+        self.channel_type
+            .diffs_with(&awaiting.channel_type)
+            .if_then(
+                |diffs| !diffs.is_empty(),
+                |diffs| all_diffs.push(Diff::Update("channel_type".into(), diffs)),
+            );
+
+        self.category.diffs_with(&awaiting.category).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("category".into(), diffs)),
+        );
+
+        self.overwrites.diffs_with(&awaiting.overwrites).if_then(
+            |diffs| !diffs.is_empty(),
+            |diffs| all_diffs.push(Diff::Update("overwrites".into(), diffs)),
+        );
+
+        all_diffs
+    }
 }
 
 #[cfg(test)]
