@@ -6,7 +6,7 @@ use crate::domain::entities::{
     role::{ExistingRole, RolesList},
 };
 
-use super::permissions::{PermissionOverwriteType, PermissionOverwritesDto};
+use super::permissions::PermissionOverwritesDto;
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
@@ -32,16 +32,7 @@ impl ChannelRequest {
             .overwrites
             .items()
             .iter()
-            .map(|permission| PermissionOverwritesDto {
-                role_or_member_id: roles
-                    .find_by_name(&permission.role.name)
-                    .unwrap()
-                    .id
-                    .clone(),
-                allow: permission.allow.code(),
-                deny: permission.deny.code(),
-                _type: PermissionOverwriteType::Role,
-            })
+            .map(|permission| PermissionOverwritesDto::from(permission, roles))
             .collect();
 
         Self {

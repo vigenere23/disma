@@ -5,7 +5,6 @@ use crate::{
     domain::entities::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-        permission::PermissionsList,
         role::{AwaitingRole, ExistingRole, RolesList},
     },
     overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
@@ -50,13 +49,7 @@ impl GuildQuerier for DiscordClient {
                         response
                             .permission_overwrites
                             .iter()
-                            .map(|permissions| PermissionsOverwrites {
-                                role: roles_list
-                                    .find_by_id(&permissions.role_or_member_id)
-                                    .clone(),
-                                allow: PermissionsList::from(permissions.allow.as_str()),
-                                deny: PermissionsList::from(permissions.deny.as_str()),
-                            })
+                            .map(|permissions| permissions.into(&roles_list))
                             .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
                     ),
                 }),
@@ -80,12 +73,21 @@ impl GuildQuerier for DiscordClient {
                     .as_ref()
                     .map(|category_id| categories_list.find_by_id(category_id).clone());
 
+                let overwrites = PermissionsOverwritesList::from(
+                    response
+                        .permission_overwrites
+                        .iter()
+                        .map(|permissions| permissions.into(&roles_list))
+                        .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
+                );
+
                 Some(ExistingChannel {
                     id: response.id.clone(),
                     name: response.name.clone(),
                     channel_type,
                     category,
                     topic: response.topic.clone(),
+                    overwrites,
                 })
             })
             .collect();

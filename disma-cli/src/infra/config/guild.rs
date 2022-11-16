@@ -68,7 +68,7 @@ impl Into<AwaitingGuild> for GuildConfig {
             .channels
             .unwrap_or_default()
             .into_iter()
-            .map(|channel| channel.into(&categories_list))
+            .map(|channel| channel.into(&roles_list, &categories_list))
             .collect();
 
         AwaitingGuild {

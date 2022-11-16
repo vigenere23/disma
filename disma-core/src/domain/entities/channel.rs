@@ -1,4 +1,8 @@
-use crate::category::{AwaitingCategory, ExistingCategory};
+use crate::{
+    category::{AwaitingCategory, ExistingCategory},
+    overwrites::PermissionsOverwritesList,
+    role::{AwaitingRole, ExistingRole},
+};
 
 use strum::{Display, EnumString};
 
@@ -14,7 +18,7 @@ pub struct AwaitingChannel {
     pub topic: Option<String>,
     pub channel_type: ChannelType,
     pub category: Option<AwaitingCategory>,
-    // pub overwrites: PermissionsOverwritesList<AwaitingRole>,
+    pub overwrites: PermissionsOverwritesList<AwaitingRole>,
 }
 
 #[derive(Debug)]
@@ -24,7 +28,7 @@ pub struct ExistingChannel {
     pub topic: Option<String>,
     pub channel_type: ChannelType,
     pub category: Option<ExistingCategory>,
-    // pub overwrites: PermissionsOverwritesList<ExistingRole>,
+    pub overwrites: PermissionsOverwritesList<ExistingRole>,
 }
 
 #[cfg(test)]
