@@ -29,7 +29,7 @@ pub struct AwaitingChannel {
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ExistingChannel {
     pub id: String,
     pub name: String,
@@ -76,6 +76,52 @@ impl Differ<AwaitingChannel> for ExistingChannel {
         );
 
         all_diffs
+    }
+}
+
+pub trait Channel {
+    fn name(&self) -> String;
+}
+
+impl Channel for AwaitingChannel {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl Channel for ExistingChannel {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ChannelsList<C>
+where
+    C: Channel,
+{
+    items: Vec<C>,
+}
+
+impl<C> ChannelsList<C>
+where
+    C: Channel,
+{
+    pub fn find_by_name(&self, name: &str) -> Option<&C> {
+        self.items.iter().find(|channel| channel.name() == name)
+    }
+
+    pub fn items(&self) -> &Vec<C> {
+        &self.items
+    }
+}
+
+impl<C> From<Vec<C>> for ChannelsList<C>
+where
+    C: Channel,
+{
+    fn from(items: Vec<C>) -> Self {
+        Self { items }
     }
 }
 

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::channel::{AwaitingChannel, ExistingChannel};
+use crate::channel::{AwaitingChannel, ChannelsList, ExistingChannel};
 
 use super::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
@@ -46,14 +46,14 @@ pub type GuildCommanderRef = Arc<dyn GuildCommander>;
 pub struct ExistingGuild {
     pub roles: RolesList<ExistingRole>,
     pub categories: CategoriesList<ExistingCategory>,
-    pub channels: Vec<ExistingChannel>,
+    pub channels: ChannelsList<ExistingChannel>,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
     pub categories: CategoriesList<AwaitingCategory>,
-    pub channels: Vec<AwaitingChannel>,
+    pub channels: ChannelsList<AwaitingChannel>,
 }
 
 pub struct GuildSummary {

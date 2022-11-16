@@ -10,7 +10,7 @@ use crate::domain::{
 
 use super::{
     base::{DiffCommandRef, Differ},
-    channel::UpdateChannel,
+    channel::{AddChannel, DeleteChannel, UpdateChannel},
 };
 
 pub struct DiffCommandFactory {}
@@ -108,33 +108,37 @@ impl DiffCommandFactory {
     ) -> Vec<DiffCommandRef> {
         let mut diffs: Vec<DiffCommandRef> = Vec::new();
 
-        for awaiting_channel in awaiting_guild.channels {
+        for awaiting_channel in awaiting_guild.channels.items() {
             match existing_guild.channels.find_by_name(&awaiting_channel.name) {
                 Some(existing_channel) => {
-                    if existing_channel.option_eq(&awaiting_channel) {
+                    if existing_channel != awaiting_channel {
                         let command = UpdateChannel::new(
                             existing_channel.clone(),
                             awaiting_channel.clone(),
                             existing_guild.roles.clone(),
+                            existing_guild.categories.clone(),
                         );
                         diffs.push(Arc::from(command));
                     }
                 }
                 None => {
-                    let command =
-                        AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
+                    let command = AddChannel::new(
+                        awaiting_channel.clone(),
+                        existing_guild.roles.clone(),
+                        existing_guild.categories.clone(),
+                    );
                     diffs.push(Arc::from(command));
                 }
             }
         }
 
-        for existing_category in existing_guild.categories.items() {
+        for existing_channel in existing_guild.channels.items() {
             if awaiting_guild
-                .categories
-                .find_by_name(&existing_category.name)
+                .channels
+                .find_by_name(&existing_channel.name)
                 .is_none()
             {
-                let command = DeleteCategory::new(existing_category.clone());
+                let command = DeleteChannel::new(existing_channel.clone());
                 diffs.push(Arc::from(command));
             }
         }

@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use disma::{
     category::{AwaitingCategory, CategoriesList},
+    channel::{AwaitingChannel, ChannelsList},
     guild::{AwaitingGuild, ExistingGuild},
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
@@ -32,6 +33,7 @@ impl From<&ExistingGuild> for GuildConfig {
 
         let channels: Vec<ChannelConfig> = guild
             .channels
+            .items()
             .iter()
             .map(|channel| channel.into())
             .collect();
@@ -64,17 +66,19 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         let categories_list = CategoriesList::from(categories);
 
-        let channels = self
+        let channels: Vec<AwaitingChannel> = self
             .channels
             .unwrap_or_default()
             .into_iter()
             .map(|channel| channel.into(&roles_list, &categories_list))
             .collect();
 
+        let channels_list = ChannelsList::from(channels);
+
         AwaitingGuild {
             roles: roles_list,
             categories: categories_list,
-            channels,
+            channels: channels_list,
         }
     }
 }
@@ -83,6 +87,7 @@ impl Into<AwaitingGuild> for GuildConfig {
 mod tests {
     use disma::{
         category::CategoriesList,
+        channel::ChannelsList,
         guild::{AwaitingGuild, ExistingGuild},
         role::RolesList,
     };
@@ -102,7 +107,7 @@ mod tests {
         let expected_entity = AwaitingGuild {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
-            channels: vec![],
+            channels: ChannelsList::from(vec![]),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -112,7 +117,7 @@ mod tests {
         let entity = ExistingGuild {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
-            channels: vec![],
+            channels: ChannelsList::from(vec![]),
         };
 
         let config = GuildConfig::from(&entity);

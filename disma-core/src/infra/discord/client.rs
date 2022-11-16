@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    channel::{ChannelType, ExistingChannel},
+    channel::{ChannelType, ChannelsList, ExistingChannel},
     domain::entities::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
@@ -92,10 +92,12 @@ impl GuildQuerier for DiscordClient {
             })
             .collect();
 
+        let channels_list = ChannelsList::from(channels);
+
         ExistingGuild {
             roles: roles_list,
             categories: categories_list,
-            channels,
+            channels: channels_list,
         }
     }
 

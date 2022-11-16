@@ -20,8 +20,8 @@ pub enum ChannelDtoType {
     Category = 4,
 }
 
-impl From<ChannelType> for ChannelDtoType {
-    fn from(_type: ChannelType) -> Self {
+impl From<&ChannelType> for ChannelDtoType {
+    fn from(_type: &ChannelType) -> Self {
         match _type {
             ChannelType::TEXT => ChannelDtoType::Text,
             ChannelType::VOICE => ChannelDtoType::Voice,
@@ -74,7 +74,7 @@ impl ChannelRequest {
         Self {
             name: channel.name.clone(),
             topic: String::new(),
-            _type: ChannelDtoType::from(channel.channel_type),
+            _type: ChannelDtoType::from(&channel.channel_type),
             parent_id: Some(category.id.clone()),
             permission_overwrites,
         }
