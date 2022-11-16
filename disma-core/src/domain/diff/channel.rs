@@ -1,6 +1,6 @@
 use crate::{
     category::CategoriesList,
-    channel::{AwaitingChannel, ExistingChannel},
+    channel::{AwaitingChannel, Channel, ExistingChannel},
     diff::base::Entity,
     domain::entities::{
         category::ExistingCategory,
@@ -37,7 +37,7 @@ impl DiffCommand for AddChannel {
     }
 
     fn describe(&self) -> EntityChange {
-        EntityChange::Create(Entity::Channel, self.channel.name.clone())
+        EntityChange::Create(Entity::Channel, self.channel.unique_name())
     }
 }
 
@@ -77,7 +77,7 @@ impl DiffCommand for UpdateChannel {
     fn describe(&self) -> EntityChange {
         EntityChange::Update(
             Entity::Channel,
-            self.existing_channel.name.clone(),
+            self.existing_channel.unique_name(),
             self.existing_channel.diffs_with(&self.awaiting_channel),
         )
     }
@@ -99,6 +99,6 @@ impl DiffCommand for DeleteChannel {
     }
 
     fn describe(&self) -> EntityChange {
-        EntityChange::Delete(Entity::Channel, self.channel.name.clone())
+        EntityChange::Delete(Entity::Channel, self.channel.unique_name())
     }
 }

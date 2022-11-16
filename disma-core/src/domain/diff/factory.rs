@@ -1,11 +1,14 @@
 use std::sync::Arc;
 
-use crate::domain::{
-    diff::{
-        category::{AddCategory, DeleteCategory, UpdateCategory},
-        roles::{AddRole, DeleteRole, UpdateRole},
+use crate::{
+    channel::Channel,
+    domain::{
+        diff::{
+            category::{AddCategory, DeleteCategory, UpdateCategory},
+            roles::{AddRole, DeleteRole, UpdateRole},
+        },
+        entities::guild::{AwaitingGuild, ExistingGuild},
     },
-    entities::guild::{AwaitingGuild, ExistingGuild},
 };
 
 use super::{
@@ -109,7 +112,16 @@ impl DiffCommandFactory {
         let mut diffs: Vec<DiffCommandRef> = Vec::new();
 
         for awaiting_channel in awaiting_guild.channels.items() {
-            match existing_guild.channels.find_by_name(&awaiting_channel.name) {
+            let category = awaiting_channel
+                .category
+                .as_ref()
+                .map(|category| existing_guild.categories.find_by_name_panic(&category.name));
+
+            match existing_guild.channels.find(
+                &awaiting_channel.name,
+                awaiting_channel.channel_type(),
+                category,
+            ) {
                 Some(existing_channel) => {
                     if existing_channel != awaiting_channel {
                         let command = UpdateChannel::new(
@@ -133,9 +145,18 @@ impl DiffCommandFactory {
         }
 
         for existing_channel in existing_guild.channels.items() {
+            let category = existing_channel
+                .category
+                .as_ref()
+                .map(|category| existing_guild.categories.find_by_name_panic(&category.name));
+
             if awaiting_guild
                 .channels
-                .find_by_name(&existing_channel.name)
+                .find(
+                    &existing_channel.name,
+                    existing_channel.channel_type(),
+                    category,
+                )
                 .is_none()
             {
                 let command = DeleteChannel::new(existing_channel.clone());

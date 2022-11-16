@@ -1,5 +1,5 @@
 use crate::{
-    category::{AwaitingCategory, ExistingCategory},
+    category::{AwaitingCategory, Category, ExistingCategory},
     diff::base::{Diff, Differ},
     overwrites::PermissionsOverwritesList,
     role::{AwaitingRole, ExistingRole},
@@ -81,17 +81,44 @@ impl Differ<AwaitingChannel> for ExistingChannel {
 
 pub trait Channel {
     fn name(&self) -> String;
+    fn category_name(&self) -> Option<String>;
+    fn channel_type(&self) -> ChannelType;
+
+    fn unique_name(&self) -> String {
+        format!(
+            "{}:{} ({})",
+            &self.category_name().unwrap_or_default(),
+            &self.name(),
+            &self.channel_type().to_string()
+        )
+    }
 }
 
 impl Channel for AwaitingChannel {
     fn name(&self) -> String {
         self.name.clone()
     }
+
+    fn category_name(&self) -> Option<String> {
+        self.category.as_ref().map(|category| category.name())
+    }
+
+    fn channel_type(&self) -> ChannelType {
+        self.channel_type.clone()
+    }
 }
 
 impl Channel for ExistingChannel {
     fn name(&self) -> String {
         self.name.clone()
+    }
+
+    fn category_name(&self) -> Option<String> {
+        self.category.as_ref().map(|category| category.name())
+    }
+
+    fn channel_type(&self) -> ChannelType {
+        self.channel_type.clone()
     }
 }
 
@@ -107,8 +134,17 @@ impl<C> ChannelsList<C>
 where
     C: Channel,
 {
-    pub fn find_by_name(&self, name: &str) -> Option<&C> {
-        self.items.iter().find(|channel| channel.name() == name)
+    pub fn find(
+        &self,
+        name: &str,
+        _type: ChannelType,
+        category: Option<&ExistingCategory>,
+    ) -> Option<&C> {
+        self.items.iter().find(|channel| {
+            channel.name() == name
+                && channel.channel_type() == _type
+                && channel.category_name() == category.map(|category| category.name())
+        })
     }
 
     pub fn items(&self) -> &Vec<C> {
