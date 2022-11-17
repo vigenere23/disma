@@ -119,6 +119,12 @@ Some examples can be found [here](./docs/examples).
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
 - `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
 
+**Important notes**
+
+- You cannot directly rename a role. The role will be **deleted** and recreated under a different name.
+  - To rename a role, please rename it in the Discord interface first, then in the config.
+- Every members associated to a role that's been deleted will **lose that role**.
+
 ### 🢒 `categories`
 
 **Fields**
@@ -137,6 +143,13 @@ Some examples can be found [here](./docs/examples).
   - ⚠️ Every channel needs to have a **unique combination of *name*, *category* and *type***.
 - `topic` (optional `string`) : Topic of the channel.
 - `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+
+**Important notes**
+
+- You cannot directly rename a channel. The channel will be **deleted** and recreated under a different name.
+  - To rename a channel, please rename it in the Discord interface first, then in the config.
+- Deleted channels will **lose all their messages**.
+- You currently cannot allow channels that are not listed in the config. This should be soon permitted, at least for channels associated to categories.
 
 ### Types
 
