@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use crate::channel::{AwaitingChannel, ChannelsList, ExistingChannel};
+
 use super::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -23,6 +25,20 @@ pub trait GuildCommander {
         roles: &RolesList<ExistingRole>,
     );
     fn delete_category(&self, id: &str);
+    fn add_channel(
+        &self,
+        channel: &AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    );
+    fn update_channel(
+        &self,
+        id: &str,
+        channel: &AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    );
+    fn delete_channel(&self, id: &str);
 }
 pub type GuildCommanderRef = Arc<dyn GuildCommander>;
 
@@ -30,12 +46,14 @@ pub type GuildCommanderRef = Arc<dyn GuildCommander>;
 pub struct ExistingGuild {
     pub roles: RolesList<ExistingRole>,
     pub categories: CategoriesList<ExistingCategory>,
-    // pub channels: Vec<ExistingChannel>,
+    pub channels: ChannelsList<ExistingChannel>,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
     pub categories: CategoriesList<AwaitingCategory>,
+    pub channels: ChannelsList<AwaitingChannel>,
 }
 
 pub struct GuildSummary {

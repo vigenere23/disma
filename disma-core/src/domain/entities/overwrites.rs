@@ -47,7 +47,7 @@ impl Differ<PermissionsOverwrites<AwaitingRole>> for PermissionsOverwrites<Exist
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PermissionsOverwritesList<R>
 where
     R: Role,
@@ -67,10 +67,10 @@ impl<R: Role> PermissionsOverwritesList<R> {
     }
 }
 
-impl PartialEq<PermissionsOverwritesList<ExistingRole>>
-    for PermissionsOverwritesList<AwaitingRole>
+impl PartialEq<PermissionsOverwritesList<AwaitingRole>>
+    for PermissionsOverwritesList<ExistingRole>
 {
-    fn eq(&self, other: &PermissionsOverwritesList<ExistingRole>) -> bool {
+    fn eq(&self, other: &PermissionsOverwritesList<AwaitingRole>) -> bool {
         if self.items().len() != other.items().len() {
             return false;
         }

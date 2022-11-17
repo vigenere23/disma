@@ -7,7 +7,7 @@ use crate::{
     guild::GuildCommanderRef,
 };
 
-use super::base::{DiffCommand, EntityChange};
+use super::base::{DiffCommand, Differ, EntityChange};
 
 pub struct AddCategory {
     category: AwaitingCategory,

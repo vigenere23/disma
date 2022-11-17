@@ -66,11 +66,11 @@ disma list
 
 :warning: All commands needs the evironment variable `DISCORD_BOT_TOKEN` to be set.
 
-### `list`
+### 🢒 `list`
 
 List bot's accessible servers. If you don't see access to your server, make sure to [add your bot to it](#add-a-bot-to-a-discord-server-guild).
 
-### `compile`
+### 🢒 `compile`
 
 Compile a template config to a full config file. Only the handlebars format is supported for now. Will compile to the original format (JSON or YAML).
 
@@ -81,7 +81,7 @@ Compile a template config to a full config file. Only the handlebars format is s
 - `--output, -o <OUTPUT_FILE>` : Compiled config output file.
 - `--force, -f` : Bypass the user confirmation step.
 
-### `save`
+### 🢒 `save`
 
 Save a server (guild) configuration.
 
@@ -91,7 +91,7 @@ Save a server (guild) configuration.
 - `--output, -o <OUTPUT_FILE>` : Output file path. Both `.json` and `.yaml`/`.yml` files are supported.
 - `--force, -f` : Bypass the user confirmation step.
 
-### `apply`
+### 🢒 `apply`
 
 Apply changes to a server based on a configuration file.
 
@@ -108,26 +108,61 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 
 Some examples can be found [here](./docs/examples).
 
-### `roles`
+### 🢒 `roles`
 
 **Fields**
 
-- `name` (`string`) : Name of the role. :warning: **Every role needs to have a unique name**.
+- `name` (`string`) : Name of the role.
+  - ⚠️ Every role needs to have a **unique *name***.
 - `permissions` (`string[]`) : List of permissions by name. You can read more about Discord's permissions on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions).
 - `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
 - `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
 
-### `categories`
+**Important notes**
+
+- You cannot directly rename a role. The role will be **deleted** and recreated under a different name.
+  - To rename a role, please rename it in the Discord interface first, then in the config.
+- Every members associated to a role that's been deleted will **lose that role**.
+
+### 🢒 `categories`
 
 **Fields**
 
-- `name` (`string`) : Name of the category. :Warning: **Every category needs to have a unique name**.
-- `permissions_overwrites` ([`PermissionsOverwrite[]`](#types)) : List of permissions overwrites. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permission-overwrites).
+- `name` (`string`) : Name of the category.
+  - ⚠️ Every category needs to have a **unique *name***.
+- `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+
+### 🢒 `channels`
+
+**Fields**
+
+- `name` (`string`) : Name of the channel.
+- `type` (optional `string`) : Type of channel. Currently supported are `TEXT` and `VOICE`. Default: `TEXT`.
+- `category` (optional `string`) : Name of the channel's parent category.
+  - ⚠️ Every channel needs to have a **unique combination of *name*, *category* and *type***.
+- `topic` (optional `string`) : Topic of the channel.
+- `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+
+**Important notes**
+
+- You cannot directly rename a channel. The channel will be **deleted** and recreated under a different name.
+  - To rename a channel, please rename it in the Discord interface first, then in the config.
+- Deleted channels will **lose all their messages**.
+- You currently cannot allow channels that are not listed in the config. This should be soon permitted, at least for channels associated to categories.
 
 ### Types
 
-- `PermissionsOverwrite` :
-  - `role` (`string`) : Role to apply overwrites to.
-  - `allow` (`string[]`) : Specifically allowed permissions overwrites for the role.
-  - `deny` (`deny[]`) : Specifically denied permissions overwrites for the role.
+#### 🢒 `PermissionsOverwrite`
+
+Overwrites of permissions to apply to a specific context only. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permission-overwrites).
+
+**Fields**
+
+- `role` (`string`) : Name of the role to apply overwrites to.
+- `allow` (`Permission[]`) : Specifically allowed permissions overwrites for the role.
+- `deny` (`Permission[]`) : Specifically denied permissions overwrites for the role.
+
+#### 🢒 `Permission`
+
+Uppercase `string` that represents Discord permissions. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags).

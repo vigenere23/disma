@@ -105,3 +105,17 @@ categories:
     - VIEW_CHANNEL
     - CONNECT
     deny: []
+
+
+channels:
+- name: general
+  topic: General channel
+  type: TEXT
+  category: team-01
+- name: General
+  type: VOICE
+  category: team-01
+- name: random
+  topic: Funny memes and other random stuff
+  type: TEXT
+  category: team-01

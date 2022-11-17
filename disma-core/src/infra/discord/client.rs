@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use crate::{
+    channel::{ChannelType, ChannelsList, ExistingChannel},
     domain::entities::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-        permission::PermissionsList,
         role::{AwaitingRole, ExistingRole, RolesList},
     },
     overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
@@ -49,13 +49,7 @@ impl GuildQuerier for DiscordClient {
                         response
                             .permission_overwrites
                             .iter()
-                            .map(|permissions| PermissionsOverwrites {
-                                role: roles_list
-                                    .find_by_id(&permissions.role_or_member_id)
-                                    .clone(),
-                                allow: PermissionsList::from(permissions.allow.as_str()),
-                                deny: PermissionsList::from(permissions.deny.as_str()),
-                            })
+                            .map(|permissions| permissions.into(&roles_list))
                             .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
                     ),
                 }),
@@ -63,31 +57,47 @@ impl GuildQuerier for DiscordClient {
             })
             .collect();
 
-        // TODO
-        // let channels: Vec<ExistingChannel> = channel_responses
-        //     .iter()
-        //     .filter_map(|response| {
-        //         let channel_type = match response._type {
-        //             0 => Some(ChannelType::Text),
-        //             2 => Some(ChannelType::Voice),
-        //             4 => None,
-        //             other => panic!("Channel type {other} not supported."),
-        //         };
+        let categories_list = CategoriesList::from(categories);
 
-        //         channel_type.map(|channel_type| ExistingChannel {
-        //             id: response.id.clone(),
-        //             name: response.name.clone(),
-        //             channel_type,
-        //             category: None, // TODO
-        //             topic: response.topic.clone(),
-        //         })
-        //     })
-        //     .collect();
+        let channels: Vec<ExistingChannel> = channel_responses
+            .iter()
+            .filter_map(|response| {
+                let channel_type = match response._type {
+                    0 => ChannelType::TEXT,
+                    2 => ChannelType::VOICE,
+                    _ => return None,
+                };
+
+                let category = response
+                    .parent_id
+                    .as_ref()
+                    .map(|category_id| categories_list.find_by_id(category_id).clone());
+
+                let overwrites = PermissionsOverwritesList::from(
+                    response
+                        .permission_overwrites
+                        .iter()
+                        .map(|permissions| permissions.into(&roles_list))
+                        .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
+                );
+
+                Some(ExistingChannel {
+                    id: response.id.clone(),
+                    name: response.name.clone(),
+                    channel_type,
+                    category,
+                    topic: response.topic.clone(),
+                    overwrites,
+                })
+            })
+            .collect();
+
+        let channels_list = ChannelsList::from(channels);
 
         ExistingGuild {
             roles: roles_list,
-            categories: CategoriesList::from(categories),
-            // channels,
+            categories: categories_list,
+            channels: channels_list,
         }
     }
 
@@ -134,7 +144,10 @@ impl GuildCommander for DiscordGuildClient {
 
     fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
         self.api
-            .add_channel(&self.guild_id, ChannelRequest::from(category, roles))
+            .add_channel(
+                &self.guild_id,
+                ChannelRequest::from_category(category, roles),
+            )
             .unwrap();
     }
 
@@ -145,11 +158,41 @@ impl GuildCommander for DiscordGuildClient {
         roles: &RolesList<ExistingRole>,
     ) {
         self.api
-            .update_channel(id, ChannelRequest::from(category, roles))
+            .update_channel(id, ChannelRequest::from_category(category, roles))
             .unwrap();
     }
 
     fn delete_category(&self, id: &str) {
+        self.api.delete_channel(id).unwrap();
+    }
+
+    fn add_channel(
+        &self,
+        channel: &crate::channel::AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    ) {
+        self.api
+            .add_channel(
+                &self.guild_id,
+                ChannelRequest::from_channel(channel, roles, categories),
+            )
+            .unwrap();
+    }
+
+    fn update_channel(
+        &self,
+        id: &str,
+        channel: &crate::channel::AwaitingChannel,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    ) {
+        self.api
+            .update_channel(id, ChannelRequest::from_channel(channel, roles, categories))
+            .unwrap();
+    }
+
+    fn delete_channel(&self, id: &str) {
         self.api.delete_channel(id).unwrap();
     }
 }
