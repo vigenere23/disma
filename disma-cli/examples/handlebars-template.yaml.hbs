@@ -10,9 +10,8 @@ roles:
   mentionable: false
 
 - name: dac # the bot
-  permissions: # does not need more permissions
-  - MANAGE_CHANNELS
-  - MANAGE_ROLES
+  permissions:
+  - ADMINISTRATOR
   show_in_sidebar: false
   mentionable: false
 
@@ -109,4 +108,19 @@ categories:
     - VIEW_CHANNEL
     - CONNECT
     deny: []
+{{/each}}
+
+channels:
+{{#each teams}}
+- name: general
+  topic: General channel
+  type: TEXT
+  category: team-{{this}}
+- name: General
+  type: VOICE
+  category: team-{{this}}
+- name: random
+  topic: Funny memes and other random stuff
+  type: TEXT
+  category: team-{{this}}
 {{/each}}
