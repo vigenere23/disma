@@ -62,7 +62,10 @@ impl ChannelRequest {
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
     ) -> Self {
-        let category = categories.find_by_name_panic(&channel.name);
+        let category = channel
+            .category
+            .as_ref()
+            .map(|category| categories.find_by_name_panic(&category.name));
 
         let permission_overwrites = channel
             .overwrites
@@ -75,7 +78,7 @@ impl ChannelRequest {
             name: channel.name.clone(),
             topic: String::new(),
             _type: ChannelDtoType::from(&channel.channel_type),
-            parent_id: Some(category.id.clone()),
+            parent_id: category.map(|category| category.id.clone()),
             permission_overwrites,
         }
     }

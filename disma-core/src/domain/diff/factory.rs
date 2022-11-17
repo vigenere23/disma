@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
+    category::Category,
     channel::Channel,
     domain::{
         diff::{
@@ -112,15 +113,15 @@ impl DiffCommandFactory {
         let mut diffs: Vec<DiffCommandRef> = Vec::new();
 
         for awaiting_channel in awaiting_guild.channels.items() {
-            let category = awaiting_channel
+            let category_name = awaiting_channel
                 .category
                 .as_ref()
-                .map(|category| existing_guild.categories.find_by_name_panic(&category.name));
+                .map(|category| category.name());
 
             match existing_guild.channels.find(
                 &awaiting_channel.name,
                 awaiting_channel.channel_type(),
-                category,
+                category_name,
             ) {
                 Some(existing_channel) => {
                     if existing_channel != awaiting_channel {
@@ -145,17 +146,17 @@ impl DiffCommandFactory {
         }
 
         for existing_channel in existing_guild.channels.items() {
-            let category = existing_channel
+            let category_name = existing_channel
                 .category
                 .as_ref()
-                .map(|category| existing_guild.categories.find_by_name_panic(&category.name));
+                .map(|category| category.name());
 
             if awaiting_guild
                 .channels
                 .find(
                     &existing_channel.name,
                     existing_channel.channel_type(),
-                    category,
+                    category_name,
                 )
                 .is_none()
             {

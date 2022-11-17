@@ -138,12 +138,12 @@ where
         &self,
         name: &str,
         _type: ChannelType,
-        category: Option<&ExistingCategory>,
+        category_name: Option<String>,
     ) -> Option<&C> {
         self.items.iter().find(|channel| {
             channel.name() == name
                 && channel.channel_type() == _type
-                && channel.category_name() == category.map(|category| category.name())
+                && channel.category_name() == category_name
         })
     }
 
