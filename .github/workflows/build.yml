@@ -7,12 +7,12 @@ on:
 
 jobs:
   disma:
-    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/better-ci
+    uses: vigenere23/disma/.github/workflows/build.template.yml@master
     with:
       package: disma
 
   disma-cli:
     needs: disma
-    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/better-ci
+    uses: vigenere23/disma/.github/workflows/build.template.yml@master
     with:
       package: disma-cli

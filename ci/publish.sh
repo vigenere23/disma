@@ -32,7 +32,7 @@ echo "Remote version: $remote_version"
 
 if [ "$current_version" != "$remote_version" ]
 then
-    cargo publish --dry-run # TODO remove --dry-run
+    cargo publish
 else
     echo "No need to push new version. Skipping."
 fi
