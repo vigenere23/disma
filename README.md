@@ -2,7 +2,7 @@
 
 # Disma
 
-[![CI](https://github.com/vigenere23/dac/actions/workflows/ci.yml/badge.svg)](https://github.com/vigenere23/dac/actions/workflows/ci.yml)
+[![Build](https://github.com/vigenere23/disma/actions/workflows/build.yml/badge.svg)](https://github.com/vigenere23/disma/actions/workflows/build.yml)
 [![Crates.io](https://img.shields.io/crates/v/disma)](https://crates.io/crates/disma)
 
 👨🏼‍🔧 Discord server management has never been easier!
@@ -21,5 +21,5 @@ In the new context of the pandemic, many educational institutions have shifted t
 
 ## Modules
 
-- [disma-core](./disma-core) : Core Rust library for defining configuration as code and controlling your own orchestrations and implementations.
+- [disma](./disma) : Core Rust library for defining configuration as code and controlling your own orchestrations and implementations.
 - [disma-cli](./disma-cli) : A stable and easy to use command line interface for defining configuration as simple YAML files. Still allows for templating to simplify the configuration.

@@ -1,5 +1,5 @@
 [workspace]
 members = [
-    "disma-core",
+    "disma",
     "disma-cli"
 ]

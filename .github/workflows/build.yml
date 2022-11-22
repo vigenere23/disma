@@ -1,0 +1,18 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  disma:
+    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/better-ci
+    with:
+      package: disma
+
+  disma-cli:
+    needs: disma
+    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/better-ci
+    with:
+      package: disma-cli
