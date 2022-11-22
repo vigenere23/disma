@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "*/v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  disma:
+    uses: vigenere23/disma/.github/workflows/publish.template.yml@chore/better-ci
+    with:
+      package: disma
+    secrets: inherit
+
+  disma-cli:
+    needs: disma
+    uses: vigenere23/disma/.github/workflows/publish.template.yml@chore/better-ci
+    with:
+      package: disma-cli
+    secrets: inherit
