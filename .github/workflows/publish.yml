@@ -6,6 +6,10 @@ on:
       - "*/v*.*.*"
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   disma:
     uses: vigenere23/disma/.github/workflows/publish.template.yml@master

@@ -5,6 +5,10 @@ on:
     branches:
       - "**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   disma:
     uses: vigenere23/disma/.github/workflows/build.template.yml@master
