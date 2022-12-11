@@ -7,13 +7,13 @@ roles:
   - SEND_MESSAGES
   - CHANGE_NICKNAME
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 - name: dac # the bot
   permissions:
   - ADMINISTRATOR
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 - name: staff
   color: e91e63
@@ -59,13 +59,13 @@ roles:
   - STREAM
   - USE_VAD
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 {{#each teams}}
 - name: team-{{this}}
   permissions: []
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 {{/each}}
 
 categories:
