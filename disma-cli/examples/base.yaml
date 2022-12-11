@@ -5,14 +5,14 @@ roles:
   - SEND_MESSAGES
   - CHANGE_NICKNAME
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 - name: dac # the bot
   permissions: # does not need more permissions
   - MANAGE_CHANNELS
   - MANAGE_ROLES
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 - name: staff
   color: e91e63
@@ -58,12 +58,12 @@ roles:
   - STREAM
   - USE_VAD
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 - name: team-01
   permissions: []
   show_in_sidebar: false
-  mentionable: false
+  is_mentionable: false
 
 categories:
 - name: staff only
