@@ -54,7 +54,7 @@ impl CompileConfig {
             }
         }
 
-        fs::write(output_file, &rendered).unwrap();
+        fs::write(output_file, rendered).unwrap();
 
         println!("{}", "🡲 ✨ DONE.".bold());
     }
