@@ -54,6 +54,29 @@ pub struct AwaitingGuild {
     pub roles: RolesList<AwaitingRole>,
     pub categories: CategoriesList<AwaitingCategory>,
     pub channels: ChannelsList<AwaitingChannel>,
+    pub options: AwaitingGuildOptions,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct AwaitingGuildOptions {
+    pub roles: AwaitingRolesOptions,
+    pub categories: AwaitingCategoriesOptions,
+    pub channels: AwaitingChannelsOptions,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct AwaitingRolesOptions {
+    pub allow_extra: bool,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct AwaitingCategoriesOptions {
+    pub allow_extra: bool,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct AwaitingChannelsOptions {
+    pub allow_extra: bool,
 }
 
 pub struct GuildSummary {

@@ -8,7 +8,9 @@ use disma::{
     utils::vec::Compress,
 };
 
-use super::{category::CategoryConfig, channel::ChannelConfig, role::RoleConfig};
+use super::{
+    category::CategoryConfig, channel::ChannelConfig, options::OptionsConfig, role::RoleConfig,
+};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct GuildConfig {
@@ -18,6 +20,7 @@ pub struct GuildConfig {
     categories: Option<Vec<CategoryConfig>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     channels: Option<Vec<ChannelConfig>>,
+    options: Option<OptionsConfig>,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
@@ -42,6 +45,7 @@ impl From<&ExistingGuild> for GuildConfig {
             roles: roles.compress(),
             categories: categories.compress(),
             channels: channels.compress(),
+            options: None,
         }
     }
 }
@@ -75,10 +79,13 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         let channels_list = ChannelsList::from(channels);
 
+        let options = self.options.into();
+
         AwaitingGuild {
             roles: roles_list,
             categories: categories_list,
             channels: channels_list,
+            options,
         }
     }
 }
@@ -88,18 +95,19 @@ mod tests {
     use disma::{
         category::CategoriesList,
         channel::ChannelsList,
-        guild::{AwaitingGuild, ExistingGuild},
+        guild::{AwaitingGuild, AwaitingGuildOptions, ExistingGuild},
         role::RolesList,
     };
 
     use super::GuildConfig;
 
     #[test]
-    pub fn nones_are_converted_to_empty_arrays() {
+    pub fn nones_are_converted_to_default_values() {
         let config = GuildConfig {
             roles: None,
             categories: None,
             channels: None,
+            options: None,
         };
 
         let entity: AwaitingGuild = config.into();
@@ -108,6 +116,7 @@ mod tests {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
             channels: ChannelsList::from(vec![]),
+            options: AwaitingGuildOptions::default(),
         };
         assert_eq!(entity, expected_entity);
     }

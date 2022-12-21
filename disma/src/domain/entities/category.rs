@@ -16,6 +16,7 @@ pub trait Category: Clone {
 pub struct AwaitingCategory {
     pub name: String,
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
+    pub allow_extra_channels: bool,
 }
 
 impl ToString for AwaitingCategory {

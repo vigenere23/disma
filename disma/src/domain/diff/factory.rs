@@ -47,14 +47,16 @@ impl DiffCommandFactory {
             }
         }
 
-        for existing_role in existing_guild.roles.items() {
-            if awaiting_guild
-                .roles
-                .find_by_name(&existing_role.name)
-                .is_none()
-            {
-                let command = DeleteRole::new(existing_role.clone());
-                diffs.push(Arc::from(command));
+        if !awaiting_guild.options.roles.allow_extra {
+            for existing_role in existing_guild.roles.items() {
+                if awaiting_guild
+                    .roles
+                    .find_by_name(&existing_role.name)
+                    .is_none()
+                {
+                    let command = DeleteRole::new(existing_role.clone());
+                    diffs.push(Arc::from(command));
+                }
             }
         }
 
@@ -91,14 +93,16 @@ impl DiffCommandFactory {
             }
         }
 
-        for existing_category in existing_guild.categories.items() {
-            if awaiting_guild
-                .categories
-                .find_by_name(&existing_category.name)
-                .is_none()
-            {
-                let command = DeleteCategory::new(existing_category.clone());
-                diffs.push(Arc::from(command));
+        if !awaiting_guild.options.categories.allow_extra {
+            for existing_category in existing_guild.categories.items() {
+                if awaiting_guild
+                    .categories
+                    .find_by_name(&existing_category.name)
+                    .is_none()
+                {
+                    let command = DeleteCategory::new(existing_category.clone());
+                    diffs.push(Arc::from(command));
+                }
             }
         }
 
@@ -151,15 +155,21 @@ impl DiffCommandFactory {
                 .as_ref()
                 .map(|category| category.name());
 
-            if awaiting_guild
-                .channels
-                .find(
-                    &existing_channel.name,
-                    existing_channel.channel_type(),
-                    category_name,
-                )
-                .is_none()
-            {
+            let awaiting_channel = awaiting_guild.channels.find(
+                &existing_channel.name,
+                existing_channel.channel_type(),
+                category_name,
+            );
+
+            let allow_extra_channels = match awaiting_channel {
+                Some(channel) => match &channel.category {
+                    Some(category) => category.allow_extra_channels,
+                    None => awaiting_guild.options.channels.allow_extra,
+                },
+                None => false,
+            };
+
+            if !allow_extra_channels && awaiting_channel.is_none() {
                 let command = DeleteChannel::new(existing_channel.clone());
                 diffs.push(Arc::from(command));
             }
