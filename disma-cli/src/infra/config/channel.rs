@@ -108,6 +108,7 @@ mod tests {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            allow_extra_channels: false,
         }
     }
 

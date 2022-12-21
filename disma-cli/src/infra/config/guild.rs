@@ -20,7 +20,8 @@ pub struct GuildConfig {
     categories: Option<Vec<CategoryConfig>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     channels: Option<Vec<ChannelConfig>>,
-    options: Option<OptionsConfig>,
+    #[serde(default = "OptionsConfig::default")]
+    options: OptionsConfig,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
@@ -45,7 +46,7 @@ impl From<&ExistingGuild> for GuildConfig {
             roles: roles.compress(),
             categories: categories.compress(),
             channels: channels.compress(),
-            options: None,
+            options: OptionsConfig::default(),
         }
     }
 }
@@ -95,19 +96,24 @@ mod tests {
     use disma::{
         category::CategoriesList,
         channel::ChannelsList,
-        guild::{AwaitingGuild, AwaitingGuildOptions, ExistingGuild},
+        guild::{
+            AwaitingCategoriesOptions, AwaitingChannelsOptions, AwaitingGuild,
+            AwaitingGuildOptions, AwaitingRolesOptions, ExistingGuild,
+        },
         role::RolesList,
     };
+
+    use crate::infra::config::options::OptionsConfig;
 
     use super::GuildConfig;
 
     #[test]
-    pub fn nones_are_converted_to_default_values() {
+    pub fn when_converting_to_awaiting_guild_then_nones_are_converted_to_defaults() {
         let config = GuildConfig {
             roles: None,
             categories: None,
             channels: None,
-            options: None,
+            options: OptionsConfig::default(),
         };
 
         let entity: AwaitingGuild = config.into();
@@ -116,13 +122,18 @@ mod tests {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
             channels: ChannelsList::from(vec![]),
-            options: AwaitingGuildOptions::default(),
+            options: AwaitingGuildOptions {
+                roles: AwaitingRolesOptions { allow_extra: false },
+                categories: AwaitingCategoriesOptions { allow_extra: false },
+                channels: AwaitingChannelsOptions { allow_extra: false },
+            },
         };
         assert_eq!(entity, expected_entity);
     }
 
     #[test]
-    pub fn empty_arrays_are_converted_to_nones() {
+    pub fn when_parsing_existing_guild_then_empty_arrays_are_converted_to_nones_and_nones_to_defaults(
+    ) {
         let entity = ExistingGuild {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
@@ -135,6 +146,7 @@ mod tests {
             roles: None,
             categories: None,
             channels: None,
+            options: OptionsConfig::default(),
         };
         assert_eq!(config, expected_config);
     }

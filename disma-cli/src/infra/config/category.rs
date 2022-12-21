@@ -14,6 +14,7 @@ pub struct CategoryConfig {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub permissions_overwrites: Option<Vec<PermissionsOverwritesConfig>>,
+    pub allow_extra_channels: bool,
 }
 
 impl From<&ExistingCategory> for CategoryConfig {
@@ -28,6 +29,7 @@ impl From<&ExistingCategory> for CategoryConfig {
         Self {
             name: category.name.clone(),
             permissions_overwrites: permissions_overwrites.compress(),
+            allow_extra_channels: false,
         }
     }
 }
@@ -47,6 +49,7 @@ impl CategoryConfig {
         AwaitingCategory {
             name: self.name,
             overwrites: overwrites.into(),
+            allow_extra_channels: self.allow_extra_channels,
         }
     }
 }
@@ -104,6 +107,7 @@ mod tests {
                 allow: Some(vec!["ADMINISTRATOR".to_string()]),
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
+            allow_extra_channels: false,
         };
 
         let entity: AwaitingCategory = config.into(&roles);
@@ -115,6 +119,7 @@ mod tests {
                 allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
             }]),
+            allow_extra_channels: false,
         };
         assert_eq!(entity, expected_entity);
     }
@@ -126,6 +131,7 @@ mod tests {
         let config = CategoryConfig {
             name: category_name.clone(),
             permissions_overwrites: None,
+            allow_extra_channels: false,
         };
 
         let entity: AwaitingCategory = config.into(&RolesList::from(vec![]));
@@ -133,6 +139,7 @@ mod tests {
         let expected_entity = AwaitingCategory {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            allow_extra_channels: false,
         };
         assert_eq!(entity, expected_entity);
     }
@@ -163,6 +170,7 @@ mod tests {
                 allow: Some(vec!["ADMINISTRATOR".to_string()]),
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
+            allow_extra_channels: false,
         };
         assert_eq!(config, expected_config);
     }
@@ -182,6 +190,7 @@ mod tests {
         let expected_config = CategoryConfig {
             name: category_name.clone(),
             permissions_overwrites: None,
+            allow_extra_channels: false,
         };
         assert_eq!(config, expected_config);
     }
