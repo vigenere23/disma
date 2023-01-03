@@ -11,6 +11,32 @@ use serde::{Deserialize, Serialize};
 
 use super::permission::PermissionsOverwritesConfig;
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct ChannelConfigsList {
+    pub items: Option<Vec<ChannelConfig>>,
+    pub others: ChannelExtraItemsConfig,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct ChannelExtraItemsConfig {
+    strategy: ChannelExtraItemsStrategy,
+}
+
+impl Default for ChannelExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: ChannelExtraItemsStrategy::Remove,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum ChannelExtraItemsStrategy {
+    Keep,
+    Remove,
+    // TODO Overwrite,
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ChannelConfig {
     pub name: String,

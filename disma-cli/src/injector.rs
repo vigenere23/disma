@@ -2,10 +2,7 @@ use std::sync::Arc;
 
 use disma::{
     changes::ChangesService,
-    diff::{
-        event::DiffEventListenerRef,
-        factory::{DiffCommandFactory, DiffCommandFactoryRef},
-    },
+    diff::event::DiffEventListenerRef,
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
@@ -62,12 +59,6 @@ impl Get<Arc<DiscordGuildClient>> for Injector {
     }
 }
 
-impl Get<DiffCommandFactoryRef> for Injector {
-    fn get(&self) -> DiffCommandFactoryRef {
-        Arc::from(DiffCommandFactory {})
-    }
-}
-
 impl Get<Arc<dyn GuildQuerier>> for Injector {
     fn get(&self) -> Arc<dyn GuildQuerier> {
         <Self as Get<Arc<DiscordClient>>>::get(self)
@@ -88,12 +79,7 @@ impl Get<DiffEventListenerRef> for Injector {
 
 impl Get<Arc<ChangesService>> for Injector {
     fn get(&self) -> Arc<ChangesService> {
-        Arc::from(ChangesService::new(
-            self.get(),
-            self.get(),
-            self.get(),
-            self.get(),
-        ))
+        Arc::from(ChangesService::new(self.get(), self.get(), self.get()))
     }
 }
 

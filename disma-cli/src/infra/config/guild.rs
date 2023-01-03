@@ -9,35 +9,40 @@ use disma::{
 };
 
 use super::{
-    category::CategoryConfig, channel::ChannelConfig, options::OptionsConfig, role::RoleConfig,
+    category::{CategoryConfig, CategoryConfigsList},
+    channel::{ChannelConfig, ChannelConfigsList},
+    role::{RoleConfig, RoleConfigsList},
 };
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct GuildConfig {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    roles: Option<Vec<RoleConfig>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    categories: Option<Vec<CategoryConfig>>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    channels: Option<Vec<ChannelConfig>>,
-    #[serde(default = "OptionsConfig::default")]
-    options: OptionsConfig,
+    #[serde(default = "RoleConfigsList::default")]
+    roles: RoleConfigsList,
+    #[serde(default = "CategoryConfigsList::default")]
+    categories: CategoryConfigsList,
+    #[serde(default = "ChannelConfigsList::default")]
+    channels: ChannelConfigsList,
 }
 
 impl From<&ExistingGuild> for GuildConfig {
     fn from(guild: &ExistingGuild) -> Self {
-        let roles: Vec<RoleConfig> = guild.roles.items().iter().map(|role| role.into()).collect();
+        let roles: Vec<RoleConfig> = guild
+            .roles
+            .to_list()
+            .iter()
+            .map(|role| role.into())
+            .collect();
 
         let categories: Vec<CategoryConfig> = guild
             .categories
-            .items()
+            .to_list()
             .iter()
             .map(CategoryConfig::from)
             .collect();
 
         let channels: Vec<ChannelConfig> = guild
             .channels
-            .items()
+            .to_list()
             .iter()
             .map(|channel| channel.into())
             .collect();
@@ -46,7 +51,6 @@ impl From<&ExistingGuild> for GuildConfig {
             roles: roles.compress(),
             categories: categories.compress(),
             channels: channels.compress(),
-            options: OptionsConfig::default(),
         }
     }
 }
@@ -80,13 +84,10 @@ impl Into<AwaitingGuild> for GuildConfig {
 
         let channels_list = ChannelsList::from(channels);
 
-        let options = self.options.into();
-
         AwaitingGuild {
             roles: roles_list,
             categories: categories_list,
             channels: channels_list,
-            options,
         }
     }
 }
@@ -113,7 +114,6 @@ mod tests {
             roles: None,
             categories: None,
             channels: None,
-            options: OptionsConfig::default(),
         };
 
         let entity: AwaitingGuild = config.into();
@@ -122,11 +122,6 @@ mod tests {
             roles: RolesList::from(vec![]),
             categories: CategoriesList::from(vec![]),
             channels: ChannelsList::from(vec![]),
-            options: AwaitingGuildOptions {
-                roles: AwaitingRolesOptions { allow_extra: false },
-                categories: AwaitingCategoriesOptions { allow_extra: false },
-                channels: AwaitingChannelsOptions { allow_extra: false },
-            },
         };
         assert_eq!(entity, expected_entity);
     }
@@ -146,7 +141,6 @@ mod tests {
             roles: None,
             categories: None,
             channels: None,
-            options: OptionsConfig::default(),
         };
         assert_eq!(config, expected_config);
     }

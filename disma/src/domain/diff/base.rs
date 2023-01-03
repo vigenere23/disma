@@ -1,12 +1,16 @@
 use std::sync::Arc;
 
-use crate::guild::GuildCommanderRef;
+use crate::guild::{ExistingGuild, GuildCommanderRef};
 
 pub trait DiffCommand {
     fn execute(&self, guild_commander: &GuildCommanderRef);
     fn describe(&self) -> EntityChange;
 }
 pub type DiffCommandRef = Arc<dyn DiffCommand>;
+
+pub trait DiffCommandFactory {
+    fn diff_commands_for(&self, existing_guild: &ExistingGuild) -> Vec<DiffCommandRef>;
+}
 
 pub enum EntityChange {
     Create(Entity, String),

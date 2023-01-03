@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use crate::channel::{AwaitingChannel, ChannelsList, ExistingChannel};
+use crate::{
+    category::AwaitingCategoriesList,
+    channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
+    role::AwaitingRolesList,
+};
 
 use super::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
@@ -51,10 +55,9 @@ pub struct ExistingGuild {
 
 #[derive(Debug, PartialEq)]
 pub struct AwaitingGuild {
-    pub roles: RolesList<AwaitingRole>,
-    pub categories: CategoriesList<AwaitingCategory>,
-    pub channels: ChannelsList<AwaitingChannel>,
-    pub options: AwaitingGuildOptions,
+    pub roles: AwaitingRolesList,
+    pub categories: AwaitingCategoriesList,
+    pub channels: AwaitingChannelsList,
 }
 
 #[derive(Debug, PartialEq)]

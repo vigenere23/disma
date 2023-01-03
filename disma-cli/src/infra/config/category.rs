@@ -9,6 +9,32 @@ use disma::{
 
 use super::permission::PermissionsOverwritesConfig;
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct CategoryConfigsList {
+    pub items: Option<Vec<CategoryConfig>>,
+    pub others: CategoryExtraItemsConfig,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct CategoryExtraItemsConfig {
+    strategy: CategoryExtraItemsStrategy,
+}
+
+impl Default for CategoryExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: CategoryExtraItemsStrategy::Remove,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum CategoryExtraItemsStrategy {
+    Keep,
+    Remove,
+    // TODO Overwrite,
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct CategoryConfig {
     pub name: String,

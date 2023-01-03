@@ -8,6 +8,34 @@ use disma::{
     utils::vec::Compress,
 };
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct RoleConfigsList {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub items: Option<Vec<RoleConfig>>,
+    #[serde(default = "RoleExtraItemsConfig::default")]
+    pub others: RoleExtraItemsConfig,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct RoleExtraItemsConfig {
+    strategy: RoleExtraItemsStrategy,
+}
+
+impl Default for RoleExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: RoleExtraItemsStrategy::Remove,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum RoleExtraItemsStrategy {
+    Keep,
+    Remove,
+    // TODO Overwrite,
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct RoleConfig {
     pub name: String,

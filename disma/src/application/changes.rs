@@ -1,11 +1,13 @@
 use crate::{
-    diff::{base::EntityChange, event::DiffEventListenerRef, factory::DiffCommandFactoryRef},
+    diff::{
+        base::{DiffCommandFactory, EntityChange},
+        event::DiffEventListenerRef,
+    },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
 };
 
 pub struct ChangesService {
     guild_commander: GuildCommanderRef,
-    command_factory: DiffCommandFactoryRef,
     guild_querier: GuildQuerierRef,
     event_listener: DiffEventListenerRef,
 }
@@ -13,13 +15,11 @@ pub struct ChangesService {
 impl ChangesService {
     pub fn new(
         guild_commander: GuildCommanderRef,
-        command_factory: DiffCommandFactoryRef,
         guild_querier: GuildQuerierRef,
         event_listener: DiffEventListenerRef,
     ) -> Self {
         Self {
             guild_commander,
-            command_factory,
             guild_querier,
             event_listener,
         }
@@ -32,17 +32,11 @@ impl ChangesService {
     ) -> Vec<EntityChange> {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let role_diffs = self
-            .command_factory
-            .for_roles(&existing_guild, awaiting_guild);
+        let role_diffs = awaiting_guild.roles.diff_commands_for(&existing_guild);
 
-        let category_diffs = self
-            .command_factory
-            .for_categories(&existing_guild, awaiting_guild);
+        let category_diffs = awaiting_guild.categories.diff_commands_for(&existing_guild);
 
-        let channel_diffs = self
-            .command_factory
-            .for_channels(&existing_guild, awaiting_guild);
+        let channel_diffs = awaiting_guild.channels.diff_commands_for(&existing_guild);
 
         role_diffs
             .into_iter()
@@ -55,9 +49,7 @@ impl ChangesService {
     pub fn apply_changes(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let role_diffs = self
-            .command_factory
-            .for_roles(&existing_guild, awaiting_guild);
+        let role_diffs = awaiting_guild.roles.diff_commands_for(&existing_guild);
 
         for diff in role_diffs {
             self.event_listener.before_change_executed(diff.describe());
@@ -67,9 +59,7 @@ impl ChangesService {
 
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let category_diffs = self
-            .command_factory
-            .for_categories(&existing_guild, awaiting_guild);
+        let category_diffs = awaiting_guild.categories.diff_commands_for(&existing_guild);
 
         for diff in category_diffs {
             self.event_listener.before_change_executed(diff.describe());
@@ -79,9 +69,7 @@ impl ChangesService {
 
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let channel_diffs = self
-            .command_factory
-            .for_channels(&existing_guild, awaiting_guild);
+        let channel_diffs = awaiting_guild.channels.diff_commands_for(&existing_guild);
 
         for diff in channel_diffs {
             self.event_listener.before_change_executed(diff.describe());
