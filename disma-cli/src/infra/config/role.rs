@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use disma::{
     permission::{Permission, PermissionsList},
-    role::{AwaitingRole, ExistingRole},
+    role::{AwaitingRole, AwaitingRolesList, ExistingRole, ExtraRolesOptions, ExtraRolesStrategy},
     utils::vec::Compress,
 };
 
@@ -13,7 +13,24 @@ pub struct RoleConfigsList {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub items: Option<Vec<RoleConfig>>,
     #[serde(default = "RoleExtraItemsConfig::default")]
-    pub others: RoleExtraItemsConfig,
+    pub extra_items: RoleExtraItemsConfig,
+}
+
+impl RoleConfigsList {
+    pub fn into(self) -> AwaitingRolesList {
+        let items = self
+            .items
+            .unwrap_or_default()
+            .into_iter()
+            .map(|role| role.into())
+            .collect::<Vec<AwaitingRole>>()
+            .into();
+
+        AwaitingRolesList {
+            items,
+            extra_items: self.extra_items.into(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
@@ -29,11 +46,28 @@ impl Default for RoleExtraItemsConfig {
     }
 }
 
+impl Into<ExtraRolesOptions> for RoleExtraItemsConfig {
+    fn into(self) -> ExtraRolesOptions {
+        ExtraRolesOptions {
+            strategy: self.strategy.into(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum RoleExtraItemsStrategy {
     Keep,
     Remove,
     // TODO Overwrite,
+}
+
+impl Into<ExtraRolesStrategy> for RoleExtraItemsStrategy {
+    fn into(self) -> ExtraRolesStrategy {
+        match self {
+            RoleExtraItemsStrategy::Keep => ExtraRolesStrategy::Keep,
+            RoleExtraItemsStrategy::Remove => ExtraRolesStrategy::Remove,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]

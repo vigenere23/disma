@@ -1,4 +1,6 @@
-use crate::{overwrites::PermissionsOverwritesList, role::AwaitingRole};
+use crate::{
+    channel::ExtraChannelsOptions, overwrites::PermissionsOverwritesList, role::AwaitingRole,
+};
 
 use super::{CategoriesList, Category};
 
@@ -23,7 +25,7 @@ pub enum ExtraCategoriesStrategy {
 pub struct AwaitingCategory {
     pub name: String,
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
-    pub allow_extra_channels: bool,
+    pub extra_channels: ExtraChannelsOptions,
 }
 
 impl ToString for AwaitingCategory {

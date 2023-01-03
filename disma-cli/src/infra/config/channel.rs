@@ -2,7 +2,10 @@ use std::str::FromStr;
 
 use disma::{
     category::{AwaitingCategory, CategoriesList},
-    channel::{AwaitingChannel, ChannelType, ExistingChannel},
+    channel::{
+        AwaitingChannel, AwaitingChannelsList, ChannelType, ExistingChannel, ExtraChannelsOptions,
+        ExtraChannelsStrategy,
+    },
     overwrites::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
@@ -14,12 +17,33 @@ use super::permission::PermissionsOverwritesConfig;
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct ChannelConfigsList {
     pub items: Option<Vec<ChannelConfig>>,
-    pub others: ChannelExtraItemsConfig,
+    pub extra_items: ChannelExtraItemsConfig,
+}
+
+impl ChannelConfigsList {
+    pub fn into(
+        self,
+        roles: &RolesList<AwaitingRole>,
+        categories: &CategoriesList<AwaitingCategory>,
+    ) -> AwaitingChannelsList {
+        let items = self
+            .items
+            .unwrap_or_default()
+            .into_iter()
+            .map(|channel| channel.into(roles, categories))
+            .collect::<Vec<AwaitingChannel>>()
+            .into();
+
+        AwaitingChannelsList {
+            items,
+            extra_items: self.extra_items.into(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ChannelExtraItemsConfig {
-    strategy: ChannelExtraItemsStrategy,
+    pub strategy: ChannelExtraItemsStrategy,
 }
 
 impl Default for ChannelExtraItemsConfig {
@@ -30,11 +54,28 @@ impl Default for ChannelExtraItemsConfig {
     }
 }
 
+impl Into<ExtraChannelsOptions> for ChannelExtraItemsConfig {
+    fn into(self) -> ExtraChannelsOptions {
+        ExtraChannelsOptions {
+            strategy: self.strategy.into(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum ChannelExtraItemsStrategy {
     Keep,
     Remove,
     // TODO Overwrite,
+}
+
+impl Into<ExtraChannelsStrategy> for ChannelExtraItemsStrategy {
+    fn into(self) -> ExtraChannelsStrategy {
+        match self {
+            Self::Keep => ExtraChannelsStrategy::Keep,
+            Self::Remove => ExtraChannelsStrategy::Remove,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
@@ -128,13 +169,13 @@ mod tests {
 
     use crate::infra::config::permission::PermissionsOverwritesConfig;
 
-    use super::ChannelConfig;
+    use super::{ChannelConfig, ChannelExtraItemsConfig};
 
     fn given_awaiting_category(name: &str) -> AwaitingCategory {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            allow_extra_channels: false,
+            extra_channels: ChannelExtraItemsConfig::default().into(),
         }
     }
 

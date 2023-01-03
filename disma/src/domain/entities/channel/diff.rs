@@ -108,9 +108,12 @@ impl DiffCommandFactory for AwaitingChannelsList {
             let should_remove_channel_default =
                 self.extra_items.strategy == ExtraChannelsStrategy::Remove;
 
+            // TODO should be calculated at creation, not here
             let should_remove_channel = match matching_awaiting_channel {
                 Some(channel) => match &channel.category {
-                    Some(category) => category.allow_extra_channels,
+                    Some(category) => {
+                        category.extra_channels.strategy == ExtraChannelsStrategy::Remove
+                    }
                     None => should_remove_channel_default,
                 },
                 None => should_remove_channel_default,
