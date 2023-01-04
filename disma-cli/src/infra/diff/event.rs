@@ -1,19 +1,23 @@
-use disma::diff::{base::EntityChange, event::DiffEventListener};
+use disma::commands::{CommandDescription, CommandEventListener};
 
-pub struct CliDiffEventListener {}
+pub struct CliCommandEventListener {}
 
-impl DiffEventListener for CliDiffEventListener {
-    fn before_change_executed(&self, change: EntityChange) {
-        match change {
-            EntityChange::Create(entity, name) => print!("- 🆕 Adding {:?} {name}...", entity),
-            EntityChange::Delete(entity, name) => print!("- 🗑️  Removing {:?} {name}...", entity),
-            EntityChange::Update(entity, name, _diff) => {
+impl CommandEventListener for CliCommandEventListener {
+    fn before_command_execution(&self, description: CommandDescription) {
+        match description {
+            CommandDescription::Create(entity, name) => {
+                print!("- 🆕 Adding {:?} {name}...", entity)
+            }
+            CommandDescription::Delete(entity, name) => {
+                print!("- 🗑️  Removing {:?} {name}...", entity)
+            }
+            CommandDescription::Update(entity, name, _diff) => {
                 print!("- 🔄 Updating {:?} {name}...", entity)
             }
         }
     }
 
-    fn after_change_executed(&self, _change: EntityChange) {
+    fn after_command_execution(&self, _: CommandDescription) {
         println!("Done")
     }
 }

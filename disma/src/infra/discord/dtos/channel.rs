@@ -2,12 +2,9 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
-    category::{CategoriesList, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, ChannelType},
-    domain::entities::{
-        category::AwaitingCategory,
-        role::{ExistingRole, RolesList},
-    },
+    role::{ExistingRole, RolesList},
 };
 
 use super::permissions::PermissionOverwritesDto;

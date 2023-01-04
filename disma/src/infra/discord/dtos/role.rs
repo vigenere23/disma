@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::domain::entities::{
+use crate::{
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole},
 };

@@ -1,22 +1,19 @@
 use crate::{
-    diff::{
-        base::{DiffCommandFactory, EntityChange},
-        event::DiffEventListenerRef,
-    },
+    commands::{CommandDescription, CommandEventListenerRef, CommandFactory},
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
 };
 
 pub struct ChangesService {
     guild_commander: GuildCommanderRef,
     guild_querier: GuildQuerierRef,
-    event_listener: DiffEventListenerRef,
+    event_listener: CommandEventListenerRef,
 }
 
 impl ChangesService {
     pub fn new(
         guild_commander: GuildCommanderRef,
         guild_querier: GuildQuerierRef,
-        event_listener: DiffEventListenerRef,
+        event_listener: CommandEventListenerRef,
     ) -> Self {
         Self {
             guild_commander,
@@ -29,52 +26,56 @@ impl ChangesService {
         &self,
         guild_id: &str,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<EntityChange> {
+    ) -> Vec<CommandDescription> {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let role_diffs = awaiting_guild.roles.diff_commands_for(&existing_guild);
+        let role_commands = awaiting_guild.roles.commands_for(&existing_guild);
+        let category_commands = awaiting_guild.categories.commands_for(&existing_guild);
+        let channel_commands = awaiting_guild.channels.commands_for(&existing_guild);
 
-        let category_diffs = awaiting_guild.categories.diff_commands_for(&existing_guild);
-
-        let channel_diffs = awaiting_guild.channels.diff_commands_for(&existing_guild);
-
-        role_diffs
+        role_commands
             .into_iter()
-            .chain(category_diffs.into_iter())
-            .chain(channel_diffs.into_iter())
-            .map(|diff| diff.describe())
+            .chain(category_commands.into_iter())
+            .chain(channel_commands.into_iter())
+            .map(|command| command.describe())
             .collect()
     }
 
     pub fn apply_changes(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let role_diffs = awaiting_guild.roles.diff_commands_for(&existing_guild);
+        let role_commands = awaiting_guild.roles.commands_for(&existing_guild);
 
-        for diff in role_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
+        for command in role_commands {
+            self.event_listener
+                .before_command_execution(command.describe());
+            command.execute(&self.guild_commander);
+            self.event_listener
+                .after_command_execution(command.describe());
         }
 
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let category_diffs = awaiting_guild.categories.diff_commands_for(&existing_guild);
+        let category_commands = awaiting_guild.categories.commands_for(&existing_guild);
 
-        for diff in category_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
+        for command in category_commands {
+            self.event_listener
+                .before_command_execution(command.describe());
+            command.execute(&self.guild_commander);
+            self.event_listener
+                .after_command_execution(command.describe());
         }
 
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let channel_diffs = awaiting_guild.channels.diff_commands_for(&existing_guild);
+        let channel_commands = awaiting_guild.channels.commands_for(&existing_guild);
 
-        for diff in channel_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
+        for command in channel_commands {
+            self.event_listener
+                .before_command_execution(command.describe());
+            command.execute(&self.guild_commander);
+            self.event_listener
+                .after_command_execution(command.describe());
         }
     }
 }

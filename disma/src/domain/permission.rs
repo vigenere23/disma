@@ -4,7 +4,7 @@ use std::{collections::HashSet, str::FromStr};
 
 use strum::{Display, EnumIter, EnumString, IntoEnumIterator};
 
-use crate::diff::base::{Diff, Differ};
+use crate::diff::{Diff, Differ};
 
 #[derive(Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter, EnumString)]
 pub enum Permission {
@@ -184,7 +184,7 @@ mod tests {
     mod persission {
         use std::{collections::HashSet, str::FromStr};
 
-        use crate::domain::entities::permission::Permission;
+        use crate::permission::Permission;
 
         #[test]
         fn same_permissions_are_equal() {
@@ -234,7 +234,7 @@ mod tests {
     }
 
     mod permission_list {
-        use crate::domain::entities::permission::{Permission, PermissionsList};
+        use crate::permission::{Permission, PermissionsList};
 
         #[test]
         fn when_empty_then_code_is_0() {

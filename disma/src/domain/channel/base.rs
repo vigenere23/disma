@@ -1,4 +1,4 @@
-use crate::diff::base::{Diff, Differ};
+use crate::diff::{Diff, Differ};
 
 use strum::{Display, EnumString};
 

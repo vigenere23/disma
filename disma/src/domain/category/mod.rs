@@ -9,3 +9,6 @@ mod diff;
 
 pub use existing::*;
 mod existing;
+
+pub use commands::*;
+mod commands;

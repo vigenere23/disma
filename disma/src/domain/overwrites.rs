@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::{
-    diff::base::{Diff, Differ},
+    diff::{Diff, Differ},
     permission::PermissionsList,
     role::{AwaitingRole, ExistingRole, Role},
     utils::misc::IfThen,

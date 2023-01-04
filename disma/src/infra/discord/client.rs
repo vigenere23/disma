@@ -1,13 +1,11 @@
 use std::sync::Arc;
 
 use crate::{
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{ChannelType, ChannelsList, ExistingChannel},
-    domain::entities::{
-        category::{AwaitingCategory, CategoriesList, ExistingCategory},
-        guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-        role::{AwaitingRole, ExistingRole, RolesList},
-    },
+    guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
+    role::{AwaitingRole, ExistingRole, RolesList},
 };
 
 use super::{

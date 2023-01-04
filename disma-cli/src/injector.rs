@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use disma::{
     changes::ChangesService,
-    diff::event::DiffEventListenerRef,
+    commands::CommandEventListenerRef,
     discord::{
         api::DiscordApi,
         client::{DiscordClient, DiscordGuildClient},
@@ -12,7 +12,7 @@ use disma::{
 
 use crate::{
     infra::diff::{
-        event::CliDiffEventListener,
+        event::CliCommandEventListener,
         formatter::{DiffFormater, DiffFormaterRef},
     },
     services::{
@@ -71,9 +71,9 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
     }
 }
 
-impl Get<DiffEventListenerRef> for Injector {
-    fn get(&self) -> DiffEventListenerRef {
-        Arc::from(CliDiffEventListener {})
+impl Get<CommandEventListenerRef> for Injector {
+    fn get(&self) -> CommandEventListenerRef {
+        Arc::from(CliCommandEventListener {})
     }
 }
 

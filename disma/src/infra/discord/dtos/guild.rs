@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::domain::entities::guild::GuildSummary;
+use crate::guild::GuildSummary;
 
 #[derive(Deserialize)]
 pub struct GuildResponse {

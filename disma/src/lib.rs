@@ -1,9 +1,10 @@
-mod application;
-mod domain;
-mod infra;
 pub mod utils;
 
+mod application;
 pub use application::*;
-pub use domain::diff;
-pub use domain::entities::*;
+
+mod domain;
+pub use domain::*;
+
+mod infra;
 pub use infra::*;

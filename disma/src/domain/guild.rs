@@ -1,14 +1,9 @@
 use std::sync::Arc;
 
 use crate::{
-    category::AwaitingCategoriesList,
+    category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
-    role::AwaitingRolesList,
-};
-
-use super::{
-    category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    role::{AwaitingRole, ExistingRole, RolesList},
+    role::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList},
 };
 
 pub trait GuildQuerier {
