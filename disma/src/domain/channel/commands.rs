@@ -1,3 +1,4 @@
+use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
@@ -9,7 +10,7 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-use super::{AwaitingChannelsList, ExtraChannelsStrategy};
+use super::{AwaitingChannelsList, ChannelsList};
 
 impl CommandFactory for AwaitingChannelsList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
@@ -48,37 +49,39 @@ impl CommandFactory for AwaitingChannelsList {
             }
         }
 
-        for existing_channel in existing_guild.channels.to_list() {
-            let category_name = existing_channel
-                .category
-                .as_ref()
-                .map(|category| category.name());
+        // TODO handle extra items
 
-            let matching_awaiting_channel = self.items.find(
-                &existing_channel.name,
-                existing_channel.channel_type(),
-                category_name,
-            );
+        // for existing_channel in existing_guild.channels.to_list() {
+        //     let category_name = existing_channel
+        //         .category
+        //         .as_ref()
+        //         .map(|category| category.name());
 
-            let should_remove_channel_default =
-                self.extra_items.strategy == ExtraChannelsStrategy::Remove;
+        //     let matching_awaiting_channel = self.items.find(
+        //         &existing_channel.name,
+        //         existing_channel.channel_type(),
+        //         category_name,
+        //     );
 
-            // TODO should be calculated at creation, not here
-            let should_remove_channel = match matching_awaiting_channel {
-                Some(channel) => match &channel.category {
-                    Some(category) => {
-                        category.extra_channels.strategy == ExtraChannelsStrategy::Remove
-                    }
-                    None => should_remove_channel_default,
-                },
-                None => should_remove_channel_default,
-            };
+        //     let should_remove_channel_default =
+        //         self.extra_items.strategy == ExtraChannelsStrategy::Remove;
 
-            if should_remove_channel {
-                let command = DeleteChannel::new(existing_channel.clone());
-                diffs.push(Arc::from(command));
-            }
-        }
+        //     // TODO should be calculated at creation, not here
+        //     let should_remove_channel = match matching_awaiting_channel {
+        //         Some(channel) => match &channel.category {
+        //             Some(category) => {
+        //                 category.extra_channels.strategy == ExtraChannelsStrategy::Remove
+        //             }
+        //             None => should_remove_channel_default,
+        //         },
+        //         None => should_remove_channel_default,
+        //     };
+
+        //     if should_remove_channel {
+        //         let command = DeleteChannel::new(existing_channel.clone());
+        //         diffs.push(Arc::from(command));
+        //     }
+        // }
 
         diffs
     }
@@ -173,5 +176,66 @@ impl Command for DeleteChannel {
 
     fn describe(&self) -> CommandDescription {
         CommandDescription::Delete(CommandEntity::Channel, self.channel.unique_name())
+    }
+}
+
+pub trait ExtraChannelsStrategy {
+    fn _type(&self) -> ExtraChannelsStrategyType;
+    fn handle_extra_roles(
+        &self,
+        awaiting_channels: &ChannelsList<AwaitingChannel>,
+        existing_channels: &ChannelsList<ExistingChannel>,
+        commands: &mut Vec<CommandRef>,
+    );
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ExtraChannelsStrategyType {
+    Keep,
+    Remove,
+}
+
+impl PartialEq for dyn ExtraChannelsStrategy {
+    fn eq(&self, other: &Self) -> bool {
+        self._type().eq(&other._type())
+    }
+}
+
+impl Debug for dyn ExtraChannelsStrategy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self._type())
+    }
+}
+
+pub struct RemoveExtraChannels {}
+
+impl ExtraChannelsStrategy for RemoveExtraChannels {
+    fn _type(&self) -> ExtraChannelsStrategyType {
+        ExtraChannelsStrategyType::Remove
+    }
+
+    fn handle_extra_roles(
+        &self,
+        _awaiting_channels: &ChannelsList<AwaitingChannel>,
+        _existing_channels: &ChannelsList<ExistingChannel>,
+        _commands: &mut Vec<CommandRef>,
+    ) {
+        todo!()
+    }
+}
+
+pub struct KeepExtraChannels {}
+
+impl ExtraChannelsStrategy for KeepExtraChannels {
+    fn _type(&self) -> ExtraChannelsStrategyType {
+        ExtraChannelsStrategyType::Keep
+    }
+
+    fn handle_extra_roles(
+        &self,
+        _awaiting_channels: &ChannelsList<AwaitingChannel>,
+        _existing_channels: &ChannelsList<ExistingChannel>,
+        _commands: &mut Vec<CommandRef>,
+    ) {
     }
 }

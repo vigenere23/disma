@@ -1,9 +1,11 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use disma::{
     category::{
-        AwaitingCategoriesList, AwaitingCategory, ExistingCategory, ExtraCategoriesOptions,
-        ExtraCategoriesStrategy,
+        AwaitingCategoriesList, AwaitingCategory, ExistingCategory, ExtraCategoriesStrategy,
+        KeepExtraCategories, RemoveExtraCategories,
     },
     overwrites::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
@@ -30,28 +32,20 @@ impl CategoryConfigsList {
 
         AwaitingCategoriesList {
             items,
-            extra_items: self.extra_items.into(),
+            extra_items_strategy: self.extra_items.strategy.into(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct CategoryExtraItemsConfig {
-    strategy: CategoryExtraItemsStrategy,
+    pub strategy: CategoryExtraItemsStrategy,
 }
 
 impl Default for CategoryExtraItemsConfig {
     fn default() -> Self {
         Self {
             strategy: CategoryExtraItemsStrategy::Remove,
-        }
-    }
-}
-
-impl Into<ExtraCategoriesOptions> for CategoryExtraItemsConfig {
-    fn into(self) -> ExtraCategoriesOptions {
-        ExtraCategoriesOptions {
-            strategy: self.strategy.into(),
         }
     }
 }
@@ -63,11 +57,11 @@ pub enum CategoryExtraItemsStrategy {
     // TODO Overwrite,
 }
 
-impl Into<ExtraCategoriesStrategy> for CategoryExtraItemsStrategy {
-    fn into(self) -> ExtraCategoriesStrategy {
+impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraCategoriesStrategy> {
         match self {
-            Self::Keep => ExtraCategoriesStrategy::Keep,
-            Self::Remove => ExtraCategoriesStrategy::Remove,
+            Self::Keep => Arc::from(KeepExtraCategories {}),
+            Self::Remove => Arc::from(RemoveExtraCategories {}),
         }
     }
 }
@@ -112,7 +106,7 @@ impl CategoryConfig {
         AwaitingCategory {
             name: self.name,
             overwrites: overwrites.into(),
-            extra_channels: self.extra_channels.into(),
+            extra_channels_strategy: self.extra_channels.strategy.into(),
         }
     }
 }
@@ -121,7 +115,6 @@ impl CategoryConfig {
 mod tests {
     use disma::{
         category::{AwaitingCategory, ExistingCategory},
-        channel::{ExtraChannelsOptions, ExtraChannelsStrategy},
         overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
         permission::{Permission, PermissionsList},
         role::{AwaitingRole, ExistingRole, RolesList},
@@ -187,9 +180,7 @@ mod tests {
                 allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
             }]),
-            extra_channels: ExtraChannelsOptions {
-                strategy: ExtraChannelsStrategy::Remove,
-            },
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -211,9 +202,7 @@ mod tests {
         let expected_entity = AwaitingCategory {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            extra_channels: ExtraChannelsOptions {
-                strategy: ExtraChannelsStrategy::Remove,
-            },
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         };
         assert_eq!(entity, expected_entity);
     }

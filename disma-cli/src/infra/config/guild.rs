@@ -100,15 +100,15 @@ mod tests {
         let expected_entity = AwaitingGuild {
             roles: AwaitingRolesList {
                 items: RolesList::from(vec![]),
-                extra_items: RoleExtraItemsConfig::default().into(),
+                extra_items_strategy: RoleExtraItemsConfig::default().strategy.into(),
             },
             categories: AwaitingCategoriesList {
                 items: CategoriesList::from(vec![]),
-                extra_items: CategoryExtraItemsConfig::default().into(),
+                extra_items_strategy: CategoryExtraItemsConfig::default().strategy.into(),
             },
             channels: AwaitingChannelsList {
                 items: ChannelsList::from(vec![]),
-                extra_items: ChannelExtraItemsConfig::default().into(),
+                extra_items_strategy: ChannelExtraItemsConfig::default().strategy.into(),
             },
         };
         assert_eq!(entity, expected_entity);

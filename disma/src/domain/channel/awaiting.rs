@@ -1,26 +1,23 @@
+use std::sync::Arc;
+
 use crate::{
     category::{AwaitingCategory, Category},
     overwrites::PermissionsOverwritesList,
     role::AwaitingRole,
 };
 
-use super::{Channel, ChannelType, ChannelsList};
+use super::{Channel, ChannelType, ChannelsList, ExtraChannelsStrategy};
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 pub struct AwaitingChannelsList {
     pub items: ChannelsList<AwaitingChannel>,
-    pub extra_items: ExtraChannelsOptions,
+    pub extra_items_strategy: Arc<dyn ExtraChannelsStrategy>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct ExtraChannelsOptions {
-    pub strategy: ExtraChannelsStrategy,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum ExtraChannelsStrategy {
-    Keep,
-    Remove,
+impl PartialEq for AwaitingChannelsList {
+    fn eq(&self, other: &Self) -> bool {
+        self.items.eq(&other.items) && self.extra_items_strategy.eq(&other.extra_items_strategy)
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]

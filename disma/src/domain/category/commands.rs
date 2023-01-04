@@ -1,3 +1,4 @@
+use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
@@ -8,11 +9,11 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-use super::{AwaitingCategoriesList, ExtraCategoriesStrategy};
+use super::{AwaitingCategoriesList, CategoriesList};
 
 impl CommandFactory for AwaitingCategoriesList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
-        let mut diffs: Vec<CommandRef> = Vec::new();
+        let mut commands: Vec<CommandRef> = Vec::new();
 
         for awaiting_category in self.items.to_list() {
             match existing_guild
@@ -26,27 +27,24 @@ impl CommandFactory for AwaitingCategoriesList {
                             awaiting_category.clone(),
                             existing_guild.roles.clone(),
                         );
-                        diffs.push(Arc::from(command));
+                        commands.push(Arc::from(command));
                     }
                 }
                 None => {
                     let command =
                         AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
-                    diffs.push(Arc::from(command));
+                    commands.push(Arc::from(command));
                 }
             }
         }
 
-        if self.extra_items.strategy == ExtraCategoriesStrategy::Remove {
-            for existing_category in existing_guild.categories.to_list() {
-                if self.items.find_by_name(&existing_category.name).is_none() {
-                    let command = DeleteCategory::new(existing_category.clone());
-                    diffs.push(Arc::from(command));
-                }
-            }
-        }
+        self.extra_items_strategy.handle_extra_roles(
+            &self.items,
+            &existing_guild.categories,
+            &mut commands,
+        );
 
-        diffs
+        commands
     }
 }
 
@@ -126,5 +124,74 @@ impl Command for DeleteCategory {
 
     fn describe(&self) -> CommandDescription {
         CommandDescription::Delete(CommandEntity::Category, self.category.name.clone())
+    }
+}
+
+pub trait ExtraCategoriesStrategy {
+    fn _type(&self) -> ExtraCategoriesStrategyType;
+    fn handle_extra_roles(
+        &self,
+        awaiting_categories: &CategoriesList<AwaitingCategory>,
+        existing_categories: &CategoriesList<ExistingCategory>,
+        commands: &mut Vec<CommandRef>,
+    );
+}
+
+#[derive(Debug, PartialEq)]
+pub enum ExtraCategoriesStrategyType {
+    Keep,
+    Remove,
+}
+
+impl PartialEq for dyn ExtraCategoriesStrategy {
+    fn eq(&self, other: &Self) -> bool {
+        self._type().eq(&other._type())
+    }
+}
+
+impl Debug for dyn ExtraCategoriesStrategy {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self._type())
+    }
+}
+
+pub struct RemoveExtraCategories {}
+
+impl ExtraCategoriesStrategy for RemoveExtraCategories {
+    fn _type(&self) -> ExtraCategoriesStrategyType {
+        ExtraCategoriesStrategyType::Remove
+    }
+
+    fn handle_extra_roles(
+        &self,
+        awaiting_categories: &CategoriesList<AwaitingCategory>,
+        existing_categories: &CategoriesList<ExistingCategory>,
+        commands: &mut Vec<CommandRef>,
+    ) {
+        for existing_category in existing_categories.to_list() {
+            if awaiting_categories
+                .find_by_name(&existing_category.name)
+                .is_none()
+            {
+                let command = DeleteCategory::new(existing_category.clone());
+                commands.push(Arc::from(command));
+            }
+        }
+    }
+}
+
+pub struct KeepExtraCategories {}
+
+impl ExtraCategoriesStrategy for KeepExtraCategories {
+    fn _type(&self) -> ExtraCategoriesStrategyType {
+        ExtraCategoriesStrategyType::Keep
+    }
+
+    fn handle_extra_roles(
+        &self,
+        _awaiting_categories: &CategoriesList<AwaitingCategory>,
+        _existing_categories: &CategoriesList<ExistingCategory>,
+        _commands: &mut Vec<CommandRef>,
+    ) {
     }
 }

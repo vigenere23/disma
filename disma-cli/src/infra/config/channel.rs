@@ -1,10 +1,10 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 use disma::{
     category::{AwaitingCategory, CategoriesList},
     channel::{
-        AwaitingChannel, AwaitingChannelsList, ChannelType, ExistingChannel, ExtraChannelsOptions,
-        ExtraChannelsStrategy,
+        AwaitingChannel, AwaitingChannelsList, ChannelType, ExistingChannel, ExtraChannelsStrategy,
+        KeepExtraChannels, RemoveExtraChannels,
     },
     overwrites::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
@@ -36,7 +36,7 @@ impl ChannelConfigsList {
 
         AwaitingChannelsList {
             items,
-            extra_items: self.extra_items.into(),
+            extra_items_strategy: self.extra_items.strategy.into(),
         }
     }
 }
@@ -54,14 +54,6 @@ impl Default for ChannelExtraItemsConfig {
     }
 }
 
-impl Into<ExtraChannelsOptions> for ChannelExtraItemsConfig {
-    fn into(self) -> ExtraChannelsOptions {
-        ExtraChannelsOptions {
-            strategy: self.strategy.into(),
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum ChannelExtraItemsStrategy {
     Keep,
@@ -69,11 +61,11 @@ pub enum ChannelExtraItemsStrategy {
     // TODO Overwrite,
 }
 
-impl Into<ExtraChannelsStrategy> for ChannelExtraItemsStrategy {
-    fn into(self) -> ExtraChannelsStrategy {
+impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
         match self {
-            Self::Keep => ExtraChannelsStrategy::Keep,
-            Self::Remove => ExtraChannelsStrategy::Remove,
+            Self::Keep => Arc::from(KeepExtraChannels {}),
+            Self::Remove => Arc::from(RemoveExtraChannels {}),
         }
     }
 }
@@ -175,7 +167,7 @@ mod tests {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            extra_channels: ChannelExtraItemsConfig::default().into(),
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         }
     }
 

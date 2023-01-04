@@ -1,22 +1,19 @@
+use std::sync::Arc;
+
 use crate::permission::PermissionsList;
 
-use super::{Role, RolesList};
+use super::{ExtraRolesStrategy, Role, RolesList};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug)]
 pub struct AwaitingRolesList {
     pub items: RolesList<AwaitingRole>,
-    pub extra_items: ExtraRolesOptions,
+    pub extra_items_strategy: Arc<dyn ExtraRolesStrategy>,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct ExtraRolesOptions {
-    pub strategy: ExtraRolesStrategy,
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum ExtraRolesStrategy {
-    Keep,
-    Remove,
+impl PartialEq for AwaitingRolesList {
+    fn eq(&self, other: &Self) -> bool {
+        self.items.eq(&other.items) && self.extra_items_strategy.eq(&other.extra_items_strategy)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]

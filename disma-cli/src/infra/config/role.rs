@@ -1,10 +1,13 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 
 use disma::{
     permission::{Permission, PermissionsList},
-    role::{AwaitingRole, AwaitingRolesList, ExistingRole, ExtraRolesOptions, ExtraRolesStrategy},
+    role::{
+        AwaitingRole, AwaitingRolesList, ExistingRole, ExtraRolesStrategy, KeepExtraRoles,
+        RemoveExtraRoles,
+    },
     utils::vec::Compress,
 };
 
@@ -28,28 +31,20 @@ impl RoleConfigsList {
 
         AwaitingRolesList {
             items,
-            extra_items: self.extra_items.into(),
+            extra_items_strategy: self.extra_items.strategy.into(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct RoleExtraItemsConfig {
-    strategy: RoleExtraItemsStrategy,
+    pub strategy: RoleExtraItemsStrategy,
 }
 
 impl Default for RoleExtraItemsConfig {
     fn default() -> Self {
         Self {
             strategy: RoleExtraItemsStrategy::Remove,
-        }
-    }
-}
-
-impl Into<ExtraRolesOptions> for RoleExtraItemsConfig {
-    fn into(self) -> ExtraRolesOptions {
-        ExtraRolesOptions {
-            strategy: self.strategy.into(),
         }
     }
 }
@@ -61,11 +56,11 @@ pub enum RoleExtraItemsStrategy {
     // TODO Overwrite,
 }
 
-impl Into<ExtraRolesStrategy> for RoleExtraItemsStrategy {
-    fn into(self) -> ExtraRolesStrategy {
+impl Into<Arc<dyn ExtraRolesStrategy>> for RoleExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraRolesStrategy> {
         match self {
-            RoleExtraItemsStrategy::Keep => ExtraRolesStrategy::Keep,
-            RoleExtraItemsStrategy::Remove => ExtraRolesStrategy::Remove,
+            RoleExtraItemsStrategy::Keep => Arc::from(KeepExtraRoles {}),
+            RoleExtraItemsStrategy::Remove => Arc::from(RemoveExtraRoles {}),
         }
     }
 }
