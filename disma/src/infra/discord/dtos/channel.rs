@@ -40,7 +40,7 @@ impl ChannelRequest {
     pub fn from_category(category: &AwaitingCategory, roles: &RolesList<ExistingRole>) -> Self {
         let permission_overwrites = category
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(|permission| PermissionOverwritesDto::from(permission, roles))
             .collect();
@@ -66,7 +66,7 @@ impl ChannelRequest {
 
         let permission_overwrites = channel
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(|permission| PermissionOverwritesDto::from(permission, roles))
             .collect();

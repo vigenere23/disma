@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     category::{AwaitingCategory, Category},
-    overwrites::PermissionsOverwritesList,
+    permission::PermissionsOverwritesList,
     role::AwaitingRole,
 };
 

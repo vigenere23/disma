@@ -4,7 +4,7 @@ use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{ChannelType, ChannelsList, ExistingChannel},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-    overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
+    permission::{PermissionsOverwrites, PermissionsOverwritesList},
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 

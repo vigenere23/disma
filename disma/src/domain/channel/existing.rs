@@ -1,6 +1,6 @@
 use crate::{
     category::{Category, ExistingCategory},
-    overwrites::PermissionsOverwritesList,
+    permission::PermissionsOverwritesList,
     role::ExistingRole,
 };
 

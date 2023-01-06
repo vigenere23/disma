@@ -1,4 +1,4 @@
-use crate::{overwrites::PermissionsOverwritesList, role::ExistingRole};
+use crate::{permission::PermissionsOverwritesList, role::ExistingRole};
 
 use super::{CategoriesList, Category};
 

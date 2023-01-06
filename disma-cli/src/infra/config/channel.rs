@@ -6,7 +6,7 @@ use disma::{
         AwaitingChannel, AwaitingChannelsList, ChannelType, ExistingChannel, ExtraChannelsStrategy,
         KeepExtraChannels, RemoveExtraChannels,
     },
-    overwrites::PermissionsOverwrites,
+    permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
 };
@@ -95,7 +95,7 @@ impl From<&ExistingChannel> for ChannelConfig {
 
         let permissions_overwrites = channel
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(PermissionsOverwritesConfig::from)
             .collect::<Vec<PermissionsOverwritesConfig>>()
@@ -155,8 +155,9 @@ mod tests {
     use disma::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         channel::{AwaitingChannel, ChannelType, ExistingChannel},
-        overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
-        permission::{Permission, PermissionsList},
+        permission::{
+            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+        },
         role::{AwaitingRole, ExistingRole, RolesList},
     };
 
@@ -191,7 +192,7 @@ mod tests {
     fn given_awaiting_role(name: &str) -> AwaitingRole {
         AwaitingRole {
             name: name.to_string(),
-            permissions: PermissionsList::from(&vec![Permission::VIEW_CHANNEL]),
+            permissions: PermissionsList::from(vec![Permission::VIEW_CHANNEL]),
             color: Some("123456".to_string()),
             is_mentionable: true,
             show_in_sidebar: false,
@@ -202,7 +203,7 @@ mod tests {
         ExistingRole {
             id: "bob".to_string(),
             name: name.to_string(),
-            permissions: PermissionsList::from(&vec![Permission::VIEW_CHANNEL]),
+            permissions: PermissionsList::from(vec![Permission::VIEW_CHANNEL]),
             color: Some("123456".to_string()),
             is_mentionable: true,
             show_in_sidebar: false,
@@ -240,8 +241,8 @@ mod tests {
             topic: Some(topic.clone()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role: role.clone(),
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::SEND_MESSAGES]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
         assert_eq!(entity, expected_entity);
@@ -290,8 +291,8 @@ mod tests {
             topic: Some(topic.clone()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role: role.clone(),
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::SEND_MESSAGES]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
 

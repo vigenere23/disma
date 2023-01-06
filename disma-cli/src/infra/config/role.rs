@@ -105,7 +105,7 @@ impl Into<AwaitingRole> for RoleConfig {
 
         AwaitingRole {
             name: self.name,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: self.color.map(|color| color.to_lowercase()),
             is_mentionable: self.is_mentionable,
             show_in_sidebar: self.show_in_sidebar,
@@ -144,7 +144,7 @@ mod test {
             color: Some(color.clone()),
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -171,7 +171,7 @@ mod test {
             color: None,
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -190,7 +190,7 @@ mod test {
             color: Some(color.clone()),
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
 
         let config = RoleConfig::from(&entity);
@@ -219,7 +219,7 @@ mod test {
             color: None,
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
         };
 
         let config = RoleConfig::from(&entity);

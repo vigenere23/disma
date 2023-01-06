@@ -1,6 +1,5 @@
 use disma::{
-    overwrites::PermissionsOverwrites,
-    permission::PermissionsList,
+    permission::{PermissionsList, PermissionsOverwrites},
     role::{Role, RolesList},
     utils::vec::Compress,
 };
@@ -25,8 +24,8 @@ impl PermissionsOverwritesConfig {
                 .find_by_name(&self.role)
                 .unwrap_or_else(|| panic!("No role found with name {}", &self.role))
                 .clone(),
-            allow: PermissionsList::from(&self.allow.unwrap_or_default()),
-            deny: PermissionsList::from(&self.deny.unwrap_or_default()),
+            allow: PermissionsList::from(self.allow.unwrap_or_default()),
+            deny: PermissionsList::from(self.deny.unwrap_or_default()),
         }
     }
 }

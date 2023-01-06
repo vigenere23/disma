@@ -7,7 +7,7 @@ use disma::{
         AwaitingCategoriesList, AwaitingCategory, ExistingCategory, ExtraCategoriesStrategy,
         KeepExtraCategories, RemoveExtraCategories,
     },
-    overwrites::PermissionsOverwrites,
+    permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
 };
@@ -79,7 +79,7 @@ impl From<&ExistingCategory> for CategoryConfig {
     fn from(category: &ExistingCategory) -> Self {
         let permissions_overwrites: Vec<PermissionsOverwritesConfig> = category
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(PermissionsOverwritesConfig::from)
             .collect();
@@ -116,8 +116,9 @@ impl CategoryConfig {
 mod tests {
     use disma::{
         category::{AwaitingCategory, ExistingCategory},
-        overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
-        permission::{Permission, PermissionsList},
+        permission::{
+            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+        },
         role::{AwaitingRole, ExistingRole, RolesList},
     };
 
@@ -134,7 +135,7 @@ mod tests {
         let permissions: Vec<String> = vec![];
         AwaitingRole {
             name: name.to_string(),
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: None,
             is_mentionable: true,
             show_in_sidebar: false,
@@ -146,7 +147,7 @@ mod tests {
         ExistingRole {
             id: id.to_string(),
             name: name.to_string(),
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: None,
             is_mentionable: true,
             show_in_sidebar: false,
@@ -178,8 +179,8 @@ mod tests {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role,
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
             extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         };
@@ -220,8 +221,8 @@ mod tests {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role,
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
         };
 

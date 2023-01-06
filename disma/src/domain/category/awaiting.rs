@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    channel::ExtraChannelsStrategy, overwrites::PermissionsOverwritesList, role::AwaitingRole,
+    channel::ExtraChannelsStrategy, permission::PermissionsOverwritesList, role::AwaitingRole,
 };
 
 use super::{CategoriesList, Category, ExtraCategoriesStrategy};
