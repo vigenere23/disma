@@ -4,7 +4,7 @@ pub trait Role: Clone {
     fn name(&self) -> String;
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct RolesList<R>
 where
     R: Role,

@@ -10,12 +10,6 @@ pub struct AwaitingRolesList {
     pub extra_items_strategy: Arc<dyn ExtraRolesStrategy>,
 }
 
-impl PartialEq for AwaitingRolesList {
-    fn eq(&self, other: &Self) -> bool {
-        self.items.eq(&other.items) && self.extra_items_strategy.eq(&other.extra_items_strategy)
-    }
-}
-
 #[derive(Clone, Debug, PartialEq)]
 pub struct AwaitingRole {
     pub name: String,

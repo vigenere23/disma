@@ -143,12 +143,6 @@ pub enum ExtraCategoriesStrategyType {
     Remove,
 }
 
-impl PartialEq for dyn ExtraCategoriesStrategy {
-    fn eq(&self, other: &Self) -> bool {
-        self._type().eq(&other._type())
-    }
-}
-
 impl Debug for dyn ExtraCategoriesStrategy {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self._type())

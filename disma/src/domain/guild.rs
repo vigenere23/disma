@@ -48,33 +48,11 @@ pub struct ExistingGuild {
     pub channels: ChannelsList<ExistingChannel>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct AwaitingGuild {
     pub roles: AwaitingRolesList,
     pub categories: AwaitingCategoriesList,
     pub channels: AwaitingChannelsList,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct AwaitingGuildOptions {
-    pub roles: AwaitingRolesOptions,
-    pub categories: AwaitingCategoriesOptions,
-    pub channels: AwaitingChannelsOptions,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct AwaitingRolesOptions {
-    pub allow_extra: bool,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct AwaitingCategoriesOptions {
-    pub allow_extra: bool,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct AwaitingChannelsOptions {
-    pub allow_extra: bool,
 }
 
 pub struct GuildSummary {

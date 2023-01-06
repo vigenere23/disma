@@ -29,7 +29,7 @@ pub trait Channel {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct ChannelsList<C>
 where
     C: Channel,
