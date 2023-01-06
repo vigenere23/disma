@@ -43,23 +43,23 @@ pub struct RoleExtraItemsConfig {
 impl Default for RoleExtraItemsConfig {
     fn default() -> Self {
         Self {
-            strategy: RoleExtraItemsStrategy::Remove,
+            strategy: RoleExtraItemsStrategy::REMOVE,
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum RoleExtraItemsStrategy {
-    Keep,
-    Remove,
+    KEEP,
+    REMOVE,
     // TODO Overwrite,
 }
 
 impl Into<Arc<dyn ExtraRolesStrategy>> for RoleExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraRolesStrategy> {
         match self {
-            RoleExtraItemsStrategy::Keep => Arc::from(KeepExtraRoles {}),
-            RoleExtraItemsStrategy::Remove => Arc::from(RemoveExtraRoles {}),
+            RoleExtraItemsStrategy::KEEP => Arc::from(KeepExtraRoles {}),
+            RoleExtraItemsStrategy::REMOVE => Arc::from(RemoveExtraRoles {}),
         }
     }
 }

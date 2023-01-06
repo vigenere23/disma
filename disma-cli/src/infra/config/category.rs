@@ -46,23 +46,23 @@ pub struct CategoryExtraItemsConfig {
 impl Default for CategoryExtraItemsConfig {
     fn default() -> Self {
         Self {
-            strategy: CategoryExtraItemsStrategy::Remove,
+            strategy: CategoryExtraItemsStrategy::REMOVE,
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum CategoryExtraItemsStrategy {
-    Keep,
-    Remove,
+    KEEP,
+    REMOVE,
     // TODO Overwrite,
 }
 
 impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraCategoriesStrategy> {
         match self {
-            Self::Keep => Arc::from(KeepExtraCategories {}),
-            Self::Remove => Arc::from(RemoveExtraCategories {}),
+            Self::KEEP => Arc::from(KeepExtraCategories {}),
+            Self::REMOVE => Arc::from(RemoveExtraCategories {}),
         }
     }
 }
@@ -169,7 +169,7 @@ mod tests {
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
             extra_channels: ChannelExtraItemsConfig {
-                strategy: ChannelExtraItemsStrategy::Remove,
+                strategy: ChannelExtraItemsStrategy::REMOVE,
             },
         };
 
@@ -195,7 +195,7 @@ mod tests {
             name: category_name.clone(),
             permissions_overwrites: None,
             extra_channels: ChannelExtraItemsConfig {
-                strategy: ChannelExtraItemsStrategy::Remove,
+                strategy: ChannelExtraItemsStrategy::REMOVE,
             },
         };
 
@@ -236,7 +236,7 @@ mod tests {
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
             extra_channels: ChannelExtraItemsConfig {
-                strategy: ChannelExtraItemsStrategy::Remove,
+                strategy: ChannelExtraItemsStrategy::REMOVE,
             },
         };
         assert_eq!(config, expected_config);
@@ -258,7 +258,7 @@ mod tests {
             name: category_name.clone(),
             permissions_overwrites: None,
             extra_channels: ChannelExtraItemsConfig {
-                strategy: ChannelExtraItemsStrategy::Remove,
+                strategy: ChannelExtraItemsStrategy::REMOVE,
             },
         };
         assert_eq!(config, expected_config);

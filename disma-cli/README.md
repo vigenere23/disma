@@ -108,7 +108,15 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 
 Some examples can be found [here](./docs/examples).
 
+
 ### 🢒 `roles`
+
+**Fields**
+
+- `items`: List of roles.
+- `extra_items`: Extra items config.
+
+#### `roles.items[*]`
 
 **Fields**
 
@@ -125,15 +133,45 @@ Some examples can be found [here](./docs/examples).
   - To rename a role, please rename it in the Discord interface first, then in the config.
 - Every members associated to a role that's been deleted will **lose that role**.
 
+#### `roles.extra_items`
+
+**Fields**
+
+- `strategy` (`string`): Strategy for handling extra roles. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+
+
 ### 🢒 `categories`
+
+**Fields**
+
+- `items`: List of categories.
+- `extra_items`: Extra items config.
+
+#### `categories.items[*]`
 
 **Fields**
 
 - `name` (`string`) : Name of the category.
   - ⚠️ Every category needs to have a **unique *name***.
 - `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+- `extra_channels`:
+  - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+
+#### `categories.extra_items`
+
+**Fields**
+
+- `strategy` (`string`): Strategy for handling extra categories. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+
 
 ### 🢒 `channels`
+
+**Fields**
+
+- `items`: List of channels.
+- `extra_items`: Extra items config.
+
+#### `channels.items[*]`
 
 **Fields**
 
@@ -150,6 +188,13 @@ Some examples can be found [here](./docs/examples).
   - To rename a channel, please rename it in the Discord interface first, then in the config.
 - Deleted channels will **lose all their messages**.
 - You currently cannot allow channels that are not listed in the config. This should be soon permitted, at least for channels associated to categories.
+
+#### `channels.extra_items`
+
+**Fields**
+
+- `strategy` (`string`): Strategy for handling extra channels. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+
 
 ### Types
 

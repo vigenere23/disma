@@ -1,121 +1,131 @@
 roles:
-- name: '@everyone'
-  permissions:
-  - VIEW_CHANNEL
-  - SEND_MESSAGES
-  - CHANGE_NICKNAME
-  show_in_sidebar: false
-  is_mentionable: false
+  extra_items:
+    strategy: REMOVE
+  items:
+  - name: '@everyone'
+    permissions:
+    - VIEW_CHANNEL
+    - SEND_MESSAGES
+    - CHANGE_NICKNAME
+    show_in_sidebar: false
+    is_mentionable: false
 
-- name: dac # the bot
-  permissions: # does not need more permissions
-  - MANAGE_CHANNELS
-  - MANAGE_ROLES
-  show_in_sidebar: false
-  is_mentionable: false
+  - name: dac # the bot
+    permissions: # does not need more permissions
+    - MANAGE_CHANNELS
+    - MANAGE_ROLES
+    show_in_sidebar: false
+    is_mentionable: false
 
-- name: staff
-  color: e91e63
-  permissions:
-  - VIEW_CHANNEL
-  - SEND_MESSAGES
-  - ADD_REACTIONS
-  - ATTACH_FILES
-  - CREATE_PUBLIC_THREADS
-  - SEND_MESSAGES_IN_THREADS
-  - READ_MESSAGE_HISTORY
-  - CHANGE_NICKNAME
-  - REQUEST_TO_SPEAK
-  - CONNECT
-  - SPEAK
-  - STREAM
-  - USE_VAD
-  - USE_APPLICATION_COMMANDS
-  - MANAGE_CHANNELS
-  - MANAGE_THREADS
-  - MANAGE_MESSAGES
-  - MANAGE_NICKNAMES
-  - MOVE_MEMBERS
-  - MUTE_MEMBERS
-  - MODERATE_MEMBERS
-  show_in_sidebar: true
-  is_mentionable: false
+  - name: staff
+    color: e91e63
+    permissions:
+    - VIEW_CHANNEL
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - ATTACH_FILES
+    - CREATE_PUBLIC_THREADS
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - CHANGE_NICKNAME
+    - REQUEST_TO_SPEAK
+    - CONNECT
+    - SPEAK
+    - STREAM
+    - USE_VAD
+    - USE_APPLICATION_COMMANDS
+    - MANAGE_CHANNELS
+    - MANAGE_THREADS
+    - MANAGE_MESSAGES
+    - MANAGE_NICKNAMES
+    - MOVE_MEMBERS
+    - MUTE_MEMBERS
+    - MODERATE_MEMBERS
+    show_in_sidebar: true
+    is_mentionable: false
 
-- name: student
-  color: 4287f5
-  permissions:
-  - VIEW_CHANNEL
-  - SEND_MESSAGES
-  - ADD_REACTIONS
-  - ATTACH_FILES
-  - CREATE_PUBLIC_THREADS
-  - SEND_MESSAGES_IN_THREADS
-  - READ_MESSAGE_HISTORY
-  - CHANGE_NICKNAME
-  - REQUEST_TO_SPEAK
-  - CONNECT
-  - SPEAK
-  - STREAM
-  - USE_VAD
-  show_in_sidebar: false
-  is_mentionable: false
+  - name: student
+    color: 4287f5
+    permissions:
+    - VIEW_CHANNEL
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - ATTACH_FILES
+    - CREATE_PUBLIC_THREADS
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - CHANGE_NICKNAME
+    - REQUEST_TO_SPEAK
+    - CONNECT
+    - SPEAK
+    - STREAM
+    - USE_VAD
+    show_in_sidebar: false
+    is_mentionable: false
 
-- name: team-01
-  permissions: []
-  show_in_sidebar: false
-  is_mentionable: false
+  - name: team-01
+    permissions: []
+    show_in_sidebar: false
+    is_mentionable: false
 
 categories:
-- name: staff only
-  permissions_overwrites:
-  - role: '@everyone'
-    allow: []
-    deny:
-    - VIEW_CHANNEL
-    - CONNECT
-  - role: staff
-    allow:
-    - VIEW_CHANNEL
-    - CONNECT
-    deny: []
-  - role: dac # important to allow bot to edit channels
-    allow:
-    - VIEW_CHANNEL
-    deny: []
+  extra_items:
+    strategy: REMOVE
+  items:
+  - name: staff only
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: dac # important to allow bot to edit channels
+      allow:
+      - VIEW_CHANNEL
+      deny: []
 
-
-- name: team-01
-  permissions_overwrites:
-  - role: dac # important to allow bot to edit channels
-    allow:
-    - VIEW_CHANNEL
-    deny: []
-  - role: '@everyone'
-    allow: []
-    deny:
-    - VIEW_CHANNEL
-    - CONNECT
-  - role: staff
-    allow:
-    - VIEW_CHANNEL
-    - CONNECT
-    deny: []
-  - role: team-01
-    allow:
-    - VIEW_CHANNEL
-    - CONNECT
-    deny: []
+  - name: team-01
+    permissions_overwrites:
+    - role: dac # important to allow bot to edit channels
+      allow:
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: team-01
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
 
 
 channels:
-- name: general
-  topic: General channel
-  type: TEXT
-  category: team-01
-- name: General
-  type: VOICE
-  category: team-01
-- name: random
-  topic: Funny memes and other random stuff
-  type: TEXT
-  category: team-01
+  extra_items:
+    strategy: REMOVE
+  items:
+  - name: general
+    topic: General channel
+    type: TEXT
+    category: team-01
+
+  - name: General
+    type: VOICE
+    category: team-01
+
+  - name: random
+    topic: Funny memes and other random stuff
+    type: TEXT
+    category: team-01

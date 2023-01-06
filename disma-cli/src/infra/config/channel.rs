@@ -50,23 +50,23 @@ pub struct ChannelExtraItemsConfig {
 impl Default for ChannelExtraItemsConfig {
     fn default() -> Self {
         Self {
-            strategy: ChannelExtraItemsStrategy::Remove,
+            strategy: ChannelExtraItemsStrategy::REMOVE,
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub enum ChannelExtraItemsStrategy {
-    Keep,
-    Remove,
+    KEEP,
+    REMOVE,
     // TODO Overwrite,
 }
 
 impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
         match self {
-            Self::Keep => Arc::from(KeepExtraChannels {}),
-            Self::Remove => Arc::from(RemoveExtraChannels {}),
+            Self::KEEP => Arc::from(KeepExtraChannels {}),
+            Self::REMOVE => Arc::from(RemoveExtraChannels {}),
         }
     }
 }
