@@ -10,11 +10,11 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-use super::{AwaitingChannelsList, ChannelsList};
+use super::AwaitingChannelsList;
 
 impl CommandFactory for AwaitingChannelsList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
-        let mut diffs: Vec<CommandRef> = Vec::new();
+        let mut commands: Vec<CommandRef> = Vec::new();
 
         for awaiting_channel in self.items.to_list() {
             let category_name = awaiting_channel
@@ -35,7 +35,7 @@ impl CommandFactory for AwaitingChannelsList {
                             existing_guild.roles.clone(),
                             existing_guild.categories.clone(),
                         );
-                        diffs.push(Arc::from(command));
+                        commands.push(Arc::from(command));
                     }
                 }
                 None => {
@@ -44,46 +44,37 @@ impl CommandFactory for AwaitingChannelsList {
                         existing_guild.roles.clone(),
                         existing_guild.categories.clone(),
                     );
-                    diffs.push(Arc::from(command));
+                    commands.push(Arc::from(command));
                 }
             }
         }
 
-        // TODO handle extra items
+        for existing_channel in existing_guild.channels.to_list() {
+            let category_name = existing_channel
+                .category
+                .as_ref()
+                .map(|category| category.name());
 
-        // for existing_channel in existing_guild.channels.to_list() {
-        //     let category_name = existing_channel
-        //         .category
-        //         .as_ref()
-        //         .map(|category| category.name());
+            let awaiting_channel = self.items.find(
+                &existing_channel.name,
+                existing_channel.channel_type(),
+                category_name,
+            );
 
-        //     let matching_awaiting_channel = self.items.find(
-        //         &existing_channel.name,
-        //         existing_channel.channel_type(),
-        //         category_name,
-        //     );
+            let extra_items_strategy = match awaiting_channel {
+                Some(channel) => match &channel.category {
+                    Some(category) => category.extra_channels_strategy.clone(),
+                    None => self.extra_items_strategy.clone(),
+                },
+                None => self.extra_items_strategy.clone(),
+            };
 
-        //     let should_remove_channel_default =
-        //         self.extra_items.strategy == ExtraChannelsStrategy::Remove;
+            if awaiting_channel.is_none() {
+                extra_items_strategy.handle_extra_channel(existing_channel, &mut commands);
+            }
+        }
 
-        //     // TODO should be calculated at creation, not here
-        //     let should_remove_channel = match matching_awaiting_channel {
-        //         Some(channel) => match &channel.category {
-        //             Some(category) => {
-        //                 category.extra_channels.strategy == ExtraChannelsStrategy::Remove
-        //             }
-        //             None => should_remove_channel_default,
-        //         },
-        //         None => should_remove_channel_default,
-        //     };
-
-        //     if should_remove_channel {
-        //         let command = DeleteChannel::new(existing_channel.clone());
-        //         diffs.push(Arc::from(command));
-        //     }
-        // }
-
-        diffs
+        commands
     }
 }
 
@@ -181,11 +172,10 @@ impl Command for DeleteChannel {
 
 pub trait ExtraChannelsStrategy {
     fn _type(&self) -> ExtraChannelsStrategyType;
-    fn handle_extra_roles(
+    fn handle_extra_channel(
         &self,
-        awaiting_channels: &ChannelsList<AwaitingChannel>,
-        existing_channels: &ChannelsList<ExistingChannel>,
-        commands: &mut Vec<CommandRef>,
+        _extra_channel: &ExistingChannel,
+        _commands: &mut Vec<CommandRef>,
     );
 }
 
@@ -208,13 +198,13 @@ impl ExtraChannelsStrategy for RemoveExtraChannels {
         ExtraChannelsStrategyType::Remove
     }
 
-    fn handle_extra_roles(
+    fn handle_extra_channel(
         &self,
-        _awaiting_channels: &ChannelsList<AwaitingChannel>,
-        _existing_channels: &ChannelsList<ExistingChannel>,
-        _commands: &mut Vec<CommandRef>,
+        extra_channel: &ExistingChannel,
+        commands: &mut Vec<CommandRef>,
     ) {
-        todo!()
+        let command = DeleteChannel::new(extra_channel.clone());
+        commands.push(Arc::from(command));
     }
 }
 
@@ -225,10 +215,9 @@ impl ExtraChannelsStrategy for KeepExtraChannels {
         ExtraChannelsStrategyType::Keep
     }
 
-    fn handle_extra_roles(
+    fn handle_extra_channel(
         &self,
-        _awaiting_channels: &ChannelsList<AwaitingChannel>,
-        _existing_channels: &ChannelsList<ExistingChannel>,
+        _extra_channel: &ExistingChannel,
         _commands: &mut Vec<CommandRef>,
     ) {
     }

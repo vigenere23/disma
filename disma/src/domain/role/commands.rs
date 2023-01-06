@@ -7,7 +7,7 @@ use crate::{
     guild::{ExistingGuild, GuildCommanderRef},
 };
 
-use super::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList};
+use super::{AwaitingRole, AwaitingRolesList, ExistingRole};
 
 pub trait ExtraRolesStrategyTrait {}
 
@@ -34,12 +34,12 @@ impl CommandFactory for AwaitingRolesList {
             }
         }
 
-        // TODO have a domain-rich strategy that itself handles the commands creation
-        self.extra_items_strategy.handle_extra_roles(
-            &self.items,
-            &existing_guild.roles,
-            &mut commands,
-        );
+        for existing_role in existing_guild.roles.to_list() {
+            if self.items.find_by_name(&existing_role.name).is_none() {
+                self.extra_items_strategy
+                    .handle_extra_role(existing_role, &mut commands);
+            }
+        }
 
         commands
     }
@@ -117,12 +117,7 @@ impl Command for DeleteRole {
 
 pub trait ExtraRolesStrategy {
     fn _type(&self) -> ExtraRolesStrategyType;
-    fn handle_extra_roles(
-        &self,
-        awaiting_roles: &RolesList<AwaitingRole>,
-        existing_roles: &RolesList<ExistingRole>,
-        commands: &mut Vec<CommandRef>,
-    );
+    fn handle_extra_role(&self, extra_role: &ExistingRole, commands: &mut Vec<CommandRef>);
 }
 
 #[derive(Debug, PartialEq)]
@@ -144,18 +139,9 @@ impl ExtraRolesStrategy for RemoveExtraRoles {
         ExtraRolesStrategyType::Remove
     }
 
-    fn handle_extra_roles(
-        &self,
-        awaiting_roles: &RolesList<AwaitingRole>,
-        existing_roles: &RolesList<ExistingRole>,
-        commands: &mut Vec<CommandRef>,
-    ) {
-        for existing_role in existing_roles.to_list() {
-            if awaiting_roles.find_by_name(&existing_role.name).is_none() {
-                let command = DeleteRole::new(existing_role.clone());
-                commands.push(Arc::from(command));
-            }
-        }
+    fn handle_extra_role(&self, extra_role: &ExistingRole, commands: &mut Vec<CommandRef>) {
+        let command = DeleteRole::new(extra_role.clone());
+        commands.push(Arc::from(command));
     }
 }
 
@@ -166,11 +152,5 @@ impl ExtraRolesStrategy for KeepExtraRoles {
         ExtraRolesStrategyType::Keep
     }
 
-    fn handle_extra_roles(
-        &self,
-        _awaiting_roles: &RolesList<AwaitingRole>,
-        _existing_roles: &RolesList<ExistingRole>,
-        _commands: &mut Vec<CommandRef>,
-    ) {
-    }
+    fn handle_extra_role(&self, _extra_role: &ExistingRole, _commands: &mut Vec<CommandRef>) {}
 }
