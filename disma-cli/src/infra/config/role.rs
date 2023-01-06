@@ -13,8 +13,8 @@ use disma::{
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct RoleConfigsList {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub items: Option<Vec<RoleConfig>>,
+    #[serde(default = "Vec::default")]
+    pub items: Vec<RoleConfig>,
     #[serde(default = "RoleExtraItemsConfig::default")]
     pub extra_items: RoleExtraItemsConfig,
 }
@@ -23,7 +23,6 @@ impl RoleConfigsList {
     pub fn into(self) -> AwaitingRolesList {
         let items = self
             .items
-            .unwrap_or_default()
             .into_iter()
             .map(|role| role.into())
             .collect::<Vec<AwaitingRole>>()
@@ -151,7 +150,7 @@ mod test {
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let is_mentionable = true;
         let show_in_sidebar = false;
         let name = "Team10".to_string();
@@ -160,8 +159,8 @@ mod test {
         let config = RoleConfig {
             name: name.clone(),
             color: None,
-            show_in_sidebar,
             is_mentionable,
+            show_in_sidebar,
             permissions: None,
         };
 
@@ -207,7 +206,7 @@ mod test {
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let is_mentionable = true;
         let show_in_sidebar = false;
         let name = "Team10".to_string();

@@ -16,7 +16,9 @@ use super::permission::PermissionsOverwritesConfig;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct ChannelConfigsList {
-    pub items: Option<Vec<ChannelConfig>>,
+    #[serde(default = "Vec::default")]
+    pub items: Vec<ChannelConfig>,
+    #[serde(default = "ChannelExtraItemsConfig::default")]
     pub extra_items: ChannelExtraItemsConfig,
 }
 
@@ -28,7 +30,6 @@ impl ChannelConfigsList {
     ) -> AwaitingChannelsList {
         let items = self
             .items
-            .unwrap_or_default()
             .into_iter()
             .map(|channel| channel.into(roles, categories))
             .collect::<Vec<AwaitingChannel>>()
@@ -247,7 +248,7 @@ mod tests {
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let channel_name = "general".to_string();
 
         let config = ChannelConfig {
@@ -311,7 +312,7 @@ mod tests {
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let channel_id = "123asd".to_string();
         let channel_name = "general".to_string();
 

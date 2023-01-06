@@ -16,7 +16,9 @@ use super::{channel::ChannelExtraItemsConfig, permission::PermissionsOverwritesC
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct CategoryConfigsList {
-    pub items: Option<Vec<CategoryConfig>>,
+    #[serde(default = "Vec::default")]
+    pub items: Vec<CategoryConfig>,
+    #[serde(default = "CategoryExtraItemsConfig::default")]
     pub extra_items: CategoryExtraItemsConfig,
 }
 
@@ -24,7 +26,6 @@ impl CategoryConfigsList {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategoriesList {
         let items = self
             .items
-            .unwrap_or_default()
             .into_iter()
             .map(|category| category.into(roles))
             .collect::<Vec<AwaitingCategory>>()
@@ -186,7 +187,7 @@ mod tests {
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let category_name = "presto".to_string();
 
         let config = CategoryConfig {
@@ -241,7 +242,7 @@ mod tests {
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let category_name = "presto".to_string();
 
         let entity = ExistingCategory {
