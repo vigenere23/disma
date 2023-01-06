@@ -28,7 +28,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Lint
-        run: ../ci/lint.sh ${{ inputs.package }}
+        run: ../scripts/lint.sh ${{ inputs.package }}
         working-directory: ${{ inputs.package }}
 
       - name: Build

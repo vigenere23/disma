@@ -34,5 +34,5 @@ jobs:
           components: rustfmt, clippy
 
       - name: Publish
-        run: ../ci/publish.sh
+        run: ../scripts/publish.sh
         working-directory: ${{ inputs.package }}
