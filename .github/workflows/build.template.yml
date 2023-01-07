@@ -38,3 +38,15 @@ jobs:
       - name: Test
         run: cargo test
         working-directory: ${{ inputs.package }}
+
+      - name: Generate coverage
+        run: |
+          ./scripts/coverage/install.sh
+          ./scripts/coverage/generate.sh ${{ inputs.package }}
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ inputs.package }}/target/coverage/coverage.xml
+          fail_ci_if_error: true
+          verbose: true
