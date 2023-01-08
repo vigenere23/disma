@@ -1,10 +1,10 @@
 #!/bin/bash
 
-function generate_coverage {
+function compile_coverage {
     output_type=$1
     output_path=$2
 
-    grcov ./target/coverage \
+    grcov ./target/coverage/raw \
         --binary-path ../target/debug \
         -s . \
         -t $output_type \
@@ -23,17 +23,16 @@ echo "Running in package '$package'"
 cd $package
 
 rm -rf ./target/coverage
-mkdir -p ./target/coverage
+mkdir -p ./target/coverage/raw
 
-CARGO_INCREMENTAL=0 \
 RUSTFLAGS="-C instrument-coverage" \
-LLVM_PROFILE_FILE="target/coverage/%p-%m.profraw" \
+LLVM_PROFILE_FILE="target/coverage/raw/%p-%m.profraw" \
 cargo test
 
 echo "Generating HTML coverage file..."
-generate_coverage html ./target/coverage/html
+compile_coverage html ./target/coverage/html
 echo "HTML Coverage file outputed to $package/target/coverage/html/index.html"
 
 echo "Generating XML coverage file..."
-generate_coverage cobertura ./target/coverage/coverage.xml
+compile_coverage cobertura ./target/coverage/coverage.xml
 echo "Codecov Coverage file outputed to $package/target/coverage/coverage.xml"
