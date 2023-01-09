@@ -51,7 +51,10 @@ jobs:
       - name: Generate coverage
         run: ./scripts/coverage/generate.sh ${{ inputs.package }} ci
 
-      - name: Upload coverage
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
+
+      - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
