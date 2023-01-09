@@ -1,0 +1,21 @@
+coverage:
+  status:
+    project:
+      disma:
+        target: auto
+        flags:
+          - disma
+      disma-cli:
+        target: auto
+        flags:
+          - disma-cli
+flag_management:
+  individual_flags:
+    - name: disma
+      paths:
+        - disma/target/coverage/coverage.info
+      carryforward: true
+    - name: disma-cli
+      paths:
+        - disma-cli/target/coverage/coverage.info
+      carryforward: true

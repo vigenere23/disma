@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      RUSTFLAGS: -C instrument-coverage
+      LLVM_PROFILE_FILE: target/coverage/raw/%p-%m.profraw
+
     steps:
       - uses: actions/checkout@v3
 
@@ -25,7 +29,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
 
       - name: Lint
         run: ../scripts/lint.sh ${{ inputs.package }}
@@ -38,3 +42,22 @@ jobs:
       - name: Test
         run: cargo test
         working-directory: ${{ inputs.package }}
+
+      - name: Install Coverage tools
+        run: |
+          export RUST_ARCH="$(rustc -vV | sed -n 's|host: ||p')"
+          wget -c "https://github.com/mozilla/grcov/releases/download/v0.8.13/grcov-$RUST_ARCH.tar.bz2" -O - | tar -xj -C ~/.cargo/bin
+
+      - name: Generate coverage
+        run: ./scripts/coverage/generate.sh ${{ inputs.package }} ci
+
+      - name: Upload coverage to Codecov
+        run: bash <(curl -s https://codecov.io/bash)
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: ${{ inputs.package }}
+          flag-name: ${{ inputs.package }}
+          path-to-lcov: ${{ inputs.package }}/target/coverage/coverage.info
