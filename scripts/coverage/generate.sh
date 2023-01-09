@@ -14,9 +14,13 @@ function compile_coverage {
 }
 
 package=$1
+mode=$2
 
 if [[ -z "$package" ]]; then
     echo "Missing argument 'package'" >&2
+    exit 1
+elif [[ -z "$mode" ]]; then
+    echo "Missing argument 'mode'" >&2
     exit 1
 fi
 
@@ -30,10 +34,15 @@ RUSTFLAGS="-C instrument-coverage" \
 LLVM_PROFILE_FILE="target/coverage/raw/%p-%m.profraw" \
 cargo test
 
-echo "Generating lcov coverage file..."
-compile_coverage lcov ./target/coverage/coverage.txt
-echo "Codecov Coverage file outputed to $package/target/coverage/coverage.txt"
-
-echo "Generating HTML coverage file..."
-compile_coverage html ./target/coverage/html
-echo "HTML Coverage file outputed to $package/target/coverage/html/index.html"
+if [[ "$mode" == "ci" ]]; then
+    echo "Generating lcov coverage file..."
+    compile_coverage lcov ./target/coverage/coverage.info
+    echo "Codecov Coverage file outputed to $package/target/coverage/coverage.info"
+elif [[ "$mode" == "local" ]]; then
+    echo "Generating HTML coverage file..."
+    compile_coverage html ./target/coverage/html
+    echo "HTML Coverage file outputed to $package/target/coverage/html/index.html"
+else
+    echo "Invalid argument 'mode'. Supported modes are: 'ci', 'local'." >&2
+    exit 1
+fi
