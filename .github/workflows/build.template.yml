@@ -17,6 +17,7 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
+            ~/.cargo/bin
             **/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
 
@@ -25,7 +26,7 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
 
       - name: Lint
         run: ../scripts/lint.sh ${{ inputs.package }}
@@ -38,3 +39,17 @@ jobs:
       - name: Test
         run: cargo test
         working-directory: ${{ inputs.package }}
+
+      - name: Generate coverage
+        run: |
+          ./scripts/coverage/install.sh
+          ./scripts/coverage/generate.sh ${{ inputs.package }}
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ inputs.package }}/target/coverage/coverage.txt
+          fail_ci_if_error: true
+          verbose: true
+          flags: ${{ inputs.package }}
+          token: ${{ secrets.CODECOV_TOKEN }}
