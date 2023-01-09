@@ -9,6 +9,7 @@ function compile_coverage {
         -s . \
         -t $output_type \
         --ignore-not-existing \
+        --ignore "/*" \
         -o $output_path
 }
 

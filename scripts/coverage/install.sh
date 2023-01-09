@@ -1,2 +1,5 @@
 rustup component add llvm-tools-preview
-cargo install grcov
+
+if ! command -v grcov &> /dev/null; then
+    cargo install grcov
+fi
