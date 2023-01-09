@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      RUSTFLAGS: -C instrument-coverage
+      LLVM_PROFILE_FILE: target/coverage/raw/%p-%m.profraw
+
     steps:
       - uses: actions/checkout@v3
 
@@ -17,7 +21,6 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            ~/.cargo/bin
             **/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
 
@@ -40,16 +43,18 @@ jobs:
         run: cargo test
         working-directory: ${{ inputs.package }}
 
-      - name: Generate coverage
+      - name: Install Coverage tools
         run: |
-          ./scripts/coverage/install.sh
-          ./scripts/coverage/generate.sh ${{ inputs.package }}
+          export RUST_ARCH="$(rustc -vV | sed -n 's|host: ||p')"
+          wget -c "https://github.com/mozilla/grcov/releases/download/v0.8.13/grcov-$RUST_ARCH.tar.bz2" -O - | tar -xj -C ~/.cargo/bin
+
+      - name: Generate coverage
+        run: ./scripts/coverage/generate.sh ${{ inputs.package }} ci
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        uses: coverallsapp/github-action@master
         with:
-          files: ${{ inputs.package }}/target/coverage/coverage.txt
-          fail_ci_if_error: true
-          verbose: true
-          flags: ${{ inputs.package }}
-          token: ${{ secrets.CODECOV_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          base-path: ${{ inputs.package }}
+          flag-name: ${{ inputs.package }}
+          path-to-lcov: ${{ inputs.package }}/target/coverage/coverage.info

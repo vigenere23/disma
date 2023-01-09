@@ -12,12 +12,12 @@ concurrency:
 
 jobs:
   disma:
-    uses: vigenere23/disma/.github/workflows/build.template.yml@master
+    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/coveralls
     with:
       package: disma
 
   disma-cli:
     needs: disma
-    uses: vigenere23/disma/.github/workflows/build.template.yml@master
+    uses: vigenere23/disma/.github/workflows/build.template.yml@chore/coveralls
     with:
       package: disma-cli
