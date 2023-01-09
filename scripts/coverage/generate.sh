@@ -30,10 +30,10 @@ RUSTFLAGS="-C instrument-coverage" \
 LLVM_PROFILE_FILE="target/coverage/raw/%p-%m.profraw" \
 cargo test
 
+echo "Generating lcov coverage file..."
+compile_coverage lcov ./target/coverage/coverage.txt
+echo "Codecov Coverage file outputed to $package/target/coverage/coverage.txt"
+
 echo "Generating HTML coverage file..."
 compile_coverage html ./target/coverage/html
 echo "HTML Coverage file outputed to $package/target/coverage/html/index.html"
-
-echo "Generating XML coverage file..."
-compile_coverage cobertura ./target/coverage/coverage.xml
-echo "Codecov Coverage file outputed to $package/target/coverage/coverage.xml"

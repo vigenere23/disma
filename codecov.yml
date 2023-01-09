@@ -1,10 +1,10 @@
-# flag_management:
-#   individual_flags:
-#     - name: disma
-#       paths: 
-#       - disma/*
-#       carryforward: true
-#     - name: disma-cli
-#       paths: 
-#       - disma-cli/*
-#       carryforward: true
+flag_management:
+  individual_flags:
+    - name: disma
+      paths: 
+      - disma/
+      carryforward: true
+    - name: disma-cli
+      paths: 
+      - disma-cli/
+      carryforward: true

@@ -48,7 +48,7 @@ jobs:
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
-          files: ${{ inputs.package }}/target/coverage/coverage.xml
+          files: ${{ inputs.package }}/target/coverage/coverage.txt
           fail_ci_if_error: true
           verbose: true
           flags: ${{ inputs.package }}
