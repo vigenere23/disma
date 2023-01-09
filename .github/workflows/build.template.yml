@@ -52,3 +52,4 @@ jobs:
           fail_ci_if_error: true
           verbose: true
           flags: ${{ inputs.package }}
+          token: ${{ secrets.CODECOV_TOKEN }}
