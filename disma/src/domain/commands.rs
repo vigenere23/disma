@@ -15,6 +15,7 @@ pub trait CommandFactory {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef>;
 }
 
+#[derive(Clone)]
 pub enum CommandDescription {
     Create(CommandEntity, CommandEntityName),
     Delete(CommandEntity, CommandEntityName),
@@ -23,24 +24,28 @@ pub enum CommandDescription {
 
 type CommandEntityName = String;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum CommandEntity {
     Role,
     Category,
     Channel,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum CommandEventType {
+    BeforeExecution,
+    AfterExecution,
+}
+
 pub trait CommandEventListener {
-    fn before_command_execution(&self, description: CommandDescription);
-    fn after_command_execution(&self, description: CommandDescription);
+    fn handle(&self, event_type: CommandEventType, description: CommandDescription);
 }
 pub type CommandEventListenerRef = Arc<dyn CommandEventListener>;
 
 pub struct NullCommandEventListener {}
 
 impl CommandEventListener for NullCommandEventListener {
-    fn before_command_execution(&self, _: CommandDescription) {}
-    fn after_command_execution(&self, _: CommandDescription) {}
+    fn handle(&self, _event_type: CommandEventType, _description: CommandDescription) {}
 }
 
 #[cfg(test)]

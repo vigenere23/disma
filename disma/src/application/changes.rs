@@ -1,5 +1,7 @@
 use crate::{
-    commands::{CommandDescription, CommandEventListenerRef, CommandFactory},
+    commands::{
+        CommandDescription, CommandEventListenerRef, CommandEventType, CommandFactory, CommandRef,
+    },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
 };
 
@@ -42,40 +44,27 @@ impl ChangesService {
     }
 
     pub fn apply_changes(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+        self.apply_changes_for(guild_id, &awaiting_guild.roles);
+        self.apply_changes_for(guild_id, &awaiting_guild.categories);
+        self.apply_changes_for(guild_id, &awaiting_guild.channels);
+    }
+
+    fn apply_changes_for(&self, guild_id: &str, command_factory: &dyn CommandFactory) {
         let existing_guild = self.guild_querier.get_guild(guild_id);
+        command_factory
+            .commands_for(&existing_guild)
+            .into_iter()
+            .for_each(|command| self.apply_command(command));
+    }
 
-        let role_commands = awaiting_guild.roles.commands_for(&existing_guild);
+    fn apply_command(&self, command: CommandRef) {
+        let description = command.describe();
+        self.event_listener
+            .handle(CommandEventType::BeforeExecution, description.clone());
 
-        for command in role_commands {
-            self.event_listener
-                .before_command_execution(command.describe());
-            command.execute(&self.guild_commander);
-            self.event_listener
-                .after_command_execution(command.describe());
-        }
+        command.execute(&self.guild_commander);
 
-        let existing_guild = self.guild_querier.get_guild(guild_id);
-
-        let category_commands = awaiting_guild.categories.commands_for(&existing_guild);
-
-        for command in category_commands {
-            self.event_listener
-                .before_command_execution(command.describe());
-            command.execute(&self.guild_commander);
-            self.event_listener
-                .after_command_execution(command.describe());
-        }
-
-        let existing_guild = self.guild_querier.get_guild(guild_id);
-
-        let channel_commands = awaiting_guild.channels.commands_for(&existing_guild);
-
-        for command in channel_commands {
-            self.event_listener
-                .before_command_execution(command.describe());
-            command.execute(&self.guild_commander);
-            self.event_listener
-                .after_command_execution(command.describe());
-        }
+        self.event_listener
+            .handle(CommandEventType::AfterExecution, description);
     }
 }
