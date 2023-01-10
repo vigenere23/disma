@@ -2,8 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
-    overwrites::PermissionsOverwrites,
-    permission::PermissionsList,
+    permission::{PermissionsList, PermissionsOverwrites},
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 

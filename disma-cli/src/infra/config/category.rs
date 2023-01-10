@@ -1,26 +1,85 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 
 use disma::{
-    category::{AwaitingCategory, ExistingCategory},
-    overwrites::PermissionsOverwrites,
+    category::{
+        AwaitingCategoriesList, AwaitingCategory, ExistingCategory, ExtraCategoriesStrategy,
+        KeepExtraCategories, RemoveExtraCategories,
+    },
+    permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
 };
 
-use super::permission::PermissionsOverwritesConfig;
+use super::{channel::ChannelExtraItemsConfig, permission::PermissionsOverwritesConfig};
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct CategoryConfigsList {
+    #[serde(default = "Vec::default")]
+    pub items: Vec<CategoryConfig>,
+    #[serde(default = "CategoryExtraItemsConfig::default")]
+    pub extra_items: CategoryExtraItemsConfig,
+}
+
+impl CategoryConfigsList {
+    pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategoriesList {
+        let items = self
+            .items
+            .into_iter()
+            .map(|category| category.into(roles))
+            .collect::<Vec<AwaitingCategory>>()
+            .into();
+
+        AwaitingCategoriesList {
+            items,
+            extra_items_strategy: self.extra_items.strategy.into(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct CategoryExtraItemsConfig {
+    pub strategy: CategoryExtraItemsStrategy,
+}
+
+impl Default for CategoryExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: CategoryExtraItemsStrategy::REMOVE,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum CategoryExtraItemsStrategy {
+    KEEP,
+    REMOVE,
+    // TODO Overwrite,
+}
+
+impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraCategoriesStrategy> {
+        match self {
+            Self::KEEP => Arc::from(KeepExtraCategories {}),
+            Self::REMOVE => Arc::from(RemoveExtraCategories {}),
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct CategoryConfig {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub permissions_overwrites: Option<Vec<PermissionsOverwritesConfig>>,
+    pub extra_channels: ChannelExtraItemsConfig,
 }
 
 impl From<&ExistingCategory> for CategoryConfig {
     fn from(category: &ExistingCategory) -> Self {
         let permissions_overwrites: Vec<PermissionsOverwritesConfig> = category
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(PermissionsOverwritesConfig::from)
             .collect();
@@ -28,6 +87,7 @@ impl From<&ExistingCategory> for CategoryConfig {
         Self {
             name: category.name.clone(),
             permissions_overwrites: permissions_overwrites.compress(),
+            extra_channels: ChannelExtraItemsConfig::default(),
         }
     }
 }
@@ -47,6 +107,7 @@ impl CategoryConfig {
         AwaitingCategory {
             name: self.name,
             overwrites: overwrites.into(),
+            extra_channels_strategy: self.extra_channels.strategy.into(),
         }
     }
 }
@@ -55,10 +116,13 @@ impl CategoryConfig {
 mod tests {
     use disma::{
         category::{AwaitingCategory, ExistingCategory},
-        overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
-        permission::{Permission, PermissionsList},
+        permission::{
+            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+        },
         role::{AwaitingRole, ExistingRole, RolesList},
     };
+
+    use crate::infra::config::channel::{ChannelExtraItemsConfig, ChannelExtraItemsStrategy};
 
     use super::{CategoryConfig, PermissionsOverwritesConfig};
 
@@ -71,7 +135,7 @@ mod tests {
         let permissions: Vec<String> = vec![];
         AwaitingRole {
             name: name.to_string(),
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: None,
             is_mentionable: true,
             show_in_sidebar: false,
@@ -83,7 +147,7 @@ mod tests {
         ExistingRole {
             id: id.to_string(),
             name: name.to_string(),
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: None,
             is_mentionable: true,
             show_in_sidebar: false,
@@ -104,6 +168,9 @@ mod tests {
                 allow: Some(vec!["ADMINISTRATOR".to_string()]),
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
+            extra_channels: ChannelExtraItemsConfig {
+                strategy: ChannelExtraItemsStrategy::REMOVE,
+            },
         };
 
         let entity: AwaitingCategory = config.into(&roles);
@@ -112,20 +179,24 @@ mod tests {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role,
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         };
         assert_eq!(entity, expected_entity);
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let category_name = "presto".to_string();
 
         let config = CategoryConfig {
             name: category_name.clone(),
             permissions_overwrites: None,
+            extra_channels: ChannelExtraItemsConfig {
+                strategy: ChannelExtraItemsStrategy::REMOVE,
+            },
         };
 
         let entity: AwaitingCategory = config.into(&RolesList::from(vec![]));
@@ -133,6 +204,7 @@ mod tests {
         let expected_entity = AwaitingCategory {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -149,8 +221,8 @@ mod tests {
             name: category_name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role,
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
         };
 
@@ -163,12 +235,15 @@ mod tests {
                 allow: Some(vec!["ADMINISTRATOR".to_string()]),
                 deny: Some(vec!["ADMINISTRATOR".to_string()]),
             }]),
+            extra_channels: ChannelExtraItemsConfig {
+                strategy: ChannelExtraItemsStrategy::REMOVE,
+            },
         };
         assert_eq!(config, expected_config);
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let category_name = "presto".to_string();
 
         let entity = ExistingCategory {
@@ -182,6 +257,9 @@ mod tests {
         let expected_config = CategoryConfig {
             name: category_name.clone(),
             permissions_overwrites: None,
+            extra_channels: ChannelExtraItemsConfig {
+                strategy: ChannelExtraItemsStrategy::REMOVE,
+            },
         };
         assert_eq!(config, expected_config);
     }

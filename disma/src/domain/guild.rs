@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
-use crate::channel::{AwaitingChannel, ChannelsList, ExistingChannel};
-
-use super::{
-    category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    role::{AwaitingRole, ExistingRole, RolesList},
+use crate::{
+    category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExistingCategory},
+    channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
+    role::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList},
 };
 
 pub trait GuildQuerier {
@@ -49,11 +48,11 @@ pub struct ExistingGuild {
     pub channels: ChannelsList<ExistingChannel>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub struct AwaitingGuild {
-    pub roles: RolesList<AwaitingRole>,
-    pub categories: CategoriesList<AwaitingCategory>,
-    pub channels: ChannelsList<AwaitingChannel>,
+    pub roles: AwaitingRolesList,
+    pub categories: AwaitingCategoriesList,
+    pub channels: AwaitingChannelsList,
 }
 
 pub struct GuildSummary {

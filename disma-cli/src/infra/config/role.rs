@@ -1,12 +1,68 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 
 use disma::{
     permission::{Permission, PermissionsList},
-    role::{AwaitingRole, ExistingRole},
+    role::{
+        AwaitingRole, AwaitingRolesList, ExistingRole, ExtraRolesStrategy, KeepExtraRoles,
+        RemoveExtraRoles,
+    },
     utils::vec::Compress,
 };
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct RoleConfigsList {
+    #[serde(default = "Vec::default")]
+    pub items: Vec<RoleConfig>,
+    #[serde(default = "RoleExtraItemsConfig::default")]
+    pub extra_items: RoleExtraItemsConfig,
+}
+
+impl RoleConfigsList {
+    pub fn into(self) -> AwaitingRolesList {
+        let items = self
+            .items
+            .into_iter()
+            .map(|role| role.into())
+            .collect::<Vec<AwaitingRole>>()
+            .into();
+
+        AwaitingRolesList {
+            items,
+            extra_items_strategy: self.extra_items.strategy.into(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct RoleExtraItemsConfig {
+    pub strategy: RoleExtraItemsStrategy,
+}
+
+impl Default for RoleExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: RoleExtraItemsStrategy::REMOVE,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum RoleExtraItemsStrategy {
+    KEEP,
+    REMOVE,
+    // TODO Overwrite,
+}
+
+impl Into<Arc<dyn ExtraRolesStrategy>> for RoleExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraRolesStrategy> {
+        match self {
+            RoleExtraItemsStrategy::KEEP => Arc::from(KeepExtraRoles {}),
+            RoleExtraItemsStrategy::REMOVE => Arc::from(RemoveExtraRoles {}),
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct RoleConfig {
@@ -49,7 +105,7 @@ impl Into<AwaitingRole> for RoleConfig {
 
         AwaitingRole {
             name: self.name,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
             color: self.color.map(|color| color.to_lowercase()),
             is_mentionable: self.is_mentionable,
             show_in_sidebar: self.show_in_sidebar,
@@ -88,13 +144,13 @@ mod test {
             color: Some(color.clone()),
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
         assert_eq!(entity, expected_entity);
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let is_mentionable = true;
         let show_in_sidebar = false;
         let name = "Team10".to_string();
@@ -103,8 +159,8 @@ mod test {
         let config = RoleConfig {
             name: name.clone(),
             color: None,
-            show_in_sidebar,
             is_mentionable,
+            show_in_sidebar,
             permissions: None,
         };
 
@@ -115,7 +171,7 @@ mod test {
             color: None,
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
         };
         assert_eq!(entity, expected_entity);
     }
@@ -134,7 +190,7 @@ mod test {
             color: Some(color.clone()),
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
 
         let config = RoleConfig::from(&entity);
@@ -150,7 +206,7 @@ mod test {
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let is_mentionable = true;
         let show_in_sidebar = false;
         let name = "Team10".to_string();
@@ -163,7 +219,7 @@ mod test {
             color: None,
             is_mentionable,
             show_in_sidebar,
-            permissions: PermissionsList::from(&permissions),
+            permissions: PermissionsList::from(permissions),
         };
 
         let config = RoleConfig::from(&entity);

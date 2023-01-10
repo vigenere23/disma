@@ -1,111 +1,57 @@
 use std::sync::Arc;
 
-use crate::guild::GuildCommanderRef;
+use crate::{
+    domain::diff::Diff,
+    guild::{ExistingGuild, GuildCommanderRef},
+};
 
-pub trait DiffCommand {
+pub trait Command {
     fn execute(&self, guild_commander: &GuildCommanderRef);
-    fn describe(&self) -> EntityChange;
+    fn describe(&self) -> CommandDescription;
 }
-pub type DiffCommandRef = Arc<dyn DiffCommand>;
+pub type CommandRef = Arc<dyn Command>;
 
-pub enum EntityChange {
-    Create(Entity, String),
-    Delete(Entity, String),
-    Update(Entity, String, Vec<Diff>),
+pub trait CommandFactory {
+    fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef>;
 }
 
-#[derive(Debug)]
-pub enum Entity {
+#[derive(Clone)]
+pub enum CommandDescription {
+    Create(CommandEntity, CommandEntityName),
+    Delete(CommandEntity, CommandEntityName),
+    Update(CommandEntity, CommandEntityName, Vec<Diff>),
+}
+
+type CommandEntityName = String;
+
+#[derive(Debug, Clone)]
+pub enum CommandEntity {
     Role,
     Category,
     Channel,
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub enum Diff {
-    Add(String),
-    Remove(String),
-    Update(String, Vec<Diff>),
+#[derive(Debug, PartialEq)]
+pub enum CommandEventType {
+    BeforeExecution,
+    AfterExecution,
 }
 
-pub trait Differ<T> {
-    fn diffs_with(&self, target: &T) -> Vec<Diff>;
+pub trait CommandEventListener {
+    fn handle(&self, event_type: CommandEventType, description: CommandDescription);
 }
+pub type CommandEventListenerRef = Arc<dyn CommandEventListener>;
 
-impl Differ<bool> for bool {
-    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
-        diffs_between(self, target)
-    }
-}
+pub struct NullCommandEventListener {}
 
-impl Differ<String> for String {
-    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
-        diffs_between(self, target)
-    }
-}
-
-impl<'a, 'b> Differ<&'b str> for &'a str {
-    fn diffs_with(&self, target: &&'b str) -> Vec<Diff> {
-        diffs_between(self, target)
-    }
-}
-
-impl<T, U> Differ<Option<U>> for Option<T>
-where
-    T: PartialEq<T> + ToString + Differ<U>,
-    U: PartialEq<U> + ToString,
-{
-    fn diffs_with(&self, target: &Option<U>) -> Vec<Diff> {
-        match (self, target) {
-            (None, None) => vec![],
-            (Some(origin), None) => vec![Diff::Remove(origin.to_string())],
-            (None, Some(target)) => vec![Diff::Add(target.to_string())],
-            (Some(origin), Some(target)) => origin.diffs_with(target),
-        }
-    }
-}
-
-impl<T> Differ<Vec<T>> for Vec<T>
-where
-    T: PartialEq<T> + ToString,
-{
-    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
-        let mut diffs = vec![];
-
-        for item in self.iter() {
-            if !target.contains(item) {
-                diffs.push(Diff::Remove(item.to_string()))
-            }
-        }
-
-        for item in target.iter() {
-            if !self.contains(item) {
-                diffs.push(Diff::Add(item.to_string()))
-            }
-        }
-
-        diffs
-    }
-}
-
-fn diffs_between<T>(origin: T, target: T) -> Vec<Diff>
-where
-    T: PartialEq<T> + ToString,
-{
-    let mut diffs = vec![];
-
-    if origin != target {
-        diffs.push(Diff::Remove(origin.to_string()));
-        diffs.push(Diff::Add(target.to_string()));
-    }
-
-    diffs
+impl CommandEventListener for NullCommandEventListener {
+    fn handle(&self, _event_type: CommandEventType, _description: CommandDescription) {}
 }
 
 #[cfg(test)]
 mod tests {
     mod vec_diffs {
-        use crate::diff::base::{Diff, Differ};
+        use crate::diff::{Diff, Differ};
 
         #[test]
         fn it_calculates_additions() {
@@ -157,7 +103,7 @@ mod tests {
     }
 
     mod str_diffs {
-        use crate::diff::base::{Diff, Differ};
+        use crate::diff::{Diff, Differ};
 
         #[test]
         fn given_same_str_returns_no_diff() {

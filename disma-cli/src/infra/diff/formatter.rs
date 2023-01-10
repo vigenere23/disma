@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use colored::Colorize;
-use disma::diff::base::Diff;
+use disma::diff::Diff;
 
 pub struct DiffFormater {}
 pub type DiffFormaterRef = Arc<DiffFormater>;
@@ -50,7 +50,7 @@ impl DiffFormater {
 #[cfg(test)]
 mod tests {
     use colored::Colorize;
-    use disma::diff::base::Diff;
+    use disma::diff::Diff;
 
     use super::DiffFormater;
 

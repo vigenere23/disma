@@ -1,25 +1,24 @@
 use crate::{
-    diff::{base::EntityChange, event::DiffEventListenerRef, factory::DiffCommandFactoryRef},
+    commands::{
+        CommandDescription, CommandEventListenerRef, CommandEventType, CommandFactory, CommandRef,
+    },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
 };
 
 pub struct ChangesService {
     guild_commander: GuildCommanderRef,
-    command_factory: DiffCommandFactoryRef,
     guild_querier: GuildQuerierRef,
-    event_listener: DiffEventListenerRef,
+    event_listener: CommandEventListenerRef,
 }
 
 impl ChangesService {
     pub fn new(
         guild_commander: GuildCommanderRef,
-        command_factory: DiffCommandFactoryRef,
         guild_querier: GuildQuerierRef,
-        event_listener: DiffEventListenerRef,
+        event_listener: CommandEventListenerRef,
     ) -> Self {
         Self {
             guild_commander,
-            command_factory,
             guild_querier,
             event_listener,
         }
@@ -29,64 +28,43 @@ impl ChangesService {
         &self,
         guild_id: &str,
         awaiting_guild: &AwaitingGuild,
-    ) -> Vec<EntityChange> {
+    ) -> Vec<CommandDescription> {
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
-        let role_diffs = self
-            .command_factory
-            .for_roles(&existing_guild, awaiting_guild);
+        let role_commands = awaiting_guild.roles.commands_for(&existing_guild);
+        let category_commands = awaiting_guild.categories.commands_for(&existing_guild);
+        let channel_commands = awaiting_guild.channels.commands_for(&existing_guild);
 
-        let category_diffs = self
-            .command_factory
-            .for_categories(&existing_guild, awaiting_guild);
-
-        let channel_diffs = self
-            .command_factory
-            .for_channels(&existing_guild, awaiting_guild);
-
-        role_diffs
+        role_commands
             .into_iter()
-            .chain(category_diffs.into_iter())
-            .chain(channel_diffs.into_iter())
-            .map(|diff| diff.describe())
+            .chain(category_commands.into_iter())
+            .chain(channel_commands.into_iter())
+            .map(|command| command.describe())
             .collect()
     }
 
     pub fn apply_changes(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+        self.apply_changes_for(guild_id, &awaiting_guild.roles);
+        self.apply_changes_for(guild_id, &awaiting_guild.categories);
+        self.apply_changes_for(guild_id, &awaiting_guild.channels);
+    }
+
+    fn apply_changes_for(&self, guild_id: &str, command_factory: &dyn CommandFactory) {
         let existing_guild = self.guild_querier.get_guild(guild_id);
+        command_factory
+            .commands_for(&existing_guild)
+            .into_iter()
+            .for_each(|command| self.apply_command(command));
+    }
 
-        let role_diffs = self
-            .command_factory
-            .for_roles(&existing_guild, awaiting_guild);
+    fn apply_command(&self, command: CommandRef) {
+        let description = command.describe();
+        self.event_listener
+            .handle(CommandEventType::BeforeExecution, description.clone());
 
-        for diff in role_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
-        }
+        command.execute(&self.guild_commander);
 
-        let existing_guild = self.guild_querier.get_guild(guild_id);
-
-        let category_diffs = self
-            .command_factory
-            .for_categories(&existing_guild, awaiting_guild);
-
-        for diff in category_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
-        }
-
-        let existing_guild = self.guild_querier.get_guild(guild_id);
-
-        let channel_diffs = self
-            .command_factory
-            .for_channels(&existing_guild, awaiting_guild);
-
-        for diff in channel_diffs {
-            self.event_listener.before_change_executed(diff.describe());
-            diff.execute(&self.guild_commander);
-            self.event_listener.after_change_executed(diff.describe());
-        }
+        self.event_listener
+            .handle(CommandEventType::AfterExecution, description);
     }
 }

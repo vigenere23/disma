@@ -1,15 +1,75 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::Arc};
 
 use disma::{
     category::{AwaitingCategory, CategoriesList},
-    channel::{AwaitingChannel, ChannelType, ExistingChannel},
-    overwrites::PermissionsOverwrites,
+    channel::{
+        AwaitingChannel, AwaitingChannelsList, ChannelType, ExistingChannel, ExtraChannelsStrategy,
+        KeepExtraChannels, RemoveExtraChannels,
+    },
+    permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
     utils::vec::Compress,
 };
 use serde::{Deserialize, Serialize};
 
 use super::permission::PermissionsOverwritesConfig;
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
+pub struct ChannelConfigsList {
+    #[serde(default = "Vec::default")]
+    pub items: Vec<ChannelConfig>,
+    #[serde(default = "ChannelExtraItemsConfig::default")]
+    pub extra_items: ChannelExtraItemsConfig,
+}
+
+impl ChannelConfigsList {
+    pub fn into(
+        self,
+        roles: &RolesList<AwaitingRole>,
+        categories: &CategoriesList<AwaitingCategory>,
+    ) -> AwaitingChannelsList {
+        let items = self
+            .items
+            .into_iter()
+            .map(|channel| channel.into(roles, categories))
+            .collect::<Vec<AwaitingChannel>>()
+            .into();
+
+        AwaitingChannelsList {
+            items,
+            extra_items_strategy: self.extra_items.strategy.into(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct ChannelExtraItemsConfig {
+    pub strategy: ChannelExtraItemsStrategy,
+}
+
+impl Default for ChannelExtraItemsConfig {
+    fn default() -> Self {
+        Self {
+            strategy: ChannelExtraItemsStrategy::REMOVE,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub enum ChannelExtraItemsStrategy {
+    KEEP,
+    REMOVE,
+    // TODO Overwrite,
+}
+
+impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
+    fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
+        match self {
+            Self::KEEP => Arc::from(KeepExtraChannels {}),
+            Self::REMOVE => Arc::from(RemoveExtraChannels {}),
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ChannelConfig {
@@ -35,7 +95,7 @@ impl From<&ExistingChannel> for ChannelConfig {
 
         let permissions_overwrites = channel
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(PermissionsOverwritesConfig::from)
             .collect::<Vec<PermissionsOverwritesConfig>>()
@@ -95,19 +155,21 @@ mod tests {
     use disma::{
         category::{AwaitingCategory, CategoriesList, ExistingCategory},
         channel::{AwaitingChannel, ChannelType, ExistingChannel},
-        overwrites::{PermissionsOverwrites, PermissionsOverwritesList},
-        permission::{Permission, PermissionsList},
+        permission::{
+            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+        },
         role::{AwaitingRole, ExistingRole, RolesList},
     };
 
     use crate::infra::config::permission::PermissionsOverwritesConfig;
 
-    use super::ChannelConfig;
+    use super::{ChannelConfig, ChannelExtraItemsConfig};
 
     fn given_awaiting_category(name: &str) -> AwaitingCategory {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
         }
     }
 
@@ -130,7 +192,7 @@ mod tests {
     fn given_awaiting_role(name: &str) -> AwaitingRole {
         AwaitingRole {
             name: name.to_string(),
-            permissions: PermissionsList::from(&vec![Permission::VIEW_CHANNEL]),
+            permissions: PermissionsList::from(vec![Permission::VIEW_CHANNEL]),
             color: Some("123456".to_string()),
             is_mentionable: true,
             show_in_sidebar: false,
@@ -141,7 +203,7 @@ mod tests {
         ExistingRole {
             id: "bob".to_string(),
             name: name.to_string(),
-            permissions: PermissionsList::from(&vec![Permission::VIEW_CHANNEL]),
+            permissions: PermissionsList::from(vec![Permission::VIEW_CHANNEL]),
             color: Some("123456".to_string()),
             is_mentionable: true,
             show_in_sidebar: false,
@@ -179,15 +241,15 @@ mod tests {
             topic: Some(topic.clone()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role: role.clone(),
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::SEND_MESSAGES]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
         assert_eq!(entity, expected_entity);
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity_with_optionals() {
+    fn can_convert_compressed_config_to_awaiting_entity() {
         let channel_name = "general".to_string();
 
         let config = ChannelConfig {
@@ -229,8 +291,8 @@ mod tests {
             topic: Some(topic.clone()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
                 role: role.clone(),
-                allow: PermissionsList::from(&vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(&vec![Permission::SEND_MESSAGES]),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
 
@@ -251,7 +313,7 @@ mod tests {
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config_with_optionals() {
+    fn can_convert_existing_entity_to_compressed_config() {
         let channel_id = "123asd".to_string();
         let channel_name = "general".to_string();
 

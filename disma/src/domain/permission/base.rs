@@ -4,8 +4,6 @@ use std::{collections::HashSet, str::FromStr};
 
 use strum::{Display, EnumIter, EnumString, IntoEnumIterator};
 
-use crate::diff::base::{Diff, Differ};
-
 #[derive(Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter, EnumString)]
 pub enum Permission {
     CREATE_INSTANT_INVITE,
@@ -124,12 +122,6 @@ impl PermissionsList {
     }
 }
 
-impl Differ<PermissionsList> for PermissionsList {
-    fn diffs_with(&self, target: &Self) -> Vec<Diff> {
-        self.items().diffs_with(&target.items())
-    }
-}
-
 impl From<&str> for PermissionsList {
     fn from(code: &str) -> Self {
         let num_code: u64 = code.parse().unwrap();
@@ -152,30 +144,22 @@ impl From<u64> for PermissionsList {
     }
 }
 
-impl<const N: usize> From<[Permission; N]> for PermissionsList {
-    fn from(permissions: [Permission; N]) -> Self {
+impl From<Vec<Permission>> for PermissionsList {
+    fn from(permissions: Vec<Permission>) -> Self {
         Self {
-            permissions: HashSet::from(permissions),
+            permissions: HashSet::from_iter(permissions.into_iter()),
         }
     }
 }
 
-impl From<&Vec<Permission>> for PermissionsList {
-    fn from(permissions: &Vec<Permission>) -> Self {
-        Self {
-            permissions: HashSet::from_iter(permissions.iter().cloned()),
-        }
-    }
-}
-
-impl From<&Vec<String>> for PermissionsList {
-    fn from(permission_names: &Vec<String>) -> Self {
+impl From<Vec<String>> for PermissionsList {
+    fn from(permission_names: Vec<String>) -> Self {
         let permissions: Vec<Permission> = permission_names
-            .iter()
-            .map(|permission_name| Permission::from_str(permission_name).unwrap())
+            .into_iter()
+            .map(|permission_name| Permission::from_str(&permission_name).unwrap())
             .collect();
 
-        Self::from(&permissions)
+        Self::from(permissions)
     }
 }
 
@@ -184,7 +168,7 @@ mod tests {
     mod persission {
         use std::{collections::HashSet, str::FromStr};
 
-        use crate::domain::entities::permission::Permission;
+        use crate::permission::Permission;
 
         #[test]
         fn same_permissions_are_equal() {
@@ -233,18 +217,18 @@ mod tests {
         }
     }
 
-    mod permission_list {
-        use crate::domain::entities::permission::{Permission, PermissionsList};
+    mod permissions_list {
+        use crate::permission::{Permission, PermissionsList};
 
         #[test]
         fn when_empty_then_code_is_0() {
-            let permission_list = PermissionsList::from([]);
+            let permission_list = PermissionsList::from(vec![] as Vec<Permission>);
             assert_eq!(permission_list.code(), "0");
         }
 
         #[test]
         fn does_not_care_about_duplicates() {
-            let permissions = [Permission::ADMINISTRATOR, Permission::ADMINISTRATOR];
+            let permissions = vec![Permission::ADMINISTRATOR, Permission::ADMINISTRATOR];
             let permission_list = PermissionsList::from(permissions);
 
             let expected_code = Permission::ADMINISTRATOR.code().to_string();
@@ -253,7 +237,7 @@ mod tests {
 
         #[test]
         fn can_create_code_from_permissions() {
-            let permissions = [
+            let permissions = vec![
                 Permission::ADD_REACTIONS,
                 Permission::EMBED_LINKS,
                 Permission::USE_EXTERNAL_EMOJIS,
@@ -275,9 +259,9 @@ mod tests {
         #[test]
         fn lists_are_equal_if_same_permissions() {
             let list1 =
-                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+                PermissionsList::from(vec![Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
             let list2 =
-                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+                PermissionsList::from(vec![Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
 
             assert_eq!(list1, list2);
         }
@@ -285,9 +269,9 @@ mod tests {
         #[test]
         fn lists_are_not_equal_if_different_permissions() {
             let list1 =
-                PermissionsList::from([Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
+                PermissionsList::from(vec![Permission::ADD_REACTIONS, Permission::ADMINISTRATOR]);
             let list2 =
-                PermissionsList::from([Permission::ADD_REACTIONS, Permission::SEND_MESSAGES]);
+                PermissionsList::from(vec![Permission::ADD_REACTIONS, Permission::SEND_MESSAGES]);
 
             assert_ne!(list1, list2);
         }

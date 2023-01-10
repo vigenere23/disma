@@ -8,8 +8,7 @@ use crate::{
         io::Deserializer,
     },
 };
-use disma::changes::ChangesService;
-use disma::diff::base::EntityChange;
+use disma::{changes::ChangesService, commands::CommandDescription};
 
 pub struct ApplyChanges {
     diff_service: Arc<ChangesService>,
@@ -53,13 +52,13 @@ impl ApplyChanges {
 
         for diff in diffs {
             match diff {
-                EntityChange::Create(entity, name) => {
+                CommandDescription::Create(entity, name) => {
                     println!("\n● 🆕 Adding {:?} {}", entity, name.bold().on_black())
                 }
-                EntityChange::Delete(entity, name) => {
+                CommandDescription::Delete(entity, name) => {
                     println!("\n● 🗑️  Removing {:?} {}", entity, name.bold().on_black())
                 }
-                EntityChange::Update(entity, name, diffs) => {
+                CommandDescription::Update(entity, name, diffs) => {
                     println!(
                         "\n● 🔄 Updating {:?} {} with diffs:",
                         entity,

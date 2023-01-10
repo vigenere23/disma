@@ -2,12 +2,9 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
-    category::{CategoriesList, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, ChannelType},
-    domain::entities::{
-        category::AwaitingCategory,
-        role::{ExistingRole, RolesList},
-    },
+    role::{ExistingRole, RolesList},
 };
 
 use super::permissions::PermissionOverwritesDto;
@@ -43,7 +40,7 @@ impl ChannelRequest {
     pub fn from_category(category: &AwaitingCategory, roles: &RolesList<ExistingRole>) -> Self {
         let permission_overwrites = category
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(|permission| PermissionOverwritesDto::from(permission, roles))
             .collect();
@@ -69,7 +66,7 @@ impl ChannelRequest {
 
         let permission_overwrites = channel
             .overwrites
-            .items()
+            .to_list()
             .iter()
             .map(|permission| PermissionOverwritesDto::from(permission, roles))
             .collect();
