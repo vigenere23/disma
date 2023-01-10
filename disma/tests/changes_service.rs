@@ -1,16 +1,16 @@
 use std::sync::Arc;
 
 use disma::{
-    category::CategoriesList,
+    category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, RemoveExtraCategories},
     changes::ChangesService,
-    channel::ChannelsList,
+    channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, RemoveExtraChannels},
     commands::{
         CommandDescription, CommandEntity, CommandEventListenerMock, CommandEventListenerRef,
     },
     diff::Diff,
     guild::{AwaitingGuild, ExistingGuild, GuildCommanderMock, GuildQuerierMock, GuildQuerierRef},
     permission::{Permission, PermissionsList},
-    role::{AwaitingRole, ExistingRole, RolesList},
+    role::{AwaitingRole, AwaitingRolesList, ExistingRole, RemoveExtraRoles, RolesList},
 };
 use mock_it::{any, eq};
 
@@ -81,9 +81,30 @@ fn given_another_awaiting_role_with(name: &str) -> AwaitingRole {
 
 fn given_empty_awaiting_guild() -> AwaitingGuild {
     AwaitingGuild {
-        roles: RolesList::from(vec![]),
-        categories: CategoriesList::from(vec![]),
-        channels: ChannelsList::from(vec![]),
+        roles: given_awaiting_roles_list_for(vec![]),
+        categories: given_awaiting_categories_list_for(vec![]),
+        channels: given_awaiting_channels_list_for(vec![]),
+    }
+}
+
+fn given_awaiting_roles_list_for(roles: Vec<AwaitingRole>) -> AwaitingRolesList {
+    AwaitingRolesList {
+        items: RolesList::from(roles),
+        extra_items_strategy: Arc::from(RemoveExtraRoles {}),
+    }
+}
+
+fn given_awaiting_categories_list_for(categories: Vec<AwaitingCategory>) -> AwaitingCategoriesList {
+    AwaitingCategoriesList {
+        items: CategoriesList::from(categories),
+        extra_items_strategy: Arc::from(RemoveExtraCategories {}),
+    }
+}
+
+fn given_awaiting_channels_list_for(channels: Vec<AwaitingChannel>) -> AwaitingChannelsList {
+    AwaitingChannelsList {
+        items: ChannelsList::from(channels),
+        extra_items_strategy: Arc::from(RemoveExtraChannels {}),
     }
 }
 
@@ -123,13 +144,13 @@ fn given_role_differences_when_listing_changes_then_return_all_role_changes() {
         channels: ChannelsList::from(vec![]),
     };
     let awaiting_guild = AwaitingGuild {
-        roles: RolesList::from(vec![
+        roles: given_awaiting_roles_list_for(vec![
             given_an_awaiting_role_with("to_create"),
             given_an_awaiting_role_with("no_change"),
             given_another_awaiting_role_with("to_update"),
         ]),
-        categories: CategoriesList::from(vec![]),
-        channels: ChannelsList::from(vec![]),
+        categories: given_awaiting_categories_list_for(vec![]),
+        channels: given_awaiting_channels_list_for(vec![]),
     };
     let expected_diffs = vec![
         CommandDescription::Create(CommandEntity::Role, "to_create".to_string()),
@@ -199,13 +220,13 @@ fn given_role_differences_when_applying_changes_then_applies_all_changes() {
         channels: ChannelsList::from(vec![]),
     };
     let awaiting_guild = AwaitingGuild {
-        roles: RolesList::from(vec![
+        roles: given_awaiting_roles_list_for(vec![
             created_role.clone(),
             unchanged_role.clone(),
             updated_role.clone(),
         ]),
-        categories: CategoriesList::from(vec![]),
-        channels: ChannelsList::from(vec![]),
+        categories: given_awaiting_categories_list_for(vec![]),
+        channels: given_awaiting_channels_list_for(vec![]),
     };
     guild_commander
         .when_add_role(eq(&created_role))
