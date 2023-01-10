@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use mock_it::mock_it;
+
 use crate::{
     domain::diff::Diff,
     guild::{ExistingGuild, GuildCommanderRef},
@@ -15,7 +17,7 @@ pub trait CommandFactory {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef>;
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum CommandDescription {
     Create(CommandEntity, CommandEntityName),
     Delete(CommandEntity, CommandEntityName),
@@ -24,7 +26,7 @@ pub enum CommandDescription {
 
 type CommandEntityName = String;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum CommandEntity {
     Role,
     Category,
@@ -37,6 +39,7 @@ pub enum CommandEventType {
     AfterExecution,
 }
 
+#[mock_it]
 pub trait CommandEventListener {
     fn handle(&self, event_type: CommandEventType, description: CommandDescription);
 }
