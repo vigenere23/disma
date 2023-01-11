@@ -1,21 +1,19 @@
 use std::sync::Arc;
 
-use mock_it::mock_it;
-
 use crate::{
     category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
     role::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList},
 };
 
-#[mock_it]
+#[cfg_attr(test, mock_it::mock_it)]
 pub trait GuildQuerier {
     fn get_guild(&self, guild_id: &str) -> ExistingGuild;
     fn list_guilds(&self) -> Vec<GuildSummary>;
 }
 pub type GuildQuerierRef = Arc<dyn GuildQuerier>;
 
-#[mock_it]
+#[cfg_attr(test, mock_it::mock_it)]
 pub trait GuildCommander {
     fn add_role(&self, role: &AwaitingRole);
     fn update_role(&self, id: &str, role: &AwaitingRole);

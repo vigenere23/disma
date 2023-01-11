@@ -1,7 +1,5 @@
 use std::sync::Arc;
 
-use mock_it::mock_it;
-
 use crate::{
     domain::diff::Diff,
     guild::{ExistingGuild, GuildCommanderRef},
@@ -39,7 +37,7 @@ pub enum CommandEventType {
     AfterExecution,
 }
 
-#[mock_it]
+#[cfg_attr(test, mock_it::mock_it)]
 pub trait CommandEventListener {
     fn handle(&self, event_type: CommandEventType, description: CommandDescription);
 }
