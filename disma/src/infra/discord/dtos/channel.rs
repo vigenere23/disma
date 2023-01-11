@@ -73,7 +73,7 @@ impl ChannelRequest {
 
         Self {
             name: channel.name.clone(),
-            topic: String::new(),
+            topic: channel.topic.clone().unwrap_or_default(),
             _type: ChannelDtoType::from(&channel.channel_type),
             parent_id: category.map(|category| category.id.clone()),
             permission_overwrites,
