@@ -115,122 +115,208 @@ impl Into<AwaitingRole> for RoleConfig {
 
 #[cfg(test)]
 mod test {
-    use disma::{
-        permission::{Permission, PermissionsList},
-        role::{AwaitingRole, ExistingRole},
-    };
 
-    use super::RoleConfig;
-
-    #[test]
-    fn can_convert_config_to_awaiting_entity() {
-        let is_mentionable = true;
-        let show_in_sidebar = false;
-        let color = "826d5f".to_string();
-        let name = "Team10".to_string();
-
-        let config = RoleConfig {
-            name: name.clone(),
-            color: Some(color.clone()),
-            show_in_sidebar,
-            is_mentionable,
-            permissions: Some(vec!["ADMINISTRATOR".to_string()]),
+    mod into_awaiting {
+        use disma::{
+            permission::{Permission, PermissionsList},
+            role::AwaitingRole,
         };
 
-        let entity: AwaitingRole = config.into();
+        use crate::infra::config::role::RoleConfig;
 
-        let expected_entity = AwaitingRole {
-            name: name.clone(),
-            color: Some(color.clone()),
-            is_mentionable,
-            show_in_sidebar,
-            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-        };
-        assert_eq!(entity, expected_entity);
+        #[test]
+        fn can_convert_config_to_awaiting_entity() {
+            let is_mentionable = true;
+            let show_in_sidebar = false;
+            let color = "826d5f".to_string();
+            let name = "Team10".to_string();
+
+            let config = RoleConfig {
+                name: name.clone(),
+                color: Some(color.clone()),
+                show_in_sidebar,
+                is_mentionable,
+                permissions: Some(vec!["ADMINISTRATOR".to_string()]),
+            };
+
+            let entity: AwaitingRole = config.into();
+
+            let expected_entity = AwaitingRole {
+                name: name.clone(),
+                color: Some(color.clone()),
+                is_mentionable,
+                show_in_sidebar,
+                permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+            };
+            assert_eq!(entity, expected_entity);
+        }
+
+        #[test]
+        fn can_convert_compressed_config_to_awaiting_entity() {
+            let is_mentionable = true;
+            let show_in_sidebar = false;
+            let name = "Team10".to_string();
+            let permissions: Vec<String> = vec![];
+
+            let config = RoleConfig {
+                name: name.clone(),
+                color: None,
+                is_mentionable,
+                show_in_sidebar,
+                permissions: None,
+            };
+
+            let entity: AwaitingRole = config.into();
+
+            let expected_entity = AwaitingRole {
+                name: name.clone(),
+                color: None,
+                is_mentionable,
+                show_in_sidebar,
+                permissions: PermissionsList::from(permissions),
+            };
+            assert_eq!(entity, expected_entity);
+        }
     }
 
-    #[test]
-    fn can_convert_compressed_config_to_awaiting_entity() {
-        let is_mentionable = true;
-        let show_in_sidebar = false;
-        let name = "Team10".to_string();
-        let permissions: Vec<String> = vec![];
-
-        let config = RoleConfig {
-            name: name.clone(),
-            color: None,
-            is_mentionable,
-            show_in_sidebar,
-            permissions: None,
+    mod from_existing {
+        use disma::{
+            permission::{Permission, PermissionsList},
+            role::ExistingRole,
         };
 
-        let entity: AwaitingRole = config.into();
+        use crate::infra::config::role::RoleConfig;
 
-        let expected_entity = AwaitingRole {
-            name: name.clone(),
-            color: None,
-            is_mentionable,
-            show_in_sidebar,
-            permissions: PermissionsList::from(permissions),
-        };
-        assert_eq!(entity, expected_entity);
+        #[test]
+        fn can_convert_existing_entity_to_config() {
+            let is_mentionable = true;
+            let show_in_sidebar = false;
+            let color = "826d5f".to_string();
+            let name = "Team10".to_string();
+            let id = "93jdi0".to_string();
+
+            let entity = ExistingRole {
+                id: id.clone(),
+                name: name.clone(),
+                color: Some(color.clone()),
+                is_mentionable,
+                show_in_sidebar,
+                permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+            };
+
+            let config = RoleConfig::from(&entity);
+
+            let expected_config = RoleConfig {
+                name: name.clone(),
+                color: Some(color.clone()),
+                show_in_sidebar,
+                is_mentionable,
+                permissions: Some(vec!["ADMINISTRATOR".to_string()]),
+            };
+            assert_eq!(config, expected_config);
+        }
+
+        #[test]
+        fn can_convert_existing_entity_to_compressed_config() {
+            let is_mentionable = true;
+            let show_in_sidebar = false;
+            let name = "Team10".to_string();
+            let id = "93jdi0".to_string();
+            let permissions: Vec<String> = vec![];
+
+            let entity = ExistingRole {
+                id: id.clone(),
+                name: name.clone(),
+                color: None,
+                is_mentionable,
+                show_in_sidebar,
+                permissions: PermissionsList::from(permissions),
+            };
+
+            let config = RoleConfig::from(&entity);
+
+            let expected_config = RoleConfig {
+                name: name.clone(),
+                color: None,
+                show_in_sidebar,
+                is_mentionable,
+                permissions: None,
+            };
+            assert_eq!(config, expected_config);
+        }
     }
 
-    #[test]
-    fn can_convert_existing_entity_to_config() {
-        let is_mentionable = true;
-        let show_in_sidebar = false;
-        let color = "826d5f".to_string();
-        let name = "Team10".to_string();
-        let id = "93jdi0".to_string();
-
-        let entity = ExistingRole {
-            id: id.clone(),
-            name: name.clone(),
-            color: Some(color.clone()),
-            is_mentionable,
-            show_in_sidebar,
-            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+    mod serde_parsing {
+        use crate::infra::config::role::{
+            RoleConfig, RoleConfigsList, RoleExtraItemsConfig, RoleExtraItemsStrategy,
         };
 
-        let config = RoleConfig::from(&entity);
+        #[test]
+        fn can_be_parsed() {
+            let yaml_config = r"
+                items:
+                  - name: role_1
+                    color: 29a1f4
+                    permissions:
+                      - ADMINISTRATOR
+                      - SEND_MESSAGES
+                    show_in_sidebar: true
+                    is_mentionable: false
+                extra_items:
+                  strategy: KEEP
+            ";
+            let expected_config = RoleConfigsList {
+                items: vec![RoleConfig {
+                    name: "role_1".to_string(),
+                    permissions: Some(vec![
+                        "ADMINISTRATOR".to_string(),
+                        "SEND_MESSAGES".to_string(),
+                    ]),
+                    color: Some("29a1f4".to_string()),
+                    show_in_sidebar: true,
+                    is_mentionable: false,
+                }],
+                extra_items: RoleExtraItemsConfig {
+                    strategy: RoleExtraItemsStrategy::KEEP,
+                },
+            };
 
-        let expected_config = RoleConfig {
-            name: name.clone(),
-            color: Some(color.clone()),
-            show_in_sidebar,
-            is_mentionable,
-            permissions: Some(vec!["ADMINISTRATOR".to_string()]),
-        };
-        assert_eq!(config, expected_config);
-    }
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
 
-    #[test]
-    fn can_convert_existing_entity_to_compressed_config() {
-        let is_mentionable = true;
-        let show_in_sidebar = false;
-        let name = "Team10".to_string();
-        let id = "93jdi0".to_string();
-        let permissions: Vec<String> = vec![];
+            assert_eq!(config, expected_config);
+        }
 
-        let entity = ExistingRole {
-            id: id.clone(),
-            name: name.clone(),
-            color: None,
-            is_mentionable,
-            show_in_sidebar,
-            permissions: PermissionsList::from(permissions),
-        };
+        #[test]
+        fn it_fills_empty_config_with_defaults() {
+            let yaml_config = r"";
 
-        let config = RoleConfig::from(&entity);
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
 
-        let expected_config = RoleConfig {
-            name: name.clone(),
-            color: None,
-            show_in_sidebar,
-            is_mentionable,
-            permissions: None,
-        };
-        assert_eq!(config, expected_config);
+            assert_eq!(config, RoleConfigsList::default());
+        }
+
+        #[test]
+        fn it_fills_empty_fields_with_defaults() {
+            let yaml_config = r"
+                items:
+                  - name: role_1
+                    show_in_sidebar: true
+                    is_mentionable: false
+            ";
+            let expected_config = RoleConfigsList {
+                items: vec![RoleConfig {
+                    name: "role_1".to_string(),
+                    permissions: None,
+                    color: None,
+                    show_in_sidebar: true,
+                    is_mentionable: false,
+                }],
+                ..Default::default()
+            };
+
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
+
+            assert_eq!(config, expected_config);
+        }
     }
 }

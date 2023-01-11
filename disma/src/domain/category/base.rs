@@ -4,7 +4,7 @@ pub trait Category: Clone {
     fn name(&self) -> String;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct CategoriesList<C>
 where
     C: Category,

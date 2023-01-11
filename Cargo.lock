@@ -163,6 +163,7 @@ dependencies = [
 name = "disma"
 version = "0.8.1"
 dependencies = [
+ "mock-it",
  "reqwest",
  "serde",
  "serde_json",
@@ -524,6 +525,26 @@ dependencies = [
  "log",
  "wasi",
  "windows-sys 0.42.0",
+]
+
+[[package]]
+name = "mock-it"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c79f6245a4564f117ae4e640a829a7b425e641ca3e6ea279d74a9caf05d2daf"
+dependencies = [
+ "mock-it_codegen",
+]
+
+[[package]]
+name = "mock-it_codegen"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d8a887ee7c909093b773c59ee57412f0fd29d2f262905eeea721cfc31a38e18f"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
