@@ -9,7 +9,6 @@ use disma::{
     },
     permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
-    utils::vec::Compress,
 };
 
 use super::{channel::ChannelExtraItemsConfig, permission::PermissionsOverwritesConfig};
@@ -70,8 +69,8 @@ impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryExtraItemsStrategy {
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct CategoryConfig {
     pub name: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub permissions_overwrites: Option<Vec<PermissionsOverwritesConfig>>,
+    #[serde(default = "Vec::default")]
+    pub permissions_overwrites: Vec<PermissionsOverwritesConfig>,
     pub extra_channels: ChannelExtraItemsConfig,
 }
 
@@ -86,7 +85,7 @@ impl From<&ExistingCategory> for CategoryConfig {
 
         Self {
             name: category.name.clone(),
-            permissions_overwrites: permissions_overwrites.compress(),
+            permissions_overwrites,
             extra_channels: ChannelExtraItemsConfig::default(),
         }
     }
@@ -96,13 +95,9 @@ impl CategoryConfig {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategory {
         let overwrites = self
             .permissions_overwrites
-            .map(|permissions| {
-                permissions
-                    .into_iter()
-                    .map(|permission| permission.into(roles))
-                    .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
-            })
-            .unwrap_or_default();
+            .into_iter()
+            .map(|permission| permission.into(roles))
+            .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>();
 
         AwaitingCategory {
             name: self.name,
@@ -145,11 +140,11 @@ mod tests {
 
             let config = CategoryConfig {
                 name: name.to_string(),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role.name.clone(),
-                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
-                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
-                }]),
+                    allow: vec!["ADMINISTRATOR".to_string()],
+                    deny: vec!["ADMINISTRATOR".to_string()],
+                }],
                 extra_channels: ChannelExtraItemsConfig {
                     strategy: ChannelExtraItemsStrategy::REMOVE,
                 },
@@ -162,26 +157,6 @@ mod tests {
                     allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                     deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 }]),
-                extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
-            };
-
-            (config, matching_entity)
-        }
-
-        fn given_matching_compressed_config_and_awaiting_entity(
-            name: &str,
-        ) -> (CategoryConfig, AwaitingCategory) {
-            let config = CategoryConfig {
-                name: name.to_string(),
-                permissions_overwrites: None,
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
-
-            let matching_entity = AwaitingCategory {
-                name: name.to_string(),
-                overwrites: PermissionsOverwritesList::from(vec![]),
                 extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
             };
 
@@ -239,18 +214,6 @@ mod tests {
         }
 
         #[test]
-        fn can_convert_compressed_config_to_awaiting_entity() {
-            let name = "presto";
-            let roles = RolesList::from(vec![]);
-            let (config, expected_entity) =
-                given_matching_compressed_config_and_awaiting_entity(name);
-
-            let entity: AwaitingCategory = config.into(&roles);
-
-            assert_eq!(entity, expected_entity);
-        }
-
-        #[test]
         fn can_convert_config_list_to_awaiting_entity_list() {
             let name = "presto";
             let roles = given_awaiting_roles(vec!["Team01"]);
@@ -294,31 +257,11 @@ mod tests {
 
             let config = CategoryConfig {
                 name: name.to_string(),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role.name.clone(),
-                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
-                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
-                }]),
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
-
-            (entity, config)
-        }
-
-        fn given_matching_compressed_entity_and_config(
-            name: &str,
-        ) -> (ExistingCategory, CategoryConfig) {
-            let entity = ExistingCategory {
-                id: "some".to_string(),
-                name: name.to_string(),
-                overwrites: PermissionsOverwritesList::from(vec![]),
-            };
-
-            let config = CategoryConfig {
-                name: name.to_string(),
-                permissions_overwrites: None,
+                    allow: vec!["ADMINISTRATOR".to_string()],
+                    deny: vec!["ADMINISTRATOR".to_string()],
+                }],
                 extra_channels: ChannelExtraItemsConfig {
                     strategy: ChannelExtraItemsStrategy::REMOVE,
                 },
@@ -348,16 +291,6 @@ mod tests {
             let name = "presto";
             let role = given_existing_role("kgj399sd", "Team01");
             let (entity, expected_config) = given_matching_entity_and_config(name, &role);
-
-            let config = CategoryConfig::from(&entity);
-
-            assert_eq!(config, expected_config);
-        }
-
-        #[test]
-        fn can_convert_existing_entity_to_compressed_config() {
-            let name = "presto";
-            let (entity, expected_config) = given_matching_compressed_entity_and_config(name);
 
             let config = CategoryConfig::from(&entity);
 

@@ -8,7 +8,6 @@ use disma::{
         AwaitingRole, AwaitingRolesList, ExistingRole, ExtraRolesStrategy, KeepExtraRoles,
         RemoveExtraRoles,
     },
-    utils::vec::Compress,
 };
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
@@ -67,8 +66,8 @@ impl Into<Arc<dyn ExtraRolesStrategy>> for RoleExtraItemsStrategy {
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct RoleConfig {
     pub name: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub permissions: Option<Vec<String>>,
+    #[serde(default = "Vec::default")]
+    pub permissions: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Option<String>,
     pub show_in_sidebar: bool,
@@ -86,7 +85,7 @@ impl From<&ExistingRole> for RoleConfig {
 
         Self {
             name: role.name.clone(),
-            permissions: permissions.compress(),
+            permissions,
             color: role.color.clone(),
             show_in_sidebar: role.show_in_sidebar,
             is_mentionable: role.is_mentionable,
@@ -98,7 +97,6 @@ impl Into<AwaitingRole> for RoleConfig {
     fn into(self) -> AwaitingRole {
         let permissions: Vec<Permission> = self
             .permissions
-            .unwrap_or_default()
             .iter()
             .map(|permission| Permission::from_str(permission).unwrap())
             .collect();
@@ -136,7 +134,7 @@ mod test {
                 color: Some(color.clone()),
                 show_in_sidebar,
                 is_mentionable,
-                permissions: Some(vec!["ADMINISTRATOR".to_string()]),
+                permissions: vec!["ADMINISTRATOR".to_string()],
             };
 
             let entity: AwaitingRole = config.into();
@@ -163,7 +161,7 @@ mod test {
                 color: None,
                 is_mentionable,
                 show_in_sidebar,
-                permissions: None,
+                permissions: vec![],
             };
 
             let entity: AwaitingRole = config.into();
@@ -211,7 +209,7 @@ mod test {
                 color: Some(color.clone()),
                 show_in_sidebar,
                 is_mentionable,
-                permissions: Some(vec!["ADMINISTRATOR".to_string()]),
+                permissions: vec!["ADMINISTRATOR".to_string()],
             };
             assert_eq!(config, expected_config);
         }
@@ -240,7 +238,7 @@ mod test {
                 color: None,
                 show_in_sidebar,
                 is_mentionable,
-                permissions: None,
+                permissions: vec![],
             };
             assert_eq!(config, expected_config);
         }
@@ -268,10 +266,7 @@ mod test {
             let expected_config = RoleConfigsList {
                 items: vec![RoleConfig {
                     name: "role_1".to_string(),
-                    permissions: Some(vec![
-                        "ADMINISTRATOR".to_string(),
-                        "SEND_MESSAGES".to_string(),
-                    ]),
+                    permissions: vec!["ADMINISTRATOR".to_string(), "SEND_MESSAGES".to_string()],
                     color: Some("29a1f4".to_string()),
                     show_in_sidebar: true,
                     is_mentionable: false,
@@ -306,7 +301,7 @@ mod test {
             let expected_config = RoleConfigsList {
                 items: vec![RoleConfig {
                     name: "role_1".to_string(),
-                    permissions: None,
+                    permissions: vec![],
                     color: None,
                     show_in_sidebar: true,
                     is_mentionable: false,
