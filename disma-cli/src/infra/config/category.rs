@@ -115,8 +115,13 @@ impl CategoryConfig {
 #[cfg(test)]
 mod tests {
     mod into_awaiting {
+        use std::sync::Arc;
+
         use disma::{
-            category::AwaitingCategory,
+            category::{
+                AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories,
+            },
+            channel::RemoveExtraChannels,
             permission::{
                 Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
             },
@@ -124,10 +129,86 @@ mod tests {
         };
 
         use crate::infra::config::{
-            category::CategoryConfig,
+            category::{
+                CategoryConfig, CategoryConfigsList, CategoryExtraItemsConfig,
+                CategoryExtraItemsStrategy,
+            },
             channel::{ChannelExtraItemsConfig, ChannelExtraItemsStrategy},
             permission::PermissionsOverwritesConfig,
         };
+
+        fn given_matching_config_and_awaiting_entity(
+            name: &str,
+            roles: &RolesList<AwaitingRole>,
+        ) -> (CategoryConfig, AwaitingCategory) {
+            let role = roles.to_list().first().unwrap();
+
+            let config = CategoryConfig {
+                name: name.to_string(),
+                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                    role: role.name.clone(),
+                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
+                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
+                }]),
+                extra_channels: ChannelExtraItemsConfig {
+                    strategy: ChannelExtraItemsStrategy::REMOVE,
+                },
+            };
+
+            let matching_entity = AwaitingCategory {
+                name: name.to_string(),
+                overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+                    role: role.clone(),
+                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                    deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                }]),
+                extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
+            };
+
+            (config, matching_entity)
+        }
+
+        fn given_matching_compressed_config_and_awaiting_entity(
+            name: &str,
+        ) -> (CategoryConfig, AwaitingCategory) {
+            let config = CategoryConfig {
+                name: name.to_string(),
+                permissions_overwrites: None,
+                extra_channels: ChannelExtraItemsConfig {
+                    strategy: ChannelExtraItemsStrategy::REMOVE,
+                },
+            };
+
+            let matching_entity = AwaitingCategory {
+                name: name.to_string(),
+                overwrites: PermissionsOverwritesList::from(vec![]),
+                extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
+            };
+
+            (config, matching_entity)
+        }
+
+        fn given_matching_config_list_and_awaiting_entites_list(
+            name: &str,
+            roles: &RolesList<AwaitingRole>,
+        ) -> (CategoryConfigsList, AwaitingCategoriesList) {
+            let (config_item, awaiting_item) =
+                given_matching_config_and_awaiting_entity(name, roles);
+
+            let config_list = CategoryConfigsList {
+                items: vec![config_item],
+                extra_items: CategoryExtraItemsConfig {
+                    strategy: CategoryExtraItemsStrategy::KEEP,
+                },
+            };
+
+            let awaiting_list = AwaitingCategoriesList {
+                items: CategoriesList::from(vec![awaiting_item]),
+                extra_items_strategy: Arc::from(KeepExtraCategories {}),
+            };
+
+            (config_list, awaiting_list)
+        }
 
         fn given_awaiting_roles(names: Vec<&str>) -> RolesList<AwaitingRole> {
             let roles: Vec<AwaitingRole> =
@@ -148,57 +229,37 @@ mod tests {
 
         #[test]
         fn can_convert_config_to_awaiting_entity() {
-            let category_name = "presto".to_string();
-            let role_name = "Team01";
-            let roles = given_awaiting_roles(vec![role_name]);
-            let role = given_awaiting_role(role_name);
-
-            let config = CategoryConfig {
-                name: category_name.clone(),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
-                    role: role_name.to_string(),
-                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
-                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
-                }]),
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
+            let name = "presto";
+            let roles = given_awaiting_roles(vec!["Team01"]);
+            let (config, expected_entity) = given_matching_config_and_awaiting_entity(name, &roles);
 
             let entity: AwaitingCategory = config.into(&roles);
 
-            let expected_entity = AwaitingCategory {
-                name: category_name.clone(),
-                overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
-                    role,
-                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                    deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                }]),
-                extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
-            };
             assert_eq!(entity, expected_entity);
         }
 
         #[test]
         fn can_convert_compressed_config_to_awaiting_entity() {
-            let category_name = "presto".to_string();
+            let name = "presto";
+            let roles = RolesList::from(vec![]);
+            let (config, expected_entity) =
+                given_matching_compressed_config_and_awaiting_entity(name);
 
-            let config = CategoryConfig {
-                name: category_name.clone(),
-                permissions_overwrites: None,
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
+            let entity: AwaitingCategory = config.into(&roles);
 
-            let entity: AwaitingCategory = config.into(&RolesList::from(vec![]));
-
-            let expected_entity = AwaitingCategory {
-                name: category_name.clone(),
-                overwrites: PermissionsOverwritesList::from(vec![]),
-                extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
-            };
             assert_eq!(entity, expected_entity);
+        }
+
+        #[test]
+        fn can_convert_config_list_to_awaiting_entity_list() {
+            let name = "presto";
+            let roles = given_awaiting_roles(vec!["Team01"]);
+            let (config_list, expected_entities_list) =
+                given_matching_config_list_and_awaiting_entites_list(name, &roles);
+
+            let entities_list: AwaitingCategoriesList = config_list.into(&roles);
+
+            assert_eq!(entities_list, expected_entities_list);
         }
     }
 
@@ -217,6 +278,59 @@ mod tests {
             permission::PermissionsOverwritesConfig,
         };
 
+        fn given_matching_entity_and_config(
+            name: &str,
+            role: &ExistingRole,
+        ) -> (ExistingCategory, CategoryConfig) {
+            let entity = ExistingCategory {
+                id: "some".to_string(),
+                name: name.to_string(),
+                overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+                    role: role.clone(),
+                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                    deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                }]),
+            };
+
+            let config = CategoryConfig {
+                name: name.to_string(),
+                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                    role: role.name.clone(),
+                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
+                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
+                }]),
+                extra_channels: ChannelExtraItemsConfig {
+                    strategy: ChannelExtraItemsStrategy::REMOVE,
+                },
+            };
+
+            (entity, config)
+        }
+
+        fn given_matching_compressed_entity_and_config(
+            name: &str,
+        ) -> (ExistingCategory, CategoryConfig) {
+            let entity = ExistingCategory {
+                id: "some".to_string(),
+                name: name.to_string(),
+                overwrites: PermissionsOverwritesList::from(vec![]),
+            };
+
+            let config = CategoryConfig {
+                name: name.to_string(),
+                permissions_overwrites: None,
+                extra_channels: ChannelExtraItemsConfig {
+                    strategy: ChannelExtraItemsStrategy::REMOVE,
+                },
+            };
+
+            (entity, config)
+        }
+
+        fn given_matching_entites_list_and_config_list(name: &str, roles: &ExistingRole) {
+            todo!()
+        }
+
         fn given_existing_role(id: &str, name: &str) -> ExistingRole {
             let permissions: Vec<String> = vec![];
             ExistingRole {
@@ -231,57 +345,28 @@ mod tests {
 
         #[test]
         fn can_convert_existing_entity_to_config() {
-            let category_name = "presto".to_string();
-            let role_id = "kgj399sd";
-            let role_name = "Team01";
-            let role = given_existing_role(role_id, role_name);
-
-            let entity = ExistingCategory {
-                id: "some".to_string(),
-                name: category_name.clone(),
-                overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
-                    role,
-                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                    deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                }]),
-            };
+            let name = "presto";
+            let role = given_existing_role("kgj399sd", "Team01");
+            let (entity, expected_config) = given_matching_entity_and_config(name, &role);
 
             let config = CategoryConfig::from(&entity);
 
-            let expected_config = CategoryConfig {
-                name: category_name.clone(),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
-                    role: role_name.to_string(),
-                    allow: Some(vec!["ADMINISTRATOR".to_string()]),
-                    deny: Some(vec!["ADMINISTRATOR".to_string()]),
-                }]),
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
             assert_eq!(config, expected_config);
         }
 
         #[test]
         fn can_convert_existing_entity_to_compressed_config() {
-            let category_name = "presto".to_string();
-
-            let entity = ExistingCategory {
-                id: "some".to_string(),
-                name: category_name.clone(),
-                overwrites: PermissionsOverwritesList::from(vec![]),
-            };
+            let name = "presto";
+            let (entity, expected_config) = given_matching_compressed_entity_and_config(name);
 
             let config = CategoryConfig::from(&entity);
 
-            let expected_config = CategoryConfig {
-                name: category_name.clone(),
-                permissions_overwrites: None,
-                extra_channels: ChannelExtraItemsConfig {
-                    strategy: ChannelExtraItemsStrategy::REMOVE,
-                },
-            };
             assert_eq!(config, expected_config);
+        }
+
+        #[test]
+        fn can_convert_existing_entities_list_to_config_list() {
+            todo!() // Missing function From<CategoriesList<ExistingCategory>>
         }
     }
 
