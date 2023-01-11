@@ -1,4 +1,4 @@
-use std::{str::FromStr, sync::Arc};
+use std::sync::Arc;
 
 use disma::{
     category::{AwaitingCategory, CategoriesList},
@@ -8,7 +8,6 @@ use disma::{
     },
     permission::PermissionsOverwrites,
     role::{AwaitingRole, RolesList},
-    utils::vec::Compress,
 };
 use serde::{Deserialize, Serialize};
 
@@ -74,19 +73,49 @@ impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct ChannelConfig {
     pub name: String,
-    #[serde(rename = "type")]
-    pub _type: Option<String>,
+    #[serde(rename = "type", default = "ChannelConfigType::default")]
+    pub _type: ChannelConfigType,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub topic: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub permissions_overwrites: Option<Vec<PermissionsOverwritesConfig>>,
+    #[serde(default = "Vec::default")]
+    pub permissions_overwrites: Vec<PermissionsOverwritesConfig>,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub enum ChannelConfigType {
+    TEXT,
+    VOICE,
+}
+
+impl Default for ChannelConfigType {
+    fn default() -> Self {
+        Self::TEXT
+    }
+}
+
+impl From<ChannelType> for ChannelConfigType {
+    fn from(value: ChannelType) -> Self {
+        match value {
+            ChannelType::TEXT => Self::TEXT,
+            ChannelType::VOICE => Self::VOICE,
+        }
+    }
+}
+
+impl Into<ChannelType> for ChannelConfigType {
+    fn into(self) -> ChannelType {
+        match self {
+            Self::TEXT => ChannelType::TEXT,
+            Self::VOICE => ChannelType::VOICE,
+        }
+    }
 }
 
 impl From<&ExistingChannel> for ChannelConfig {
     fn from(channel: &ExistingChannel) -> Self {
-        let _type = Some(channel.channel_type.to_string());
+        let _type = channel.channel_type.clone().into();
 
         let category = channel
             .category
@@ -98,8 +127,7 @@ impl From<&ExistingChannel> for ChannelConfig {
             .to_list()
             .iter()
             .map(PermissionsOverwritesConfig::from)
-            .collect::<Vec<PermissionsOverwritesConfig>>()
-            .compress();
+            .collect::<Vec<PermissionsOverwritesConfig>>();
 
         Self {
             name: channel.name.clone(),
@@ -117,11 +145,7 @@ impl ChannelConfig {
         roles: &RolesList<AwaitingRole>,
         categories: &CategoriesList<AwaitingCategory>,
     ) -> AwaitingChannel {
-        let channel_type = self
-            ._type
-            .as_ref()
-            .map(|_type| ChannelType::from_str(_type).unwrap())
-            .unwrap_or(ChannelType::TEXT);
+        let channel_type = self._type.into();
 
         let category = self.category.map(|name| {
             categories
@@ -130,15 +154,12 @@ impl ChannelConfig {
                 .clone()
         });
 
+        // TODO add strategy to inherit category's overwrites?
         let overwrites = self
             .permissions_overwrites
-            .map(|permissions| {
-                permissions
-                    .into_iter()
-                    .map(|permission| permission.into(roles))
-                    .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>()
-            })
-            .unwrap_or_default();
+            .into_iter()
+            .map(|permission| permission.into(roles))
+            .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>();
 
         AwaitingChannel {
             name: self.name,
@@ -163,7 +184,7 @@ mod tests {
         };
 
         use crate::infra::config::{
-            channel::{ChannelConfig, ChannelExtraItemsConfig},
+            channel::{ChannelConfig, ChannelConfigType, ChannelExtraItemsConfig},
             permission::PermissionsOverwritesConfig,
         };
 
@@ -205,14 +226,14 @@ mod tests {
 
             let config = ChannelConfig {
                 name: channel_name.clone(),
-                _type: Some("VOICE".into()),
+                _type: ChannelConfigType::VOICE,
                 category: Some(category_name.clone()),
                 topic: Some(topic.clone()),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role_name.clone(),
                     allow: Some(vec!["ADMINISTRATOR".to_string()]),
                     deny: Some(vec!["SEND_MESSAGES".to_string()]),
-                }]),
+                }],
             };
 
             let entity = config.into(&RolesList::from(vec![role.clone()]), &categories);
@@ -237,10 +258,10 @@ mod tests {
 
             let config = ChannelConfig {
                 name: channel_name.clone(),
-                _type: None,
+                _type: ChannelConfigType::TEXT,
                 category: None,
                 topic: None,
-                permissions_overwrites: None,
+                permissions_overwrites: vec![],
             };
 
             let entity = config.into(&RolesList::from(vec![]), &CategoriesList::from(vec![]));
@@ -267,7 +288,8 @@ mod tests {
         };
 
         use crate::infra::config::{
-            channel::ChannelConfig, permission::PermissionsOverwritesConfig,
+            channel::{ChannelConfig, ChannelConfigType},
+            permission::PermissionsOverwritesConfig,
         };
 
         fn given_existing_category(id: &str, name: &str) -> ExistingCategory {
@@ -317,14 +339,14 @@ mod tests {
 
             let expected_config = ChannelConfig {
                 name: channel_name.clone(),
-                _type: Some("VOICE".into()),
+                _type: ChannelConfigType::VOICE,
                 category: Some(category_name.clone()),
                 topic: Some(topic.clone()),
-                permissions_overwrites: Some(vec![PermissionsOverwritesConfig {
+                permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role_name.clone(),
                     allow: Some(vec!["ADMINISTRATOR".to_string()]),
                     deny: Some(vec!["SEND_MESSAGES".to_string()]),
-                }]),
+                }],
             };
             assert_eq!(config, expected_config);
         }
@@ -347,10 +369,10 @@ mod tests {
 
             let expected_config = ChannelConfig {
                 name: channel_name.clone(),
-                _type: Some("VOICE".into()),
+                _type: ChannelConfigType::VOICE,
                 category: None,
                 topic: None,
-                permissions_overwrites: None,
+                permissions_overwrites: vec![],
             };
             assert_eq!(config, expected_config);
         }
