@@ -1,5 +1,5 @@
 use disma::{
-    permission::{PermissionsList, PermissionsOverwrites},
+    permission::{Permission, PermissionsList, PermissionsOverwrites},
     role::{Role, RolesList},
 };
 use serde::{Deserialize, Serialize};
@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 pub struct PermissionsOverwritesConfig {
     pub role: String,
     #[serde(default = "Vec::default")]
-    pub allow: Vec<String>,
+    pub allow: Vec<Permission>,
     #[serde(default = "Vec::default")]
-    pub deny: Vec<String>,
+    pub deny: Vec<Permission>,
 }
 
 impl PermissionsOverwritesConfig {
@@ -34,24 +34,10 @@ where
     R: Role,
 {
     fn from(permissions: &PermissionsOverwrites<R>) -> Self {
-        let allowed_permissions: Vec<String> = permissions
-            .allow
-            .items()
-            .iter()
-            .map(|item| item.to_string())
-            .collect();
-
-        let denied_permissions: Vec<String> = permissions
-            .deny
-            .items()
-            .iter()
-            .map(|item| item.to_string())
-            .collect();
-
         Self {
             role: permissions.role.name(),
-            allow: allowed_permissions,
-            deny: denied_permissions,
+            allow: permissions.allow.to_list(),
+            deny: permissions.deny.to_list(),
         }
     }
 }

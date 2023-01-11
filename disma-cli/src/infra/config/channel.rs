@@ -231,8 +231,8 @@ mod tests {
                 topic: Some(topic.clone()),
                 permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role_name.clone(),
-                    allow: vec!["ADMINISTRATOR".to_string()],
-                    deny: vec!["SEND_MESSAGES".to_string()],
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::SEND_MESSAGES],
                 }],
             };
 
@@ -344,8 +344,8 @@ mod tests {
                 topic: Some(topic.clone()),
                 permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role_name.clone(),
-                    allow: vec!["ADMINISTRATOR".to_string()],
-                    deny: vec!["SEND_MESSAGES".to_string()],
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::SEND_MESSAGES],
                 }],
             };
             assert_eq!(config, expected_config);

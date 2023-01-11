@@ -1,10 +1,11 @@
 #![allow(non_camel_case_types)]
 
-use std::{collections::HashSet, str::FromStr};
+use std::collections::HashSet;
 
-use strum::{Display, EnumIter, EnumString, IntoEnumIterator};
+use serde::{Deserialize, Serialize};
+use strum::{Display, EnumIter, IntoEnumIterator};
 
-#[derive(Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter, EnumString)]
+#[derive(Serialize, Deserialize, Clone, Debug, Display, Eq, PartialEq, Hash, EnumIter)]
 pub enum Permission {
     CREATE_INSTANT_INVITE,
     KICK_MEMBERS,
@@ -117,8 +118,8 @@ impl PermissionsList {
         format!("{}", code)
     }
 
-    pub fn items(&self) -> Vec<&Permission> {
-        self.permissions.iter().collect()
+    pub fn to_list(&self) -> Vec<Permission> {
+        self.permissions.iter().cloned().collect()
     }
 }
 
@@ -152,21 +153,10 @@ impl From<Vec<Permission>> for PermissionsList {
     }
 }
 
-impl From<Vec<String>> for PermissionsList {
-    fn from(permission_names: Vec<String>) -> Self {
-        let permissions: Vec<Permission> = permission_names
-            .into_iter()
-            .map(|permission_name| Permission::from_str(&permission_name).unwrap())
-            .collect();
-
-        Self::from(permissions)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     mod persission {
-        use std::{collections::HashSet, str::FromStr};
+        use std::collections::HashSet;
 
         use crate::permission::Permission;
 
@@ -192,21 +182,6 @@ mod tests {
 
             let set = HashSet::from([permission1, permission2]);
             assert_eq!(set.len(), 2);
-        }
-
-        #[test]
-        fn can_parse_from_str() {
-            let permission = Permission::from_str("SEND_MESSAGES");
-            let expected_permission = Permission::SEND_MESSAGES;
-
-            assert!(permission.is_ok());
-            assert_eq!(permission.unwrap(), expected_permission);
-        }
-
-        #[test]
-        fn given_invalid_str_it_cannot_parse_from_str() {
-            let permission = Permission::from_str("bullshit");
-            assert!(permission.is_err());
         }
 
         #[test]

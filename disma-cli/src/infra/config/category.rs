@@ -142,8 +142,8 @@ mod tests {
                 name: name.to_string(),
                 permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role.name.clone(),
-                    allow: vec!["ADMINISTRATOR".to_string()],
-                    deny: vec!["ADMINISTRATOR".to_string()],
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::ADMINISTRATOR],
                 }],
                 extra_channels: ChannelExtraItemsConfig {
                     strategy: ChannelExtraItemsStrategy::REMOVE,
@@ -192,10 +192,9 @@ mod tests {
         }
 
         fn given_awaiting_role(name: &str) -> AwaitingRole {
-            let permissions: Vec<String> = vec![];
             AwaitingRole {
                 name: name.to_string(),
-                permissions: PermissionsList::from(permissions),
+                permissions: PermissionsList::from(vec![]),
                 color: None,
                 is_mentionable: true,
                 show_in_sidebar: false,
@@ -259,8 +258,8 @@ mod tests {
                 name: name.to_string(),
                 permissions_overwrites: vec![PermissionsOverwritesConfig {
                     role: role.name.clone(),
-                    allow: vec!["ADMINISTRATOR".to_string()],
-                    deny: vec!["ADMINISTRATOR".to_string()],
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::ADMINISTRATOR],
                 }],
                 extra_channels: ChannelExtraItemsConfig {
                     strategy: ChannelExtraItemsStrategy::REMOVE,
@@ -275,11 +274,10 @@ mod tests {
         }
 
         fn given_existing_role(id: &str, name: &str) -> ExistingRole {
-            let permissions: Vec<String> = vec![];
             ExistingRole {
                 id: id.to_string(),
                 name: name.to_string(),
-                permissions: PermissionsList::from(permissions),
+                permissions: PermissionsList::from(vec![]),
                 color: None,
                 is_mentionable: true,
                 show_in_sidebar: false,
