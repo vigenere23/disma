@@ -246,5 +246,77 @@ mod test {
         }
     }
 
-    mod serde_parsing {}
+    mod serde_parsing {
+        use crate::infra::config::role::{
+            RoleConfig, RoleConfigsList, RoleExtraItemsConfig, RoleExtraItemsStrategy,
+        };
+
+        #[test]
+        fn can_be_parsed() {
+            let yaml_config = r"
+                items:
+                  - name: role_1
+                    color: 29a1f4
+                    permissions:
+                      - ADMINISTRATOR
+                      - SEND_MESSAGES
+                    show_in_sidebar: true
+                    is_mentionable: false
+                extra_items:
+                  strategy: KEEP
+            ";
+            let expected_config = RoleConfigsList {
+                items: vec![RoleConfig {
+                    name: "role_1".to_string(),
+                    permissions: Some(vec![
+                        "ADMINISTRATOR".to_string(),
+                        "SEND_MESSAGES".to_string(),
+                    ]),
+                    color: Some("29a1f4".to_string()),
+                    show_in_sidebar: true,
+                    is_mentionable: false,
+                }],
+                extra_items: RoleExtraItemsConfig {
+                    strategy: RoleExtraItemsStrategy::KEEP,
+                },
+            };
+
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
+
+            assert_eq!(config, expected_config);
+        }
+
+        #[test]
+        fn it_fills_empty_config_with_defaults() {
+            let yaml_config = r"";
+
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
+
+            assert_eq!(config, RoleConfigsList::default());
+        }
+
+        #[test]
+        fn it_fills_empty_fields_with_defaults() {
+            let yaml_config = r"
+                items:
+                  - name: role_1
+                    show_in_sidebar: true
+                    is_mentionable: false
+            ";
+            let expected_config = RoleConfigsList {
+                items: vec![RoleConfig {
+                    name: "role_1".to_string(),
+                    permissions: None,
+                    color: None,
+                    show_in_sidebar: true,
+                    is_mentionable: false,
+                }],
+                ..Default::default()
+            };
+
+            let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();
+
+            assert_eq!(config, expected_config);
+        }
+    }
 }
