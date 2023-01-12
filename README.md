@@ -31,8 +31,9 @@ In the new context of the pandemic, many educational institutions have shifted t
 - [x] Roles: add, update or remove roles
 - [x] Categories: add, update or remove categories
 - [x] Channels: add, update or remove channels
-- [ ] Allow additional roles, categories or members (ongoing)
-- [ ] Members: invite or kick members (started)
+- [x] Allow additional roles, categories or members
+- [ ] Members: invite or kick members ([#25](https://github.com/vigenere23/disma/issues/25))
+- [ ] Other small but important features (see the [Stable features milestone](https://github.com/vigenere23/disma/milestone/2))
 
 ### Technical
 
@@ -41,8 +42,8 @@ In the new context of the pandemic, many educational institutions have shifted t
   - [ ] Diff commands
   - [ ] Commands to requests convertion
   - [ ] Responses to existing guild convertion
-  - [ ] Config to awaiting guild convertion
-  - [ ] Existing guild to config convertion
+  - [x] Config to awaiting guild convertion
+  - [x] Existing guild to config convertion
 - [ ] Exception handling strategies for :
   - [ ] Discord API
     - [ ] Server errors (Discord's end)
