@@ -54,7 +54,7 @@ mod tests {
     };
 
     #[test]
-    fn is_parses_config_list() {
+    fn it_parses_config_list() {
         let yaml_config = r"
             items:
             - name: category_1
@@ -110,7 +110,9 @@ mod tests {
                 permissions_overwrites: vec![],
                 extra_channels: ChannelExtraItemsConfig::default(),
             }],
-            ..Default::default()
+            extra_items: CategoryExtraItemsConfig {
+                strategy: CategoryExtraItemsStrategy::REMOVE,
+            },
         };
 
         let config: CategoryConfigsList = serde_yaml::from_str(yaml_config).unwrap();

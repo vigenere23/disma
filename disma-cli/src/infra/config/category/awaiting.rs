@@ -74,7 +74,7 @@ mod tests {
         permission::PermissionsOverwritesConfig,
     };
 
-    fn given_matching_config_and_awaiting_entity(
+    fn given_matching_config_and_awaiting(
         name: &str,
         roles: &RolesList<AwaitingRole>,
     ) -> (CategoryConfig, AwaitingCategory) {
@@ -105,11 +105,11 @@ mod tests {
         (config, awaiting_entity)
     }
 
-    fn given_matching_config_list_and_awaiting_entites_list(
+    fn given_matching_config_list_and_awaiting_list(
         name: &str,
         roles: &RolesList<AwaitingRole>,
     ) -> (CategoryConfigsList, AwaitingCategoriesList) {
-        let (config_item, awaiting_item) = given_matching_config_and_awaiting_entity(name, roles);
+        let (config_item, awaiting_item) = given_matching_config_and_awaiting(name, roles);
 
         let config_list = CategoryConfigsList {
             items: vec![config_item],
@@ -143,21 +143,21 @@ mod tests {
 
     #[test]
     fn can_convert_config_to_awaiting_entity() {
-        let name = "presto";
-        let roles = given_awaiting_roles(vec!["Team01"]);
-        let (config, expected_entity) = given_matching_config_and_awaiting_entity(name, &roles);
+        let name = "category_1";
+        let roles = given_awaiting_roles(vec!["role_1"]);
+        let (config, expected_awaiting) = given_matching_config_and_awaiting(name, &roles);
 
-        let entity: AwaitingCategory = config.into(&roles);
+        let awaiting: AwaitingCategory = config.into(&roles);
 
-        assert_eq!(entity, expected_entity);
+        assert_eq!(awaiting, expected_awaiting);
     }
 
     #[test]
     fn can_convert_config_list_to_awaiting_entity_list() {
-        let name = "presto";
-        let roles = given_awaiting_roles(vec!["Team01"]);
+        let name = "category_1";
+        let roles = given_awaiting_roles(vec!["role_1"]);
         let (config_list, expected_awaiting_list) =
-            given_matching_config_list_and_awaiting_entites_list(name, &roles);
+            given_matching_config_list_and_awaiting_list(name, &roles);
 
         let awaiting_list: AwaitingCategoriesList = config_list.into(&roles);
 

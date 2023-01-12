@@ -8,11 +8,7 @@ use super::{CategoryConfig, CategoryConfigsList};
 
 impl From<&CategoriesList<ExistingCategory>> for CategoryConfigsList {
     fn from(categories: &CategoriesList<ExistingCategory>) -> Self {
-        let items = categories
-            .to_list()
-            .into_iter()
-            .map(|category| category.into())
-            .collect();
+        let items = categories.to_list().iter().map(Into::into).collect();
 
         CategoryConfigsList {
             items,

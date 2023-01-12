@@ -4,11 +4,7 @@ use super::{RoleConfig, RoleConfigsList};
 
 impl From<&RolesList<ExistingRole>> for RoleConfigsList {
     fn from(roles: &RolesList<ExistingRole>) -> Self {
-        let items = roles
-            .to_list()
-            .into_iter()
-            .map(|category| category.into())
-            .collect();
+        let items = roles.to_list().iter().map(Into::into).collect();
 
         RoleConfigsList {
             items,

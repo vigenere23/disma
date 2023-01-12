@@ -14,6 +14,13 @@ pub struct AwaitingChannelsList {
     pub extra_items_strategy: Arc<dyn ExtraChannelsStrategy>,
 }
 
+impl PartialEq for AwaitingChannelsList {
+    fn eq(&self, other: &Self) -> bool {
+        self.items == other.items
+            && self.extra_items_strategy._type() == other.extra_items_strategy._type()
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct AwaitingChannel {
     pub name: String,

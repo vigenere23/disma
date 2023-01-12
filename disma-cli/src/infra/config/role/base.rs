@@ -49,7 +49,7 @@ mod tests {
     };
 
     #[test]
-    fn is_parses_config_list() {
+    fn it_parses_config_list() {
         let yaml_config = r"
             items:
             - name: role_1
@@ -105,7 +105,9 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            ..Default::default()
+            extra_items: RoleExtraItemsConfig {
+                strategy: RoleExtraItemsStrategy::REMOVE,
+            },
         };
 
         let config: RoleConfigsList = serde_yaml::from_str(yaml_config).unwrap();

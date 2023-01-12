@@ -57,7 +57,7 @@ mod tests {
         RoleConfig, RoleConfigsList, RoleExtraItemsConfig, RoleExtraItemsStrategy,
     };
 
-    fn given_matching_config_and_awaiting_entity(name: &str) -> (RoleConfig, AwaitingRole) {
+    fn given_matching_config_and_awaiting(name: &str) -> (RoleConfig, AwaitingRole) {
         let config = RoleConfig {
             name: name.to_string(),
             color: Some("826d5f".to_string()),
@@ -77,10 +77,10 @@ mod tests {
         (config, awaiting)
     }
 
-    fn given_matching_config_list_and_awaiting_entites_list(
+    fn given_matching_config_list_and_awaiting_list(
         name: &str,
     ) -> (RoleConfigsList, AwaitingRolesList) {
-        let (config_item, awaiting_item) = given_matching_config_and_awaiting_entity(name);
+        let (config_item, awaiting_item) = given_matching_config_and_awaiting(name);
 
         let config_list = RoleConfigsList {
             items: vec![config_item],
@@ -100,7 +100,7 @@ mod tests {
     #[test]
     fn can_convert_config_to_awaiting() {
         let name = "Team10";
-        let (config, expected_awaiting) = given_matching_config_and_awaiting_entity(name);
+        let (config, expected_awaiting) = given_matching_config_and_awaiting(name);
 
         let awaiting: AwaitingRole = config.into();
 
@@ -111,7 +111,7 @@ mod tests {
     fn can_convert_compressed_config_to_awaiting_entity() {
         let name = "presto";
         let (config_list, expected_awaiting_list) =
-            given_matching_config_list_and_awaiting_entites_list(name);
+            given_matching_config_list_and_awaiting_list(name);
 
         let awaiting_list: AwaitingRolesList = config_list.into();
 
