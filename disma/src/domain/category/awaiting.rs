@@ -12,6 +12,13 @@ pub struct AwaitingCategoriesList {
     pub extra_items_strategy: Arc<dyn ExtraCategoriesStrategy>,
 }
 
+impl PartialEq for AwaitingCategoriesList {
+    fn eq(&self, other: &Self) -> bool {
+        self.items == other.items
+            && self.extra_items_strategy._type() == other.extra_items_strategy._type()
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct AwaitingCategory {
     pub name: String,
@@ -21,7 +28,7 @@ pub struct AwaitingCategory {
 
 impl PartialEq for AwaitingCategory {
     fn eq(&self, other: &Self) -> bool {
-        self.name.eq(&other.name) && self.overwrites.eq(&other.overwrites)
+        self.name == other.name && self.overwrites == other.overwrites
     }
 }
 

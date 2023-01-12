@@ -8,7 +8,7 @@ use super::{PermissionsList, PermissionsOverwrites, PermissionsOverwritesList};
 
 impl Differ<PermissionsList> for PermissionsList {
     fn diffs_with(&self, target: &Self) -> Vec<Diff> {
-        self.items().diffs_with(&target.items())
+        self.to_list().diffs_with(&target.to_list())
     }
 }
 
