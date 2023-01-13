@@ -55,21 +55,28 @@ impl CommandFactory for AwaitingChannelsList {
                 .as_ref()
                 .map(|category| category.name());
 
-            let awaiting_channel = self.items.find(
+            let matching_awaiting_channel = self.items.find(
                 &existing_channel.name,
                 existing_channel.channel_type(),
                 category_name,
             );
 
-            let extra_items_strategy = match awaiting_channel {
-                Some(channel) => match &channel.category {
-                    Some(category) => category.extra_channels_strategy.clone(),
+            let matching_awaiting_category = existing_channel
+                .category_name()
+                .map(|category_name| categories.find(category_name))
+                .unwrap_or(None);
+
+            let extra_items_strategy = match matching_awaiting_channel {
+                Some(matching_awaiting_channel) => match &matching_awaiting_channel.category {
+                    Some(matching_awaiting_category) => {
+                        matching_awaiting_category.extra_channels_strategy.clone()
+                    }
                     None => self.extra_items_strategy.clone(),
                 },
                 None => self.extra_items_strategy.clone(),
             };
 
-            if awaiting_channel.is_none() {
+            if matching_awaiting_channel.is_none() {
                 extra_items_strategy.handle_extra_channel(existing_channel, &mut commands);
             }
         }
