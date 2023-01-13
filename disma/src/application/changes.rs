@@ -160,7 +160,7 @@ mod tests {
         AwaitingGuild {
             roles: given_awaiting_roles_list_for(vec![]),
             categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![]),
+            channels: given_awaiting_channels_list_for(vec![], vec![]),
         }
     }
 
@@ -180,10 +180,14 @@ mod tests {
         }
     }
 
-    fn given_awaiting_channels_list_for(channels: Vec<AwaitingChannel>) -> AwaitingChannelsList {
+    fn given_awaiting_channels_list_for(
+        channels: Vec<AwaitingChannel>,
+        categories: Vec<AwaitingCategory>,
+    ) -> AwaitingChannelsList {
         AwaitingChannelsList {
             items: ChannelsList::from(channels),
             extra_items_strategy: Arc::from(RemoveExtraChannels {}),
+            categories: CategoriesList::from(categories),
         }
     }
 
@@ -229,7 +233,7 @@ mod tests {
                 given_another_awaiting_role_with("to_update"),
             ]),
             categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![]),
+            channels: given_awaiting_channels_list_for(vec![], vec![]),
         };
         let expected_diffs = vec![
             CommandDescription::Create(CommandEntity::Role, "to_create".to_string()),
@@ -322,7 +326,7 @@ mod tests {
                 updated_role.clone(),
             ]),
             categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![]),
+            channels: given_awaiting_channels_list_for(vec![], vec![]),
         };
         guild_commander
             .when_add_role(eq(&created_role))

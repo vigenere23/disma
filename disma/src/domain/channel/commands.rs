@@ -63,16 +63,11 @@ impl CommandFactory for AwaitingChannelsList {
 
             let matching_awaiting_category = existing_channel
                 .category_name()
-                .map(|category_name| categories.find(category_name))
-                .unwrap_or(None);
+                .map(|category_name| self.categories.find_by_name(&category_name))
+                .unwrap_or_default();
 
-            let extra_items_strategy = match matching_awaiting_channel {
-                Some(matching_awaiting_channel) => match &matching_awaiting_channel.category {
-                    Some(matching_awaiting_category) => {
-                        matching_awaiting_category.extra_channels_strategy.clone()
-                    }
-                    None => self.extra_items_strategy.clone(),
-                },
+            let extra_items_strategy = match matching_awaiting_category {
+                Some(category) => category.extra_channels_strategy.clone(),
                 None => self.extra_items_strategy.clone(),
             };
 

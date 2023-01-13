@@ -28,6 +28,7 @@ impl ChannelConfigsList {
         AwaitingChannelsList {
             items,
             extra_items_strategy: self.extra_items.strategy.into(),
+            categories: categories.clone(),
         }
     }
 }
@@ -189,6 +190,7 @@ mod tests {
         let awaiting_list = AwaitingChannelsList {
             items: ChannelsList::from(vec![awaiting_item]),
             extra_items_strategy: Arc::from(KeepExtraChannels {}),
+            categories: categories.clone(),
         };
 
         (config_list, awaiting_list)
