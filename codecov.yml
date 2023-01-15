@@ -3,10 +3,12 @@ coverage:
     project:
       disma:
         target: auto
+        threshold: 2
         flags:
           - disma
       disma-cli:
         target: auto
+        threshold: 2
         flags:
           - disma-cli
 flag_management:
