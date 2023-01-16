@@ -13,7 +13,7 @@ impl ListGuilds {
 
     pub fn run(&self) {
         println!();
-        println!("{}", "🡲 ✅ Listing accessible guilds...".bold());
+        println!("{}", "➜ ✅ Listing accessible guilds...".bold());
 
         let guilds = self.guild_querier.list_guilds();
 

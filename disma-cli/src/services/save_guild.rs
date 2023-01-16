@@ -29,13 +29,13 @@ impl SaveExistingGuild {
         println!();
         println!(
             "{}",
-            format!("🡲 💾 Saving current guild config to '{}'...", file).bold()
+            format!("➜ 💾 Saving current guild config to '{}'...", file).bold()
         );
 
         if !force && file_path.exists() {
             println!(
                 "{}",
-                format!("🡲 ❗ A file named '{}' already exists.", file).bold()
+                format!("➜ ❗ A file named '{}' already exists.", file).bold()
             );
 
             if !ask_user_confirmation("Do you still want to proceeed?") {
@@ -45,6 +45,6 @@ impl SaveExistingGuild {
 
         self.serializer.serialize(&guild_params, file_path);
 
-        println!("{}", "🡲 ✨ DONE.".bold());
+        println!("{}", "➜ ✨ DONE.".bold());
     }
 }
