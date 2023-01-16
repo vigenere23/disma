@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
-    permission::{PermissionsList, PermissionsOverwrites},
+    permission::{PermissionsList, PermissionsOverwrite},
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 
@@ -25,7 +25,7 @@ pub struct PermissionOverwritesDto {
 
 impl PermissionOverwritesDto {
     pub fn from(
-        overwrites: &PermissionsOverwrites<AwaitingRole>,
+        overwrites: &PermissionsOverwrite<AwaitingRole>,
         roles: &RolesList<ExistingRole>,
     ) -> Self {
         let role = roles
@@ -40,8 +40,8 @@ impl PermissionOverwritesDto {
         }
     }
 
-    pub fn into(&self, roles: &RolesList<ExistingRole>) -> PermissionsOverwrites<ExistingRole> {
-        PermissionsOverwrites {
+    pub fn into(&self, roles: &RolesList<ExistingRole>) -> PermissionsOverwrite<ExistingRole> {
+        PermissionsOverwrite {
             role: roles.find_by_id(&self.role_or_member_id).clone(),
             allow: PermissionsList::from(self.allow.as_str()),
             deny: PermissionsList::from(self.deny.as_str()),

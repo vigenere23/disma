@@ -1,11 +1,11 @@
-use disma::{
-    permission::{Permission, PermissionsList, PermissionsOverwrites},
+use crate::{
+    permission::{Permission, PermissionsList, PermissionsOverwrite},
     role::{Role, RolesList},
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct PermissionsOverwritesConfig {
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+pub struct PermissionsOverwriteParams {
     pub role: String,
     #[serde(default = "Vec::default")]
     pub allow: Vec<Permission>,
@@ -13,12 +13,12 @@ pub struct PermissionsOverwritesConfig {
     pub deny: Vec<Permission>,
 }
 
-impl PermissionsOverwritesConfig {
-    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrites<R>
+impl PermissionsOverwriteParams {
+    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrite<R>
     where
         R: Role,
     {
-        PermissionsOverwrites {
+        PermissionsOverwrite {
             role: roles
                 .find_by_name(&self.role)
                 .unwrap_or_else(|| panic!("No role found with name {}", &self.role))
@@ -29,11 +29,11 @@ impl PermissionsOverwritesConfig {
     }
 }
 
-impl<R> From<&PermissionsOverwrites<R>> for PermissionsOverwritesConfig
+impl<R> From<&PermissionsOverwrite<R>> for PermissionsOverwriteParams
 where
     R: Role,
 {
-    fn from(permissions: &PermissionsOverwrites<R>) -> Self {
+    fn from(permissions: &PermissionsOverwrite<R>) -> Self {
         Self {
             role: permissions.role.name(),
             allow: permissions.allow.to_list(),

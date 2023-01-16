@@ -4,7 +4,7 @@ use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{ChannelType, ChannelsList, ExistingChannel},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
-    permission::{PermissionsOverwrites, PermissionsOverwritesList},
+    permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{AwaitingRole, ExistingRole, RolesList},
 };
 
@@ -48,7 +48,7 @@ impl GuildQuerier for DiscordClient {
                             .permission_overwrites
                             .iter()
                             .map(|permissions| permissions.into(&roles_list))
-                            .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
+                            .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                     ),
                 }),
                 _ => None,
@@ -76,7 +76,7 @@ impl GuildQuerier for DiscordClient {
                         .permission_overwrites
                         .iter()
                         .map(|permissions| permissions.into(&roles_list))
-                        .collect::<Vec<PermissionsOverwrites<ExistingRole>>>(),
+                        .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                 );
 
                 Some(ExistingChannel {

@@ -6,7 +6,7 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct PermissionsOverwrites<T>
+pub struct PermissionsOverwrite<T>
 where
     T: Role,
 {
@@ -15,12 +15,12 @@ where
     pub deny: PermissionsList,
 }
 
-impl<T, U> PartialEq<PermissionsOverwrites<T>> for PermissionsOverwrites<U>
+impl<T, U> PartialEq<PermissionsOverwrite<T>> for PermissionsOverwrite<U>
 where
     T: Role,
     U: Role,
 {
-    fn eq(&self, other: &PermissionsOverwrites<T>) -> bool {
+    fn eq(&self, other: &PermissionsOverwrite<T>) -> bool {
         self.role.name() == other.role.name()
             && self.allow == other.allow
             && self.deny == other.deny
@@ -32,17 +32,17 @@ pub struct PermissionsOverwritesList<R>
 where
     R: Role,
 {
-    items: Vec<PermissionsOverwrites<R>>,
+    items: Vec<PermissionsOverwrite<R>>,
 }
 
 impl<R: Role> PermissionsOverwritesList<R> {
-    pub fn find_by_role_name(&self, name: &str) -> Option<&PermissionsOverwrites<R>> {
+    pub fn find_by_role_name(&self, name: &str) -> Option<&PermissionsOverwrite<R>> {
         self.items
             .iter()
             .find(|overwrite| overwrite.role.name() == name)
     }
 
-    pub fn to_list(&self) -> &Vec<PermissionsOverwrites<R>> {
+    pub fn to_list(&self) -> &Vec<PermissionsOverwrite<R>> {
         &self.items
     }
 }
@@ -71,8 +71,8 @@ impl PartialEq<PermissionsOverwritesList<AwaitingRole>>
     }
 }
 
-impl<R: Role> From<Vec<PermissionsOverwrites<R>>> for PermissionsOverwritesList<R> {
-    fn from(overwrites: Vec<PermissionsOverwrites<R>>) -> Self {
+impl<R: Role> From<Vec<PermissionsOverwrite<R>>> for PermissionsOverwritesList<R> {
+    fn from(overwrites: Vec<PermissionsOverwrite<R>>) -> Self {
         let mut role_names: HashSet<String> = HashSet::new();
 
         for overwrite in overwrites.iter() {

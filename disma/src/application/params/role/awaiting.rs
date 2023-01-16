@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
-use disma::{
+use crate::{
     permission::PermissionsList,
     role::{AwaitingRole, AwaitingRolesList, ExtraRolesStrategy, KeepExtraRoles, RemoveExtraRoles},
 };
 
-use super::{RoleConfig, RoleConfigsList, RoleExtraItemsStrategy};
+use super::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList};
 
-impl RoleConfigsList {
+impl RolesParamsList {
     pub fn into(self) -> AwaitingRolesList {
         let items = self
             .items
@@ -23,16 +23,16 @@ impl RoleConfigsList {
     }
 }
 
-impl Into<Arc<dyn ExtraRolesStrategy>> for RoleExtraItemsStrategy {
+impl Into<Arc<dyn ExtraRolesStrategy>> for RoleParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraRolesStrategy> {
         match self {
-            RoleExtraItemsStrategy::KEEP => Arc::from(KeepExtraRoles {}),
-            RoleExtraItemsStrategy::REMOVE => Arc::from(RemoveExtraRoles {}),
+            RoleParamsExtraItemsStrategy::KEEP => Arc::from(KeepExtraRoles {}),
+            RoleParamsExtraItemsStrategy::REMOVE => Arc::from(RemoveExtraRoles {}),
         }
     }
 }
 
-impl Into<AwaitingRole> for RoleConfig {
+impl Into<AwaitingRole> for RoleParams {
     fn into(self) -> AwaitingRole {
         AwaitingRole {
             name: self.name,
@@ -48,17 +48,16 @@ impl Into<AwaitingRole> for RoleConfig {
 mod tests {
     use std::sync::Arc;
 
-    use disma::{
+    use crate::{
+        params::role::{
+            RoleParams, RoleParamsExtraItems, RoleParamsExtraItemsStrategy, RolesParamsList,
+        },
         permission::{Permission, PermissionsList},
         role::{AwaitingRole, AwaitingRolesList, KeepExtraRoles, RolesList},
     };
 
-    use crate::infra::config::role::{
-        RoleConfig, RoleConfigsList, RoleExtraItemsConfig, RoleExtraItemsStrategy,
-    };
-
-    fn given_matching_config_and_awaiting(name: &str) -> (RoleConfig, AwaitingRole) {
-        let config = RoleConfig {
+    fn given_matching_params_and_awaiting(name: &str) -> (RoleParams, AwaitingRole) {
+        let params = RoleParams {
             name: name.to_string(),
             color: Some("826d5f".to_string()),
             is_mentionable: true,
@@ -74,46 +73,46 @@ mod tests {
             permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
 
-        (config, awaiting)
+        (params, awaiting)
     }
 
-    fn given_matching_config_list_and_awaiting_list(
+    fn given_matching_params_list_and_awaiting_list(
         name: &str,
-    ) -> (RoleConfigsList, AwaitingRolesList) {
-        let (config_item, awaiting_item) = given_matching_config_and_awaiting(name);
+    ) -> (RolesParamsList, AwaitingRolesList) {
+        let (params, awaiting) = given_matching_params_and_awaiting(name);
 
-        let config_list = RoleConfigsList {
-            items: vec![config_item],
-            extra_items: RoleExtraItemsConfig {
-                strategy: RoleExtraItemsStrategy::KEEP,
+        let params_list = RolesParamsList {
+            items: vec![params],
+            extra_items: RoleParamsExtraItems {
+                strategy: RoleParamsExtraItemsStrategy::KEEP,
             },
         };
 
         let awaiting_list = AwaitingRolesList {
-            items: RolesList::from(vec![awaiting_item]),
+            items: RolesList::from(vec![awaiting]),
             extra_items_strategy: Arc::from(KeepExtraRoles {}),
         };
 
-        (config_list, awaiting_list)
+        (params_list, awaiting_list)
     }
 
     #[test]
-    fn can_convert_config_to_awaiting() {
+    fn can_convert_params_to_awaiting() {
         let name = "Team10";
-        let (config, expected_awaiting) = given_matching_config_and_awaiting(name);
+        let (params, expected_awaiting) = given_matching_params_and_awaiting(name);
 
-        let awaiting: AwaitingRole = config.into();
+        let awaiting: AwaitingRole = params.into();
 
         assert_eq!(awaiting, expected_awaiting);
     }
 
     #[test]
-    fn can_convert_compressed_config_to_awaiting_entity() {
+    fn can_convert_compressed_params_to_awaiting_entity() {
         let name = "presto";
-        let (config_list, expected_awaiting_list) =
-            given_matching_config_list_and_awaiting_list(name);
+        let (params_list, expected_awaiting_list) =
+            given_matching_params_list_and_awaiting_list(name);
 
-        let awaiting_list: AwaitingRolesList = config_list.into();
+        let awaiting_list: AwaitingRolesList = params_list.into();
 
         assert_eq!(awaiting_list, expected_awaiting_list);
     }

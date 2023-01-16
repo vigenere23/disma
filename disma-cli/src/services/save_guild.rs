@@ -1,14 +1,11 @@
 use colored::Colorize;
 use std::{path::Path, sync::Arc};
 
-use crate::{
-    infra::config::guild::GuildConfig,
-    utils::{
-        input::{abort, ask_user_confirmation},
-        io::Serializer,
-    },
+use crate::utils::{
+    input::{abort, ask_user_confirmation},
+    io::Serializer,
 };
-use disma::guild::GuildQuerier;
+use disma::{guild::GuildQuerier, params::guild::GuildParams};
 
 pub struct SaveExistingGuild {
     guild_querier: Arc<dyn GuildQuerier>,
@@ -26,7 +23,7 @@ impl SaveExistingGuild {
     pub fn run(&self, guild_id: &str, file: &str, force: bool) {
         let guild = self.guild_querier.get_guild(guild_id);
 
-        let config = GuildConfig::from(&guild);
+        let guild_params = GuildParams::from(&guild);
         let file_path = Path::new(file);
 
         println!();
@@ -46,7 +43,7 @@ impl SaveExistingGuild {
             }
         }
 
-        self.serializer.serialize(&config, file_path);
+        self.serializer.serialize(&guild_params, file_path);
 
         println!("{}", "🡲 ✨ DONE.".bold());
     }

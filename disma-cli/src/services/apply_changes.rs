@@ -2,13 +2,13 @@ use colored::Colorize;
 use std::{path::Path, sync::Arc};
 
 use crate::{
-    infra::{config::guild::GuildConfig, diff::formatter::DiffFormaterRef},
+    infra::diff::formatter::DiffFormaterRef,
     utils::{
         input::{abort, ask_user_confirmation},
         io::Deserializer,
     },
 };
-use disma::{changes::ChangesService, commands::CommandDescription};
+use disma::{changes::ChangesService, commands::CommandDescription, params::guild::GuildParams};
 
 pub struct ApplyChanges {
     diff_service: Arc<ChangesService>,
@@ -37,11 +37,12 @@ impl ApplyChanges {
             "{}",
             format!("🡲 🛠️  Loading guild config from '{}'...", &file).bold()
         );
-        let config = self.deserializer.deserialize::<GuildConfig>(file_path);
-        let awaiting_guild = config.into();
+        let guild_params = self.deserializer.deserialize::<GuildParams>(file_path);
 
         println!("{}", "🡲 🔎 Looking for changes...".bold());
-        let diffs = self.diff_service.list_changes(guild_id, &awaiting_guild);
+        let diffs = self
+            .diff_service
+            .list_changes(guild_id, guild_params.clone());
 
         if diffs.is_empty() {
             println!("{}", "🡲 ✨ No change to be applied.".bold());
@@ -80,6 +81,6 @@ impl ApplyChanges {
         }
 
         println!("{}", "🡲 🚀 Applying changes...\n".bold());
-        self.diff_service.apply_changes(guild_id, &awaiting_guild);
+        self.diff_service.apply_changes(guild_id, guild_params);
     }
 }

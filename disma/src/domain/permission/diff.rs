@@ -4,7 +4,7 @@ use crate::{
     utils::misc::IfThen,
 };
 
-use super::{PermissionsList, PermissionsOverwrites, PermissionsOverwritesList};
+use super::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList};
 
 impl Differ<PermissionsList> for PermissionsList {
     fn diffs_with(&self, target: &Self) -> Vec<Diff> {
@@ -12,8 +12,8 @@ impl Differ<PermissionsList> for PermissionsList {
     }
 }
 
-impl Differ<PermissionsOverwrites<AwaitingRole>> for PermissionsOverwrites<ExistingRole> {
-    fn diffs_with(&self, target: &PermissionsOverwrites<AwaitingRole>) -> Vec<Diff> {
+impl Differ<PermissionsOverwrite<AwaitingRole>> for PermissionsOverwrite<ExistingRole> {
+    fn diffs_with(&self, target: &PermissionsOverwrite<AwaitingRole>) -> Vec<Diff> {
         let mut all_diffs = vec![];
 
         self.allow.diffs_with(&target.allow).if_then(
@@ -64,7 +64,7 @@ mod tests {
     use crate::{
         diff::{Diff, Differ},
         permission::{
-            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+            Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
         role::{AwaitingRole, ExistingRole},
     };
@@ -108,12 +108,12 @@ mod tests {
     fn can_diff_permissions_overwites_update() {
         let role_name = "role_a".to_string();
 
-        let origin = PermissionsOverwrites {
+        let origin = PermissionsOverwrite {
             role: given_existing_role_with_name(role_name.clone()),
             allow: PermissionsList::from(vec![Permission::USE_VAD]),
             deny: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
         };
-        let target = PermissionsOverwrites {
+        let target = PermissionsOverwrite {
             role: given_awaiting_role_with_name(role_name.clone()),
             allow: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
             deny: PermissionsList::from(vec![Permission::USE_VAD]),
@@ -144,13 +144,13 @@ mod tests {
     fn can_diff_permissions_overwrites_list_update() {
         let role_name = "role_a".to_string();
 
-        let origin = PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+        let origin = PermissionsOverwritesList::from(vec![PermissionsOverwrite {
             role: given_existing_role_with_name(role_name.clone()),
             allow: PermissionsList::from(vec![Permission::USE_VAD]),
             deny: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
         }]);
 
-        let target = PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+        let target = PermissionsOverwritesList::from(vec![PermissionsOverwrite {
             role: given_awaiting_role_with_name(role_name.clone()),
             allow: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
             deny: PermissionsList::from(vec![Permission::USE_VAD]),

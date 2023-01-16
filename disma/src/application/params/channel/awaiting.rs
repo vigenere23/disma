@@ -1,18 +1,20 @@
 use std::sync::Arc;
 
-use disma::{
+use crate::{
     category::{AwaitingCategory, CategoriesList},
     channel::{
         AwaitingChannel, AwaitingChannelsList, ChannelType, ExtraChannelsStrategy,
         KeepExtraChannels, RemoveExtraChannels,
     },
-    permission::PermissionsOverwrites,
+    permission::PermissionsOverwrite,
     role::{AwaitingRole, RolesList},
 };
 
-use super::{ChannelConfig, ChannelConfigType, ChannelConfigsList, ChannelExtraItemsStrategy};
+use super::{
+    ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+};
 
-impl ChannelConfigsList {
+impl ChannelsParamsList {
     pub fn into(
         self,
         roles: &RolesList<AwaitingRole>,
@@ -33,7 +35,7 @@ impl ChannelConfigsList {
     }
 }
 
-impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
+impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
         match self {
             Self::KEEP => Arc::from(KeepExtraChannels {}),
@@ -42,7 +44,7 @@ impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelExtraItemsStrategy {
     }
 }
 
-impl ChannelConfig {
+impl ChannelParams {
     pub fn into(
         self,
         roles: &RolesList<AwaitingRole>,
@@ -62,7 +64,7 @@ impl ChannelConfig {
             .permissions_overwrites
             .into_iter()
             .map(|permission| permission.into(roles))
-            .collect::<Vec<PermissionsOverwrites<AwaitingRole>>>();
+            .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>();
 
         AwaitingChannel {
             name: self.name,
@@ -74,7 +76,7 @@ impl ChannelConfig {
     }
 }
 
-impl Into<ChannelType> for ChannelConfigType {
+impl Into<ChannelType> for ChannelParamsChannelType {
     fn into(self) -> ChannelType {
         match self {
             Self::TEXT => ChannelType::TEXT,
@@ -87,30 +89,29 @@ impl Into<ChannelType> for ChannelConfigType {
 mod tests {
     use std::sync::Arc;
 
-    use disma::{
+    use crate::{
         category::{AwaitingCategory, CategoriesList},
         channel::{
             AwaitingChannel, AwaitingChannelsList, ChannelType, ChannelsList, KeepExtraChannels,
         },
+        params::{
+            channel::{
+                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItems,
+                ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+            },
+            permission::PermissionsOverwriteParams,
+        },
         permission::{
-            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+            Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
         role::{AwaitingRole, RolesList},
-    };
-
-    use crate::infra::config::{
-        channel::{
-            ChannelConfig, ChannelConfigType, ChannelConfigsList, ChannelExtraItemsConfig,
-            ChannelExtraItemsStrategy,
-        },
-        permission::PermissionsOverwritesConfig,
     };
 
     fn given_awaiting_category(name: &str) -> AwaitingCategory {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            extra_channels_strategy: ChannelExtraItemsConfig::default().strategy.into(),
+            extra_channels_strategy: ChannelParamsExtraItems::default().strategy.into(),
         }
     }
 
@@ -137,20 +138,20 @@ mod tests {
         RolesList::from(roles)
     }
 
-    fn given_matching_config_and_awaiting(
+    fn given_matching_params_and_awaiting(
         name: &str,
         roles: &RolesList<AwaitingRole>,
         categories: &CategoriesList<AwaitingCategory>,
-    ) -> (ChannelConfig, AwaitingChannel) {
+    ) -> (ChannelParams, AwaitingChannel) {
         let role = roles.to_list().first().unwrap();
         let category = categories.to_list().first().unwrap();
 
-        let config = ChannelConfig {
+        let params = ChannelParams {
             name: name.to_string(),
-            _type: ChannelConfigType::VOICE,
+            _type: ChannelParamsChannelType::VOICE,
             category: Some(category.name.clone()),
             topic: Some("Nice sweater".to_string()),
-            permissions_overwrites: vec![PermissionsOverwritesConfig {
+            permissions_overwrites: vec![PermissionsOverwriteParams {
                 role: role.name.clone(),
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::SEND_MESSAGES],
@@ -162,62 +163,61 @@ mod tests {
             channel_type: ChannelType::VOICE,
             category: Some(category.clone()),
             topic: Some("Nice sweater".to_string()),
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
 
-        (config, awaiting)
+        (params, awaiting)
     }
 
-    fn given_matching_config_list_and_awaiting_list(
+    fn given_matching_params_list_and_awaiting_list(
         name: &str,
         roles: &RolesList<AwaitingRole>,
         categories: &CategoriesList<AwaitingCategory>,
-    ) -> (ChannelConfigsList, AwaitingChannelsList) {
-        let (config_item, awaiting_item) =
-            given_matching_config_and_awaiting(name, roles, categories);
+    ) -> (ChannelsParamsList, AwaitingChannelsList) {
+        let (params, awaiting) = given_matching_params_and_awaiting(name, roles, categories);
 
-        let config_list = ChannelConfigsList {
-            items: vec![config_item],
-            extra_items: ChannelExtraItemsConfig {
-                strategy: ChannelExtraItemsStrategy::KEEP,
+        let params_list = ChannelsParamsList {
+            items: vec![params],
+            extra_items: ChannelParamsExtraItems {
+                strategy: ChannelParamsExtraItemsStrategy::KEEP,
             },
         };
 
         let awaiting_list = AwaitingChannelsList {
-            items: ChannelsList::from(vec![awaiting_item]),
+            items: ChannelsList::from(vec![awaiting]),
             extra_items_strategy: Arc::from(KeepExtraChannels {}),
             categories: categories.clone(),
         };
 
-        (config_list, awaiting_list)
+        (params_list, awaiting_list)
     }
 
     #[test]
-    fn can_convert_config_to_awaiting_entity() {
+    fn can_convert_params_to_awaiting_entity() {
         let name = "channel_1";
         let categories = given_awaiting_categories(vec!["category_1"]);
         let roles = given_awaiting_roles(vec!["role_1"]);
-        let (config, expected_awaiting) =
-            given_matching_config_and_awaiting(name, &roles, &categories);
+        let (params, expected_awaiting) =
+            given_matching_params_and_awaiting(name, &roles, &categories);
 
-        let awaiting = config.into(&roles, &categories);
+        let awaiting = params.into(&roles, &categories);
 
         assert_eq!(awaiting, expected_awaiting);
     }
 
     #[test]
-    fn can_convert_config_list_to_awaiting_entity_list() {
+    fn can_convert_params_list_to_awaiting_entity_list() {
         let name = "channel_1";
         let categories = given_awaiting_categories(vec!["category_1"]);
         let roles = given_awaiting_roles(vec!["role_1"]);
-        let (config_list, expected_awaiting_list) =
-            given_matching_config_list_and_awaiting_list(name, &roles, &categories);
+        let (params_list, expected_awaiting_list) =
+            given_matching_params_list_and_awaiting_list(name, &roles, &categories);
 
-        let awaiting_list: AwaitingChannelsList = config_list.into(&roles, &categories);
+        let awaiting_list: AwaitingChannelsList = params_list.into(&roles, &categories);
 
         assert_eq!(awaiting_list, expected_awaiting_list);
     }
