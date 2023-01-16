@@ -35,21 +35,21 @@ impl ApplyChanges {
         println!();
         println!(
             "{}",
-            format!("🡲 🛠️  Loading guild config from '{}'...", &file).bold()
+            format!("➜ 🛠️  Loading guild config from '{}'...", &file).bold()
         );
         let guild_params = self.deserializer.deserialize::<GuildParams>(file_path);
 
-        println!("{}", "🡲 🔎 Looking for changes...".bold());
+        println!("{}", "➜ 🔎 Looking for changes...".bold());
         let diffs = self
             .diff_service
             .list_changes(guild_id, guild_params.clone());
 
         if diffs.is_empty() {
-            println!("{}", "🡲 ✨ No change to be applied.".bold());
+            println!("{}", "➜ ✨ No change to be applied.".bold());
             return;
         }
 
-        println!("{}", "🡲 📜 Found the following changes :".bold());
+        println!("{}", "➜ 📜 Found the following changes :".bold());
 
         for diff in diffs {
             match diff {
@@ -80,7 +80,7 @@ impl ApplyChanges {
             abort();
         }
 
-        println!("{}", "🡲 🚀 Applying changes...\n".bold());
+        println!("{}", "➜ 🚀 Applying changes...\n".bold());
         self.diff_service.apply_changes(guild_id, guild_params);
     }
 }

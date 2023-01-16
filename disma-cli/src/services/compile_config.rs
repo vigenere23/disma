@@ -25,7 +25,7 @@ impl CompileConfig {
         let context: Value = self.deserializer.deserialize(Path::new(vars_file));
 
         println!();
-        println!("{}", "🡲 ⚙️ Compiling guild config...".bold());
+        println!("{}", "➜ ⚙️ Compiling guild config...".bold());
         let mut renderer = Handlebars::new();
         renderer
             .register_template_string(Self::TEMPLATE_NAME, &template)
@@ -37,7 +37,7 @@ impl CompileConfig {
         println!(
             "{}",
             format!(
-                "🡲 💾 Saving compiled guild config to '{}'...",
+                "➜ 💾 Saving compiled guild config to '{}'...",
                 output_path.as_os_str().to_str().unwrap()
             )
             .bold()
@@ -46,7 +46,7 @@ impl CompileConfig {
         if !force && output_path.exists() {
             println!(
                 "{}",
-                format!("🡲 ❗ A file named '{}' already exists.", output_file).bold()
+                format!("➜ ❗ A file named '{}' already exists.", output_file).bold()
             );
 
             if !ask_user_confirmation("Do you still want to proceeed?") {
@@ -56,6 +56,6 @@ impl CompileConfig {
 
         fs::write(output_file, rendered).unwrap();
 
-        println!("{}", "🡲 ✨ DONE.".bold());
+        println!("{}", "➜ ✨ DONE.".bold());
     }
 }
