@@ -2,7 +2,7 @@
 name = "disma-cli"
 authors = ["Gab St-Pierre <lolgab1@hotmail.com>"]
 description = "Discord server management has never been easier!"
-version = "0.7.2"
+version = "0.7.3"
 edition = "2021"
 license-file = "../LICENSE"
 homepage = "https://github.com/vigenere23/disma"
