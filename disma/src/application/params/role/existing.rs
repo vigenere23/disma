@@ -1,19 +1,19 @@
-use disma::role::{ExistingRole, RolesList};
+use crate::role::{ExistingRole, RolesList};
 
-use super::{RoleConfig, RoleConfigsList};
+use super::{RoleParams, RolesParamsList};
 
-impl From<&RolesList<ExistingRole>> for RoleConfigsList {
+impl From<&RolesList<ExistingRole>> for RolesParamsList {
     fn from(roles: &RolesList<ExistingRole>) -> Self {
         let items = roles.to_list().iter().map(Into::into).collect();
 
-        RoleConfigsList {
+        RolesParamsList {
             items,
             ..Default::default()
         }
     }
 }
 
-impl From<&ExistingRole> for RoleConfig {
+impl From<&ExistingRole> for RoleParams {
     fn from(role: &ExistingRole) -> Self {
         Self {
             name: role.name.clone(),
@@ -27,14 +27,13 @@ impl From<&ExistingRole> for RoleConfig {
 
 #[cfg(test)]
 mod tests {
-    use disma::{
+    use crate::{
+        params::role::{RoleParams, RolesParamsList},
         permission::{Permission, PermissionsList},
         role::{ExistingRole, RolesList},
     };
 
-    use crate::infra::config::role::{RoleConfig, RoleConfigsList};
-
-    fn given_matching_existing_and_config(name: &str) -> (ExistingRole, RoleConfig) {
+    fn given_matching_existing_and_params(name: &str) -> (ExistingRole, RoleParams) {
         let existing = ExistingRole {
             id: "something".to_string(),
             name: name.to_string(),
@@ -44,7 +43,7 @@ mod tests {
             permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
         };
 
-        let config = RoleConfig {
+        let params = RoleParams {
             name: name.to_string(),
             color: Some("826d5f".to_string()),
             is_mentionable: true,
@@ -52,42 +51,42 @@ mod tests {
             permissions: vec![Permission::ADMINISTRATOR],
         };
 
-        (existing, config)
+        (existing, params)
     }
 
-    fn given_matching_existing_list_and_config_list(
+    fn given_matching_existing_list_and_params_list(
         name: &str,
-    ) -> (RolesList<ExistingRole>, RoleConfigsList) {
-        let (existing_item, config_item) = given_matching_existing_and_config(name);
+    ) -> (RolesList<ExistingRole>, RolesParamsList) {
+        let (existing, params) = given_matching_existing_and_params(name);
 
-        let existing_list = RolesList::from(vec![existing_item]);
+        let existing_list = RolesList::from(vec![existing]);
 
-        let config_list = RoleConfigsList {
-            items: vec![config_item],
+        let params_list = RolesParamsList {
+            items: vec![params],
             ..Default::default()
         };
 
-        (existing_list, config_list)
+        (existing_list, params_list)
     }
 
     #[test]
-    fn can_convert_existing_to_config() {
+    fn can_convert_existing_to_params() {
         let name = "Team10";
-        let (existing, expected_config) = given_matching_existing_and_config(name);
+        let (existing, expected_params) = given_matching_existing_and_params(name);
 
-        let config = RoleConfig::from(&existing);
+        let params = RoleParams::from(&existing);
 
-        assert_eq!(config, expected_config);
+        assert_eq!(params, expected_params);
     }
 
     #[test]
-    fn can_convert_existing_entities_list_to_config_list() {
+    fn can_convert_existing_entities_list_to_params_list() {
         let name = "presto";
-        let (existing_list, expected_config_list) =
-            given_matching_existing_list_and_config_list(name);
+        let (existing_list, expected_params_list) =
+            given_matching_existing_list_and_params_list(name);
 
-        let config_list = RoleConfigsList::from(&existing_list);
+        let params_list = RolesParamsList::from(&existing_list);
 
-        assert_eq!(config_list, expected_config_list);
+        assert_eq!(params_list, expected_params_list);
     }
 }

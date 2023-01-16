@@ -3,6 +3,7 @@ use crate::{
         CommandDescription, CommandEventListenerRef, CommandEventType, CommandFactory, CommandRef,
     },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
+    params::guild::GuildParams,
 };
 
 pub struct ChangesService {
@@ -27,8 +28,9 @@ impl ChangesService {
     pub fn list_changes(
         &self,
         guild_id: &str,
-        awaiting_guild: &AwaitingGuild,
+        guild_params: GuildParams,
     ) -> Vec<CommandDescription> {
+        let awaiting_guild: AwaitingGuild = guild_params.into();
         let existing_guild = self.guild_querier.get_guild(guild_id);
 
         let role_commands = awaiting_guild.roles.commands_for(&existing_guild);
@@ -43,7 +45,9 @@ impl ChangesService {
             .collect()
     }
 
-    pub fn apply_changes(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+    pub fn apply_changes(&self, guild_id: &str, guild_params: GuildParams) {
+        let awaiting_guild: AwaitingGuild = guild_params.into();
+
         self.apply_changes_for(guild_id, &awaiting_guild.roles);
         self.apply_changes_for(guild_id, &awaiting_guild.categories);
         self.apply_changes_for(guild_id, &awaiting_guild.channels);
@@ -74,20 +78,30 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        category::{
-            AwaitingCategoriesList, AwaitingCategory, CategoriesList, RemoveExtraCategories,
-        },
+        category::CategoriesList,
         changes::ChangesService,
-        channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, RemoveExtraChannels},
+        channel::ChannelsList,
         commands::{
             CommandDescription, CommandEntity, CommandEventListenerMock, CommandEventListenerRef,
         },
         diff::Diff,
-        guild::{
-            AwaitingGuild, ExistingGuild, GuildCommanderMock, GuildQuerierMock, GuildQuerierRef,
+        guild::{ExistingGuild, GuildCommanderMock, GuildQuerierMock, GuildQuerierRef},
+        params::{
+            category::{
+                CategoriesParamsList, CategoryParams, CategoryParamsExtraItems,
+                CategoryParamsExtraItemsStrategy,
+            },
+            channel::{
+                ChannelParams, ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy,
+                ChannelsParamsList,
+            },
+            guild::GuildParams,
+            role::{
+                RoleParams, RoleParamsExtraItems, RoleParamsExtraItemsStrategy, RolesParamsList,
+            },
         },
         permission::{Permission, PermissionsList},
-        role::{AwaitingRole, AwaitingRolesList, ExistingRole, RemoveExtraRoles, RolesList},
+        role::{ExistingRole, RolesList},
     };
     use mock_it::{any, eq};
 
@@ -130,64 +144,58 @@ mod tests {
         }
     }
 
-    fn given_an_awaiting_role_with(name: &str) -> AwaitingRole {
-        AwaitingRole {
+    fn given_role_params_with(name: &str) -> RoleParams {
+        RoleParams {
             name: name.to_string(),
             color: Some("abcdef".to_string()),
             is_mentionable: true,
             show_in_sidebar: true,
-            permissions: PermissionsList::from(vec![
-                Permission::SEND_MESSAGES,
-                Permission::READ_MESSAGE_HISTORY,
-            ]),
+            permissions: vec![Permission::SEND_MESSAGES, Permission::READ_MESSAGE_HISTORY],
         }
     }
 
-    fn given_another_awaiting_role_with(name: &str) -> AwaitingRole {
-        AwaitingRole {
+    fn given_other_role_params_with(name: &str) -> RoleParams {
+        RoleParams {
             name: name.to_string(),
             color: None,
             is_mentionable: false,
             show_in_sidebar: false,
-            permissions: PermissionsList::from(vec![
-                Permission::SEND_MESSAGES,
-                Permission::CHANGE_NICKNAME,
-            ]),
+            permissions: vec![Permission::SEND_MESSAGES, Permission::CHANGE_NICKNAME],
         }
     }
 
-    fn given_empty_awaiting_guild() -> AwaitingGuild {
-        AwaitingGuild {
-            roles: given_awaiting_roles_list_for(vec![]),
-            categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![], vec![]),
+    fn given_empty_guild_params() -> GuildParams {
+        GuildParams {
+            roles: given_roles_params_list_for(vec![]),
+            categories: given_categories_params_list_for(vec![]),
+            channels: given_channels_params_list_for(vec![]),
         }
     }
 
-    fn given_awaiting_roles_list_for(roles: Vec<AwaitingRole>) -> AwaitingRolesList {
-        AwaitingRolesList {
-            items: RolesList::from(roles),
-            extra_items_strategy: Arc::from(RemoveExtraRoles {}),
+    fn given_roles_params_list_for(roles: Vec<RoleParams>) -> RolesParamsList {
+        RolesParamsList {
+            items: roles,
+            extra_items: RoleParamsExtraItems {
+                strategy: RoleParamsExtraItemsStrategy::REMOVE,
+            },
         }
     }
 
-    fn given_awaiting_categories_list_for(
-        categories: Vec<AwaitingCategory>,
-    ) -> AwaitingCategoriesList {
-        AwaitingCategoriesList {
-            items: CategoriesList::from(categories),
-            extra_items_strategy: Arc::from(RemoveExtraCategories {}),
+    fn given_categories_params_list_for(categories: Vec<CategoryParams>) -> CategoriesParamsList {
+        CategoriesParamsList {
+            items: categories,
+            extra_items: CategoryParamsExtraItems {
+                strategy: CategoryParamsExtraItemsStrategy::REMOVE,
+            },
         }
     }
 
-    fn given_awaiting_channels_list_for(
-        channels: Vec<AwaitingChannel>,
-        categories: Vec<AwaitingCategory>,
-    ) -> AwaitingChannelsList {
-        AwaitingChannelsList {
-            items: ChannelsList::from(channels),
-            extra_items_strategy: Arc::from(RemoveExtraChannels {}),
-            categories: CategoriesList::from(categories),
+    fn given_channels_params_list_for(channels: Vec<ChannelParams>) -> ChannelsParamsList {
+        ChannelsParamsList {
+            items: channels,
+            extra_items: ChannelParamsExtraItems {
+                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
+            },
         }
     }
 
@@ -199,7 +207,7 @@ mod tests {
         let event_listener = Arc::from(CommandEventListenerMock::new());
 
         let existing_guild = given_empty_existing_guild();
-        let awaiting_guild = given_empty_awaiting_guild();
+        let guild_params = given_empty_guild_params();
 
         let service = ChangesService::new(
             guild_commander.clone(),
@@ -207,7 +215,7 @@ mod tests {
             event_listener.clone(),
         );
 
-        let diffs = service.list_changes(GUILD_ID, &awaiting_guild);
+        let diffs = service.list_changes(GUILD_ID, guild_params);
 
         assert_eq!(diffs, vec![]);
     }
@@ -226,14 +234,14 @@ mod tests {
             categories: CategoriesList::from(vec![]),
             channels: ChannelsList::from(vec![]),
         };
-        let awaiting_guild = AwaitingGuild {
-            roles: given_awaiting_roles_list_for(vec![
-                given_an_awaiting_role_with("to_create"),
-                given_an_awaiting_role_with("no_change"),
-                given_another_awaiting_role_with("to_update"),
+        let guild_params = GuildParams {
+            roles: given_roles_params_list_for(vec![
+                given_role_params_with("to_create"),
+                given_role_params_with("no_change"),
+                given_other_role_params_with("to_update"),
             ]),
-            categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![], vec![]),
+            categories: given_categories_params_list_for(vec![]),
+            channels: given_channels_params_list_for(vec![]),
         };
         let expected_diffs = vec![
             CommandDescription::Create(CommandEntity::Role, "to_create".to_string()),
@@ -277,7 +285,7 @@ mod tests {
             event_listener.clone(),
         );
 
-        let diffs = service.list_changes(GUILD_ID, &awaiting_guild);
+        let diffs = service.list_changes(GUILD_ID, guild_params);
 
         assert_eq!(diffs, expected_diffs);
     }
@@ -288,7 +296,7 @@ mod tests {
         let event_listener = Arc::from(CommandEventListenerMock::new());
 
         let existing_guild = given_empty_existing_guild();
-        let awaiting_guild = given_empty_awaiting_guild();
+        let guild_params = given_empty_guild_params();
 
         let service = ChangesService::new(
             guild_commander.clone(),
@@ -296,18 +304,18 @@ mod tests {
             event_listener.clone(),
         );
 
-        service.apply_changes(GUILD_ID, &awaiting_guild);
+        service.apply_changes(GUILD_ID, guild_params);
     }
 
     #[test]
     fn given_role_differences_when_applying_changes_then_applies_all_changes() {
         let guild_commander = Arc::from(GuildCommanderMock::new());
         let event_listener = given_fake_diff_event_listener();
-        let created_role = given_an_awaiting_role_with("to_create");
+        let created_role = given_role_params_with("to_create");
         let role_to_update = given_an_existing_role_with("to_update", "to_update");
-        let updated_role = given_another_awaiting_role_with("to_update");
+        let updated_role = given_other_role_params_with("to_update");
         let role_to_not_change = given_an_existing_role_with("no_change", "no_change");
-        let unchanged_role = given_an_awaiting_role_with("no_change");
+        let unchanged_role = given_role_params_with("no_change");
         let role_to_delete = given_an_existing_role_with("to_delete", "to_delete");
 
         let existing_guild = ExistingGuild {
@@ -319,20 +327,20 @@ mod tests {
             categories: CategoriesList::from(vec![]),
             channels: ChannelsList::from(vec![]),
         };
-        let awaiting_guild = AwaitingGuild {
-            roles: given_awaiting_roles_list_for(vec![
+        let guild_params = GuildParams {
+            roles: given_roles_params_list_for(vec![
                 created_role.clone(),
                 unchanged_role.clone(),
                 updated_role.clone(),
             ]),
-            categories: given_awaiting_categories_list_for(vec![]),
-            channels: given_awaiting_channels_list_for(vec![], vec![]),
+            categories: given_categories_params_list_for(vec![]),
+            channels: given_channels_params_list_for(vec![]),
         };
         guild_commander
-            .when_add_role(eq(&created_role))
+            .when_add_role(eq(&created_role.into()))
             .will_return_default();
         guild_commander
-            .when_update_role(eq(&role_to_update.id), eq(&updated_role))
+            .when_update_role(eq(&role_to_update.id), eq(&updated_role.into()))
             .will_return_default();
         guild_commander
             .when_delete_role(eq(&role_to_delete.id))
@@ -344,6 +352,6 @@ mod tests {
             event_listener.clone(),
         );
 
-        service.apply_changes(GUILD_ID, &awaiting_guild);
+        service.apply_changes(GUILD_ID, guild_params);
     }
 }

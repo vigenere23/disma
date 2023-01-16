@@ -59,7 +59,7 @@ mod tests {
         channel::{AwaitingChannel, ChannelType, ExistingChannel, KeepExtraChannels},
         diff::{Diff, Differ},
         permission::{
-            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+            Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
         role::{AwaitingRole, ExistingRole},
     };
@@ -217,7 +217,7 @@ mod tests {
             topic: topic.clone(),
             channel_type: channel_type.clone(),
             category: None,
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_existing_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
@@ -229,7 +229,7 @@ mod tests {
             topic: topic.clone(),
             channel_type: channel_type.clone(),
             category: None,
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_awaiting_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
                 deny: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),

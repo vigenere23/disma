@@ -1,21 +1,22 @@
-use disma::channel::{ChannelType, ChannelsList, ExistingChannel};
+use crate::{
+    channel::{ChannelType, ChannelsList, ExistingChannel},
+    params::permission::PermissionsOverwriteParams,
+};
 
-use crate::infra::config::permission::PermissionsOverwritesConfig;
+use super::{ChannelParams, ChannelParamsChannelType, ChannelsParamsList};
 
-use super::{ChannelConfig, ChannelConfigType, ChannelConfigsList};
-
-impl From<&ChannelsList<ExistingChannel>> for ChannelConfigsList {
+impl From<&ChannelsList<ExistingChannel>> for ChannelsParamsList {
     fn from(channels: &ChannelsList<ExistingChannel>) -> Self {
         let items = channels.to_list().iter().map(Into::into).collect();
 
-        ChannelConfigsList {
+        ChannelsParamsList {
             items,
             ..Default::default()
         }
     }
 }
 
-impl From<&ExistingChannel> for ChannelConfig {
+impl From<&ExistingChannel> for ChannelParams {
     fn from(channel: &ExistingChannel) -> Self {
         let _type = channel.channel_type.clone().into();
 
@@ -28,8 +29,8 @@ impl From<&ExistingChannel> for ChannelConfig {
             .overwrites
             .to_list()
             .iter()
-            .map(PermissionsOverwritesConfig::from)
-            .collect::<Vec<PermissionsOverwritesConfig>>();
+            .map(PermissionsOverwriteParams::from)
+            .collect::<Vec<PermissionsOverwriteParams>>();
 
         Self {
             name: channel.name.clone(),
@@ -41,7 +42,7 @@ impl From<&ExistingChannel> for ChannelConfig {
     }
 }
 
-impl From<ChannelType> for ChannelConfigType {
+impl From<ChannelType> for ChannelParamsChannelType {
     fn from(value: ChannelType) -> Self {
         match value {
             ChannelType::TEXT => Self::TEXT,
@@ -52,18 +53,17 @@ impl From<ChannelType> for ChannelConfigType {
 
 #[cfg(test)]
 mod tests {
-    use disma::{
+    use crate::{
         category::ExistingCategory,
         channel::{ChannelType, ChannelsList, ExistingChannel},
+        params::{
+            channel::{ChannelParams, ChannelParamsChannelType, ChannelsParamsList},
+            permission::PermissionsOverwriteParams,
+        },
         permission::{
-            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+            Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
         role::ExistingRole,
-    };
-
-    use crate::infra::config::{
-        channel::{ChannelConfig, ChannelConfigType, ChannelConfigsList},
-        permission::PermissionsOverwritesConfig,
     };
 
     fn given_existing_category(name: &str) -> ExistingCategory {
@@ -85,79 +85,79 @@ mod tests {
         }
     }
 
-    fn given_matching_existing_and_config(
+    fn given_matching_existing_and_params(
         name: &str,
         role: &ExistingRole,
         category: &ExistingCategory,
-    ) -> (ExistingChannel, ChannelConfig) {
+    ) -> (ExistingChannel, ChannelParams) {
         let existing = ExistingChannel {
             id: "something".to_string(),
             name: name.to_string(),
             category: Some(category.clone()),
             channel_type: ChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
         };
 
-        let config = ChannelConfig {
+        let params = ChannelParams {
             name: name.to_string(),
             category: Some(category.name.clone()),
-            _type: ChannelConfigType::VOICE,
+            _type: ChannelParamsChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
-            permissions_overwrites: vec![PermissionsOverwritesConfig {
+            permissions_overwrites: vec![PermissionsOverwriteParams {
                 role: role.name.clone(),
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::SEND_MESSAGES],
             }],
         };
 
-        (existing, config)
+        (existing, params)
     }
 
-    fn given_matching_existing_list_and_config_list(
+    fn given_matching_existing_list_and_params_list(
         name: &str,
         role: &ExistingRole,
         category: &ExistingCategory,
-    ) -> (ChannelsList<ExistingChannel>, ChannelConfigsList) {
-        let (existing_item, config_item) = given_matching_existing_and_config(name, role, category);
+    ) -> (ChannelsList<ExistingChannel>, ChannelsParamsList) {
+        let (existing, params) = given_matching_existing_and_params(name, role, category);
 
-        let existing_list = ChannelsList::from(vec![existing_item]);
+        let existing_list = ChannelsList::from(vec![existing]);
 
-        let config_list = ChannelConfigsList {
-            items: vec![config_item],
+        let params_list = ChannelsParamsList {
+            items: vec![params],
             ..Default::default()
         };
 
-        (existing_list, config_list)
+        (existing_list, params_list)
     }
 
     #[test]
-    fn can_convert_existing_entity_to_config() {
+    fn can_convert_existing_entity_to_params() {
         let name = "channel_1";
         let role = given_existing_role("role_1");
         let category = given_existing_category("category_1");
-        let (existing, expected_config) =
-            given_matching_existing_and_config(name, &role, &category);
+        let (existing, expected_params) =
+            given_matching_existing_and_params(name, &role, &category);
 
-        let config = ChannelConfig::from(&existing);
+        let params = ChannelParams::from(&existing);
 
-        assert_eq!(config, expected_config);
+        assert_eq!(params, expected_params);
     }
 
     #[test]
-    fn can_convert_existing_entities_list_to_config_list() {
+    fn can_convert_existing_entities_list_to_params_list() {
         let name = "channel_1";
         let role = given_existing_role("role_1");
         let category = given_existing_category("category_1");
-        let (existing_list, expected_config_list) =
-            given_matching_existing_list_and_config_list(name, &role, &category);
+        let (existing_list, expected_params_list) =
+            given_matching_existing_list_and_params_list(name, &role, &category);
 
-        let config = ChannelConfigsList::from(&existing_list);
+        let params = ChannelsParamsList::from(&existing_list);
 
-        assert_eq!(config, expected_config_list);
+        assert_eq!(params, expected_params_list);
     }
 }

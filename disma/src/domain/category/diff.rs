@@ -33,7 +33,7 @@ mod tests {
         channel::KeepExtraChannels,
         diff::{Diff, Differ},
         permission::{
-            Permission, PermissionsList, PermissionsOverwrites, PermissionsOverwritesList,
+            Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
         role::{AwaitingRole, ExistingRole},
     };
@@ -68,7 +68,7 @@ mod tests {
         let origin = ExistingCategory {
             id: "something".to_string(),
             name: name.clone(),
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_existing_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
@@ -77,7 +77,7 @@ mod tests {
 
         let target = AwaitingCategory {
             name: name.clone(),
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrites {
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_awaiting_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
