@@ -28,6 +28,7 @@ impl From<&ExistingCategory> for CategoryParams {
         Self {
             name: category.name.clone(),
             permissions_overwrites,
+            sync_permissions: false,
             extra_channels: ChannelParamsExtraItems::default(),
         }
     }
@@ -69,6 +70,7 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
+            sync_permissions: false,
             extra_channels: ChannelParamsExtraItems {
                 strategy: ChannelParamsExtraItemsStrategy::REMOVE,
             },

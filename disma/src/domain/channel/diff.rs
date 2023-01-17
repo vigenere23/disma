@@ -99,6 +99,7 @@ mod tests {
         AwaitingCategory {
             name: name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            sync_permissions: false,
             extra_channels_strategy: Arc::from(KeepExtraChannels {}),
         }
     }

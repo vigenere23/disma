@@ -112,6 +112,7 @@ mod tests {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
+            sync_permissions: false,
             extra_channels_strategy: ChannelParamsExtraItems::default().strategy.into(),
         }
     }
