@@ -87,18 +87,10 @@ mod tests {
         diff::Diff,
         guild::{ExistingGuild, GuildCommanderMock, GuildQuerierMock, GuildQuerierRef},
         params::{
-            category::{
-                CategoriesParamsList, CategoryParams, CategoryParamsExtraItems,
-                CategoryParamsExtraItemsStrategy,
-            },
-            channel::{
-                ChannelParams, ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy,
-                ChannelsParamsList,
-            },
+            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
+            channel::{ChannelParams, ChannelParamsExtraItemsStrategy, ChannelsParamsList},
             guild::GuildParams,
-            role::{
-                RoleParams, RoleParamsExtraItems, RoleParamsExtraItemsStrategy, RolesParamsList,
-            },
+            role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
         },
         permission::{Permission, PermissionsList},
         role::{ExistingRole, RolesList},
@@ -175,27 +167,21 @@ mod tests {
     fn given_roles_params_list_for(roles: Vec<RoleParams>) -> RolesParamsList {
         RolesParamsList {
             items: roles,
-            extra_items: RoleParamsExtraItems {
-                strategy: RoleParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: RoleParamsExtraItemsStrategy::REMOVE,
         }
     }
 
     fn given_categories_params_list_for(categories: Vec<CategoryParams>) -> CategoriesParamsList {
         CategoriesParamsList {
             items: categories,
-            extra_items: CategoryParamsExtraItems {
-                strategy: CategoryParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: CategoryParamsExtraItemsStrategy::REMOVE,
         }
     }
 
     fn given_channels_params_list_for(channels: Vec<ChannelParams>) -> ChannelsParamsList {
         ChannelsParamsList {
             items: channels,
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::REMOVE,
         }
     }
 

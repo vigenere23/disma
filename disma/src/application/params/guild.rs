@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 use crate::guild::{AwaitingGuild, ExistingGuild};
 
 use super::{
-    category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItems},
-    channel::{ChannelParams, ChannelParamsExtraItems, ChannelsParamsList},
-    role::{RoleParams, RoleParamsExtraItems, RolesParamsList},
+    category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
+    channel::{ChannelParams, ChannelParamsExtraItemsStrategy, ChannelsParamsList},
+    role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
 };
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -53,15 +53,15 @@ impl From<&ExistingGuild> for GuildParams {
         Self {
             roles: RolesParamsList {
                 items: roles,
-                extra_items: RoleParamsExtraItems::default(),
+                extra_items: RoleParamsExtraItemsStrategy::default(),
             },
             categories: CategoriesParamsList {
                 items: categories,
-                extra_items: CategoryParamsExtraItems::default(),
+                extra_items: CategoryParamsExtraItemsStrategy::default(),
             },
             channels: ChannelsParamsList {
                 items: channels,
-                extra_items: ChannelParamsExtraItems::default(),
+                extra_items: ChannelParamsExtraItemsStrategy::default(),
             },
         }
     }

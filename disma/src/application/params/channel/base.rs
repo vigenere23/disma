@@ -6,16 +6,12 @@ use crate::params::permission::PermissionsOverwriteParams;
 pub struct ChannelsParamsList {
     #[serde(default = "Vec::default")]
     pub items: Vec<ChannelParams>,
-    #[serde(default = "ChannelParamsExtraItems::default")]
-    pub extra_items: ChannelParamsExtraItems,
+    #[serde(default = "ChannelParamsExtraItemsStrategy::default")]
+    pub extra_items: ChannelParamsExtraItemsStrategy,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct ChannelParamsExtraItems {
-    pub strategy: ChannelParamsExtraItemsStrategy,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy")]
 pub enum ChannelParamsExtraItemsStrategy {
     KEEP,
     REMOVE,
@@ -40,11 +36,9 @@ pub enum ChannelParamsChannelType {
     VOICE,
 }
 
-impl Default for ChannelParamsExtraItems {
+impl Default for ChannelParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self {
-            strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-        }
+        Self::REMOVE
     }
 }
 
@@ -59,8 +53,8 @@ mod tests {
     use crate::{
         params::{
             channel::{
-                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItems,
-                ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+                ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
@@ -94,9 +88,7 @@ mod tests {
                     deny: vec![Permission::SEND_MESSAGES],
                 }]),
             }],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::KEEP,
         };
 
         let params_list: ChannelsParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -127,9 +119,7 @@ mod tests {
                 category: None,
                 permissions_overwrites: None,
             }],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::REMOVE,
         };
 
         let params_list: ChannelsParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

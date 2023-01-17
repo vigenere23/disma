@@ -29,7 +29,7 @@ impl ChannelsParamsList {
 
         AwaitingChannelsList {
             items,
-            extra_items_strategy: self.extra_items.strategy.into(),
+            extra_items_strategy: self.extra_items.into(),
             categories: categories.clone(),
         }
     }
@@ -97,8 +97,8 @@ mod tests {
         },
         params::{
             channel::{
-                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItems,
-                ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+                ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
@@ -113,7 +113,7 @@ mod tests {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
             sync_permissions: false,
-            extra_channels_strategy: ChannelParamsExtraItems::default().strategy.into(),
+            extra_channels_strategy: ChannelParamsExtraItemsStrategy::default().into(),
         }
     }
 
@@ -186,9 +186,7 @@ mod tests {
 
         let params_list = ChannelsParamsList {
             items: vec![params],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::KEEP,
         };
 
         let awaiting_list = AwaitingChannelsList {

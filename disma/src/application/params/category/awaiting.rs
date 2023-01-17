@@ -22,7 +22,7 @@ impl CategoriesParamsList {
 
         AwaitingCategoriesList {
             items,
-            extra_items_strategy: self.extra_items.strategy.into(),
+            extra_items_strategy: self.extra_items.into(),
         }
     }
 }
@@ -48,7 +48,7 @@ impl CategoryParams {
             name: self.name,
             overwrites: overwrites.into(),
             sync_permissions: self.sync_permissions,
-            extra_channels_strategy: self.extra_channels.strategy.into(),
+            extra_channels_strategy: self.extra_channels.into(),
         }
     }
 }
@@ -61,11 +61,8 @@ mod tests {
         category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
         channel::RemoveExtraChannels,
         params::{
-            category::{
-                CategoriesParamsList, CategoryParams, CategoryParamsExtraItems,
-                CategoryParamsExtraItemsStrategy,
-            },
-            channel::{ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy},
+            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
+            channel::ChannelParamsExtraItemsStrategy,
             permission::PermissionsOverwriteParams,
         },
         permission::{
@@ -88,9 +85,7 @@ mod tests {
                 deny: vec![Permission::ADMINISTRATOR],
             }],
             sync_permissions: true,
-            extra_channels: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_channels: ChannelParamsExtraItemsStrategy::REMOVE,
         };
 
         let awaiting_entity = AwaitingCategory {
@@ -115,9 +110,7 @@ mod tests {
 
         let params_list = CategoriesParamsList {
             items: vec![params],
-            extra_items: CategoryParamsExtraItems {
-                strategy: CategoryParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: CategoryParamsExtraItemsStrategy::KEEP,
         };
 
         let awaiting_list = AwaitingCategoriesList {
