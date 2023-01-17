@@ -59,19 +59,20 @@ impl ChannelParams {
                 .clone()
         });
 
-        // TODO add strategy to inherit category's overwrites?
-        let overwrites = self
-            .permissions_overwrites
-            .into_iter()
-            .map(|permission| permission.into(roles))
-            .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>();
+        let overwrites = self.permissions_overwrites.map(|permissions| {
+            permissions
+                .into_iter()
+                .map(|permission| permission.into(roles))
+                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>()
+                .into()
+        });
 
         AwaitingChannel {
             name: self.name,
             topic: self.topic,
             channel_type,
             category,
-            overwrites: overwrites.into(),
+            overwrites,
         }
     }
 }
@@ -151,11 +152,11 @@ mod tests {
             _type: ChannelParamsChannelType::VOICE,
             category: Some(category.name.clone()),
             topic: Some("Nice sweater".to_string()),
-            permissions_overwrites: vec![PermissionsOverwriteParams {
+            permissions_overwrites: Some(vec![PermissionsOverwriteParams {
                 role: role.name.clone(),
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::SEND_MESSAGES],
-            }],
+            }]),
         };
 
         let awaiting = AwaitingChannel {
@@ -163,11 +164,13 @@ mod tests {
             channel_type: ChannelType::VOICE,
             category: Some(category.clone()),
             topic: Some("Nice sweater".to_string()),
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                role: role.clone(),
-                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
-            }]),
+            overwrites: Some(PermissionsOverwritesList::from(vec![
+                PermissionsOverwrite {
+                    role: role.clone(),
+                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                    deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
+                },
+            ])),
         };
 
         (params, awaiting)

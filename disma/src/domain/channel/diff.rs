@@ -12,7 +12,7 @@ impl PartialEq<AwaitingChannel> for ExistingChannel {
             && self.topic == other.topic
             && self.channel_type == other.channel_type
             && self.category.option_eq(&other.category)
-            && self.overwrites == other.overwrites
+            && self.overwrites == other.overwrites.clone().unwrap_or_default()
     }
 }
 
@@ -41,10 +41,12 @@ impl Differ<AwaitingChannel> for ExistingChannel {
                 |diffs| all_diffs.push(Diff::Update("category".into(), diffs)),
             );
 
-        self.overwrites.diffs_with(&awaiting.overwrites).if_then(
-            |diffs| !diffs.is_empty(),
-            |diffs| all_diffs.push(Diff::Update("overwrites".into(), diffs)),
-        );
+        self.overwrites
+            .diffs_with(&awaiting.overwrites.clone().unwrap_or_default())
+            .if_then(
+                |diffs| !diffs.is_empty(),
+                |diffs| all_diffs.push(Diff::Update("overwrites".into(), diffs)),
+            );
 
         all_diffs
     }
@@ -120,7 +122,7 @@ mod tests {
             topic: Some("Not here".to_string()),
             channel_type: channel_type.clone(),
             category: None,
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: Some(PermissionsOverwritesList::from(vec![])),
         };
 
         let diffs = origin.diffs_with(&target);
@@ -154,7 +156,7 @@ mod tests {
             topic: topic.clone(),
             channel_type: ChannelType::VOICE,
             category: None,
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: Some(PermissionsOverwritesList::from(vec![])),
         };
 
         let diffs = origin.diffs_with(&target);
@@ -189,7 +191,7 @@ mod tests {
             topic: topic.clone(),
             channel_type: channel_type.clone(),
             category: Some(given_awaiting_category_with_name("category_b".to_string())),
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: Some(PermissionsOverwritesList::from(vec![])),
         };
 
         let diffs = origin.diffs_with(&target);
@@ -229,11 +231,13 @@ mod tests {
             topic: topic.clone(),
             channel_type: channel_type.clone(),
             category: None,
-            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                role: given_awaiting_role_with(role_name.clone()),
-                allow: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
-                deny: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
-            }]),
+            overwrites: Some(PermissionsOverwritesList::from(vec![
+                PermissionsOverwrite {
+                    role: given_awaiting_role_with(role_name.clone()),
+                    allow: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
+                    deny: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
+                },
+            ])),
         };
 
         let diffs = origin.diffs_with(&target);

@@ -28,7 +28,7 @@ pub struct AwaitingChannel {
     pub topic: Option<String>,
     pub channel_type: ChannelType,
     pub category: Option<AwaitingCategory>,
-    pub overwrites: PermissionsOverwritesList<AwaitingRole>,
+    pub overwrites: Option<PermissionsOverwritesList<AwaitingRole>>,
 }
 
 impl Channel for AwaitingChannel {

@@ -37,7 +37,7 @@ impl From<&ExistingChannel> for ChannelParams {
             topic: channel.topic.clone(),
             _type,
             category,
-            permissions_overwrites,
+            permissions_overwrites: Some(permissions_overwrites),
         }
     }
 }
@@ -108,11 +108,11 @@ mod tests {
             category: Some(category.name.clone()),
             _type: ChannelParamsChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
-            permissions_overwrites: vec![PermissionsOverwriteParams {
+            permissions_overwrites: Some(vec![PermissionsOverwriteParams {
                 role: role.name.clone(),
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::SEND_MESSAGES],
-            }],
+            }]),
         };
 
         (existing, params)

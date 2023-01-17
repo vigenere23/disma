@@ -66,6 +66,8 @@ impl ChannelRequest {
 
         let permission_overwrites = channel
             .overwrites
+            .clone()
+            .unwrap_or_default()
             .to_list()
             .iter()
             .map(|permission| PermissionOverwritesDto::from(permission, roles))

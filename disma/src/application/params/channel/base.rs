@@ -30,8 +30,8 @@ pub struct ChannelParams {
     pub topic: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<String>,
-    #[serde(default = "Vec::default")]
-    pub permissions_overwrites: Vec<PermissionsOverwriteParams>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub permissions_overwrites: Option<Vec<PermissionsOverwriteParams>>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -88,11 +88,11 @@ mod tests {
                 _type: ChannelParamsChannelType::VOICE,
                 topic: Some("A nice evening".to_string()),
                 category: Some("category_1".to_string()),
-                permissions_overwrites: vec![PermissionsOverwriteParams {
+                permissions_overwrites: Some(vec![PermissionsOverwriteParams {
                     role: "role_1".to_string(),
                     allow: vec![Permission::ADMINISTRATOR],
                     deny: vec![Permission::SEND_MESSAGES],
-                }],
+                }]),
             }],
             extra_items: ChannelParamsExtraItems {
                 strategy: ChannelParamsExtraItemsStrategy::KEEP,
@@ -125,7 +125,7 @@ mod tests {
                 _type: ChannelParamsChannelType::TEXT,
                 topic: None,
                 category: None,
-                permissions_overwrites: vec![],
+                permissions_overwrites: None,
             }],
             extra_items: ChannelParamsExtraItems {
                 strategy: ChannelParamsExtraItemsStrategy::REMOVE,
