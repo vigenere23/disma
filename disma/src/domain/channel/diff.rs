@@ -1,17 +1,16 @@
 use crate::{
-    category::Category,
     diff::{Diff, Differ},
     utils::{misc::IfThen, option::OptionEq},
 };
 
-use super::{AwaitingChannel, ExistingChannel};
+use super::{AwaitingChannel, Channel, ExistingChannel};
 
 impl PartialEq<AwaitingChannel> for ExistingChannel {
     fn eq(&self, other: &AwaitingChannel) -> bool {
         self.name == other.name
             && self.topic == other.topic
             && self.channel_type == other.channel_type
-            && self.category.option_eq(&other.category)
+            && self.category_name().option_eq(&other.category_name())
             && self.overwrites == other.overwrites
     }
 }
@@ -32,10 +31,8 @@ impl Differ<AwaitingChannel> for ExistingChannel {
                 |diffs| all_diffs.push(Diff::Update("channel_type".into(), diffs)),
             );
 
-        self.category
-            .as_ref()
-            .map(|category| category.name())
-            .diffs_with(&awaiting.category.as_ref().map(|category| category.name()))
+        self.category_name()
+            .diffs_with(&awaiting.category_name())
             .if_then(
                 |diffs| !diffs.is_empty(),
                 |diffs| all_diffs.push(Diff::Update("category".into(), diffs)),

@@ -61,11 +61,15 @@ impl ChannelParams {
         });
 
         let overwrites = match self.permissions_overwrites {
-            ChannelParamsPermissionsOverwritesStrategy::FromCategory => todo!(),
+            ChannelParamsPermissionsOverwritesStrategy::FromCategory => match &category {
+                Some(category) => category.overwrites.clone(),
+                None => vec![].into(),
+            },
             ChannelParamsPermissionsOverwritesStrategy::Manual { items } => items
                 .into_iter()
                 .map(|permission| permission.into(roles))
-                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>(),
+                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>()
+                .into(),
         };
 
         AwaitingChannel {
@@ -73,7 +77,7 @@ impl ChannelParams {
             topic: self.topic,
             channel_type,
             category,
-            overwrites: overwrites.into(),
+            overwrites,
         }
     }
 }
