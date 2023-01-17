@@ -71,7 +71,7 @@ mod tests {
                 deny: vec![Permission::ADMINISTRATOR],
             }],
             sync_permissions: false,
-            extra_channels: ChannelParamsExtraItemsStrategy::REMOVE,
+            extra_channels: ChannelParamsExtraItemsStrategy::Remove,
         };
 
         (existing, params)

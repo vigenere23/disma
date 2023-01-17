@@ -30,8 +30,8 @@ impl CategoriesParamsList {
 impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraCategoriesStrategy> {
         match self {
-            Self::KEEP => Arc::from(KeepExtraCategories {}),
-            Self::REMOVE => Arc::from(RemoveExtraCategories {}),
+            Self::Keep => Arc::from(KeepExtraCategories {}),
+            Self::Remove => Arc::from(RemoveExtraCategories {}),
         }
     }
 }
@@ -85,7 +85,7 @@ mod tests {
                 deny: vec![Permission::ADMINISTRATOR],
             }],
             sync_permissions: true,
-            extra_channels: ChannelParamsExtraItemsStrategy::REMOVE,
+            extra_channels: ChannelParamsExtraItemsStrategy::Remove,
         };
 
         let awaiting_entity = AwaitingCategory {
@@ -110,7 +110,7 @@ mod tests {
 
         let params_list = CategoriesParamsList {
             items: vec![params],
-            extra_items: CategoryParamsExtraItemsStrategy::KEEP,
+            extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
 
         let awaiting_list = AwaitingCategoriesList {

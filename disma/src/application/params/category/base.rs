@@ -13,10 +13,10 @@ pub struct CategoriesParamsList {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-#[serde(tag = "strategy")]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CategoryParamsExtraItemsStrategy {
-    KEEP,
-    REMOVE,
+    Keep,
+    Remove,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -32,7 +32,7 @@ pub struct CategoryParams {
 
 impl Default for CategoryParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self::REMOVE
+        Self::Remove
     }
 }
 
@@ -71,9 +71,9 @@ mod tests {
                     deny: vec![Permission::SEND_MESSAGES],
                 }],
                 sync_permissions: true,
-                extra_channels: ChannelParamsExtraItemsStrategy::KEEP,
+                extra_channels: ChannelParamsExtraItemsStrategy::Keep,
             }],
-            extra_items: CategoryParamsExtraItemsStrategy::KEEP,
+            extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: CategoriesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -103,7 +103,7 @@ mod tests {
                 sync_permissions: false,
                 extra_channels: ChannelParamsExtraItemsStrategy::default(),
             }],
-            extra_items: CategoryParamsExtraItemsStrategy::REMOVE,
+            extra_items: CategoryParamsExtraItemsStrategy::Remove,
         };
 
         let params_list: CategoriesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

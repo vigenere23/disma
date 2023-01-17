@@ -11,7 +11,8 @@ use crate::{
 };
 
 use super::{
-    ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+    ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+    ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
 };
 
 impl ChannelsParamsList {
@@ -38,8 +39,8 @@ impl ChannelsParamsList {
 impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
         match self {
-            Self::KEEP => Arc::from(KeepExtraChannels {}),
-            Self::REMOVE => Arc::from(RemoveExtraChannels {}),
+            Self::Keep => Arc::from(KeepExtraChannels {}),
+            Self::Remove => Arc::from(RemoveExtraChannels {}),
         }
     }
 }
@@ -59,20 +60,20 @@ impl ChannelParams {
                 .clone()
         });
 
-        let overwrites = self.permissions_overwrites.map(|permissions| {
-            permissions
+        let overwrites = match self.permissions_overwrites {
+            ChannelParamsPermissionsOverwritesStrategy::FromCategory => todo!(),
+            ChannelParamsPermissionsOverwritesStrategy::Manual { items } => items
                 .into_iter()
                 .map(|permission| permission.into(roles))
-                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>()
-                .into()
-        });
+                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>(),
+        };
 
         AwaitingChannel {
             name: self.name,
             topic: self.topic,
             channel_type,
             category,
-            overwrites,
+            overwrites: overwrites.into(),
         }
     }
 }
@@ -98,7 +99,7 @@ mod tests {
         params::{
             channel::{
                 ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
-                ChannelsParamsList,
+                ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
@@ -153,11 +154,13 @@ mod tests {
             _type: ChannelParamsChannelType::VOICE,
             category: Some(category.name.clone()),
             topic: Some("Nice sweater".to_string()),
-            permissions_overwrites: Some(vec![PermissionsOverwriteParams {
-                role: role.name.clone(),
-                allow: vec![Permission::ADMINISTRATOR],
-                deny: vec![Permission::SEND_MESSAGES],
-            }]),
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                items: vec![PermissionsOverwriteParams {
+                    role: role.name.clone(),
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::SEND_MESSAGES],
+                }],
+            },
         };
 
         let awaiting = AwaitingChannel {
@@ -165,13 +168,11 @@ mod tests {
             channel_type: ChannelType::VOICE,
             category: Some(category.clone()),
             topic: Some("Nice sweater".to_string()),
-            overwrites: Some(PermissionsOverwritesList::from(vec![
-                PermissionsOverwrite {
-                    role: role.clone(),
-                    allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-                    deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
-                },
-            ])),
+            overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
+                role: role.clone(),
+                allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+                deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
+            }]),
         };
 
         (params, awaiting)
@@ -186,7 +187,7 @@ mod tests {
 
         let params_list = ChannelsParamsList {
             items: vec![params],
-            extra_items: ChannelParamsExtraItemsStrategy::KEEP,
+            extra_items: ChannelParamsExtraItemsStrategy::Keep,
         };
 
         let awaiting_list = AwaitingChannelsList {

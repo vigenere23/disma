@@ -167,21 +167,21 @@ mod tests {
     fn given_roles_params_list_for(roles: Vec<RoleParams>) -> RolesParamsList {
         RolesParamsList {
             items: roles,
-            extra_items: RoleParamsExtraItemsStrategy::REMOVE,
+            extra_items: RoleParamsExtraItemsStrategy::Remove,
         }
     }
 
     fn given_categories_params_list_for(categories: Vec<CategoryParams>) -> CategoriesParamsList {
         CategoriesParamsList {
             items: categories,
-            extra_items: CategoryParamsExtraItemsStrategy::REMOVE,
+            extra_items: CategoryParamsExtraItemsStrategy::Remove,
         }
     }
 
     fn given_channels_params_list_for(channels: Vec<ChannelParams>) -> ChannelsParamsList {
         ChannelsParamsList {
             items: channels,
-            extra_items: ChannelParamsExtraItemsStrategy::REMOVE,
+            extra_items: ChannelParamsExtraItemsStrategy::Remove,
         }
     }
 

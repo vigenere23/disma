@@ -11,10 +11,10 @@ pub struct RolesParamsList {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-#[serde(tag = "strategy")]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RoleParamsExtraItemsStrategy {
-    KEEP,
-    REMOVE,
+    Keep,
+    Remove,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -30,7 +30,7 @@ pub struct RoleParams {
 
 impl Default for RoleParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self::REMOVE
+        Self::Remove
     }
 }
 
@@ -63,7 +63,7 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            extra_items: RoleParamsExtraItemsStrategy::KEEP,
+            extra_items: RoleParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: RolesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -96,7 +96,7 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            extra_items: RoleParamsExtraItemsStrategy::REMOVE,
+            extra_items: RoleParamsExtraItemsStrategy::Remove,
         };
 
         let params_list: RolesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
