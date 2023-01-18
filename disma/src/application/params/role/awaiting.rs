@@ -18,7 +18,7 @@ impl RolesParamsList {
 
         AwaitingRolesList {
             items,
-            extra_items_strategy: self.extra_items.strategy.into(),
+            extra_items_strategy: self.extra_items.into(),
         }
     }
 }
@@ -26,8 +26,8 @@ impl RolesParamsList {
 impl Into<Arc<dyn ExtraRolesStrategy>> for RoleParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraRolesStrategy> {
         match self {
-            RoleParamsExtraItemsStrategy::KEEP => Arc::from(KeepExtraRoles {}),
-            RoleParamsExtraItemsStrategy::REMOVE => Arc::from(RemoveExtraRoles {}),
+            RoleParamsExtraItemsStrategy::Keep => Arc::from(KeepExtraRoles {}),
+            RoleParamsExtraItemsStrategy::Remove => Arc::from(RemoveExtraRoles {}),
         }
     }
 }
@@ -49,9 +49,7 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        params::role::{
-            RoleParams, RoleParamsExtraItems, RoleParamsExtraItemsStrategy, RolesParamsList,
-        },
+        params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
         permission::{Permission, PermissionsList},
         role::{AwaitingRole, AwaitingRolesList, KeepExtraRoles, RolesList},
     };
@@ -83,9 +81,7 @@ mod tests {
 
         let params_list = RolesParamsList {
             items: vec![params],
-            extra_items: RoleParamsExtraItems {
-                strategy: RoleParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: RoleParamsExtraItemsStrategy::Keep,
         };
 
         let awaiting_list = AwaitingRolesList {

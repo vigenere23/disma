@@ -22,7 +22,7 @@ impl CategoriesParamsList {
 
         AwaitingCategoriesList {
             items,
-            extra_items_strategy: self.extra_items.strategy.into(),
+            extra_items_strategy: self.extra_items.into(),
         }
     }
 }
@@ -30,8 +30,8 @@ impl CategoriesParamsList {
 impl Into<Arc<dyn ExtraCategoriesStrategy>> for CategoryParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraCategoriesStrategy> {
         match self {
-            Self::KEEP => Arc::from(KeepExtraCategories {}),
-            Self::REMOVE => Arc::from(RemoveExtraCategories {}),
+            Self::Keep => Arc::from(KeepExtraCategories {}),
+            Self::Remove => Arc::from(RemoveExtraCategories {}),
         }
     }
 }
@@ -47,7 +47,8 @@ impl CategoryParams {
         AwaitingCategory {
             name: self.name,
             overwrites: overwrites.into(),
-            extra_channels_strategy: self.extra_channels.strategy.into(),
+            sync_permissions: self.sync_permissions,
+            extra_channels_strategy: self.extra_channels.into(),
         }
     }
 }
@@ -60,11 +61,8 @@ mod tests {
         category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
         channel::RemoveExtraChannels,
         params::{
-            category::{
-                CategoriesParamsList, CategoryParams, CategoryParamsExtraItems,
-                CategoryParamsExtraItemsStrategy,
-            },
-            channel::{ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy},
+            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
+            channel::ChannelParamsExtraItemsStrategy,
             permission::PermissionsOverwriteParams,
         },
         permission::{
@@ -86,9 +84,8 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            extra_channels: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            sync_permissions: true,
+            extra_channels: ChannelParamsExtraItemsStrategy::Remove,
         };
 
         let awaiting_entity = AwaitingCategory {
@@ -98,6 +95,7 @@ mod tests {
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
+            sync_permissions: true,
             extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
         };
 
@@ -112,9 +110,7 @@ mod tests {
 
         let params_list = CategoriesParamsList {
             items: vec![params],
-            extra_items: CategoryParamsExtraItems {
-                strategy: CategoryParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
 
         let awaiting_list = AwaitingCategoriesList {

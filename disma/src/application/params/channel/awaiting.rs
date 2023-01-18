@@ -11,7 +11,8 @@ use crate::{
 };
 
 use super::{
-    ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+    ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+    ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
 };
 
 impl ChannelsParamsList {
@@ -29,7 +30,7 @@ impl ChannelsParamsList {
 
         AwaitingChannelsList {
             items,
-            extra_items_strategy: self.extra_items.strategy.into(),
+            extra_items_strategy: self.extra_items.into(),
             categories: categories.clone(),
         }
     }
@@ -38,8 +39,8 @@ impl ChannelsParamsList {
 impl Into<Arc<dyn ExtraChannelsStrategy>> for ChannelParamsExtraItemsStrategy {
     fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
         match self {
-            Self::KEEP => Arc::from(KeepExtraChannels {}),
-            Self::REMOVE => Arc::from(RemoveExtraChannels {}),
+            Self::Keep => Arc::from(KeepExtraChannels {}),
+            Self::Remove => Arc::from(RemoveExtraChannels {}),
         }
     }
 }
@@ -59,19 +60,24 @@ impl ChannelParams {
                 .clone()
         });
 
-        // TODO add strategy to inherit category's overwrites?
-        let overwrites = self
-            .permissions_overwrites
-            .into_iter()
-            .map(|permission| permission.into(roles))
-            .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>();
+        let overwrites = match self.permissions_overwrites {
+            ChannelParamsPermissionsOverwritesStrategy::FromCategory => match &category {
+                Some(category) => category.overwrites.clone(),
+                None => vec![].into(),
+            },
+            ChannelParamsPermissionsOverwritesStrategy::Manual { items } => items
+                .into_iter()
+                .map(|permission| permission.into(roles))
+                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>()
+                .into(),
+        };
 
         AwaitingChannel {
             name: self.name,
             topic: self.topic,
             channel_type,
             category,
-            overwrites: overwrites.into(),
+            overwrites,
         }
     }
 }
@@ -96,8 +102,8 @@ mod tests {
         },
         params::{
             channel::{
-                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItems,
-                ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+                ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
@@ -111,7 +117,8 @@ mod tests {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            extra_channels_strategy: ChannelParamsExtraItems::default().strategy.into(),
+            sync_permissions: false,
+            extra_channels_strategy: ChannelParamsExtraItemsStrategy::default().into(),
         }
     }
 
@@ -151,11 +158,13 @@ mod tests {
             _type: ChannelParamsChannelType::VOICE,
             category: Some(category.name.clone()),
             topic: Some("Nice sweater".to_string()),
-            permissions_overwrites: vec![PermissionsOverwriteParams {
-                role: role.name.clone(),
-                allow: vec![Permission::ADMINISTRATOR],
-                deny: vec![Permission::SEND_MESSAGES],
-            }],
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                items: vec![PermissionsOverwriteParams {
+                    role: role.name.clone(),
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::SEND_MESSAGES],
+                }],
+            },
         };
 
         let awaiting = AwaitingChannel {
@@ -173,6 +182,31 @@ mod tests {
         (params, awaiting)
     }
 
+    fn given_matching_params_and_awaiting_with_permissions_from_categories(
+        name: &str,
+        categories: &CategoriesList<AwaitingCategory>,
+    ) -> (ChannelParams, AwaitingChannel) {
+        let category = categories.to_list().first().unwrap();
+
+        let params = ChannelParams {
+            name: name.to_string(),
+            _type: ChannelParamsChannelType::VOICE,
+            category: Some(category.name.clone()),
+            topic: Some("Nice sweater".to_string()),
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::FromCategory,
+        };
+
+        let awaiting = AwaitingChannel {
+            name: name.to_string(),
+            channel_type: ChannelType::VOICE,
+            category: Some(category.clone()),
+            topic: Some("Nice sweater".to_string()),
+            overwrites: category.overwrites.clone(),
+        };
+
+        (params, awaiting)
+    }
+
     fn given_matching_params_list_and_awaiting_list(
         name: &str,
         roles: &RolesList<AwaitingRole>,
@@ -182,9 +216,7 @@ mod tests {
 
         let params_list = ChannelsParamsList {
             items: vec![params],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::Keep,
         };
 
         let awaiting_list = AwaitingChannelsList {
@@ -203,6 +235,19 @@ mod tests {
         let roles = given_awaiting_roles(vec!["role_1"]);
         let (params, expected_awaiting) =
             given_matching_params_and_awaiting(name, &roles, &categories);
+
+        let awaiting = params.into(&roles, &categories);
+
+        assert_eq!(awaiting, expected_awaiting);
+    }
+
+    #[test]
+    fn given_permissions_overwrites_from_category_can_convert_params_to_awaiting_entity() {
+        let name = "channel_1";
+        let categories = given_awaiting_categories(vec!["category_1"]);
+        let roles = given_awaiting_roles(vec!["role_1"]);
+        let (params, expected_awaiting) =
+            given_matching_params_and_awaiting_with_permissions_from_categories(name, &categories);
 
         let awaiting = params.into(&roles, &categories);
 

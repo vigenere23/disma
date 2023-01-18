@@ -1,6 +1,6 @@
 use crate::{
     category::{CategoriesList, ExistingCategory},
-    params::{channel::ChannelParamsExtraItems, permission::PermissionsOverwriteParams},
+    params::{channel::ChannelParamsExtraItemsStrategy, permission::PermissionsOverwriteParams},
 };
 
 use super::{CategoriesParamsList, CategoryParams};
@@ -28,7 +28,8 @@ impl From<&ExistingCategory> for CategoryParams {
         Self {
             name: category.name.clone(),
             permissions_overwrites,
-            extra_channels: ChannelParamsExtraItems::default(),
+            sync_permissions: false,
+            extra_channels: ChannelParamsExtraItemsStrategy::default(),
         }
     }
 }
@@ -39,7 +40,7 @@ mod tests {
         category::{CategoriesList, ExistingCategory},
         params::{
             category::{CategoriesParamsList, CategoryParams},
-            channel::{ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy},
+            channel::ChannelParamsExtraItemsStrategy,
             permission::PermissionsOverwriteParams,
         },
         permission::{
@@ -69,9 +70,8 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            extra_channels: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            sync_permissions: false,
+            extra_channels: ChannelParamsExtraItemsStrategy::Remove,
         };
 
         (existing, params)

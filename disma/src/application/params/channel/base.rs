@@ -6,19 +6,15 @@ use crate::params::permission::PermissionsOverwriteParams;
 pub struct ChannelsParamsList {
     #[serde(default = "Vec::default")]
     pub items: Vec<ChannelParams>,
-    #[serde(default = "ChannelParamsExtraItems::default")]
-    pub extra_items: ChannelParamsExtraItems,
+    #[serde(default = "ChannelParamsExtraItemsStrategy::default")]
+    pub extra_items: ChannelParamsExtraItemsStrategy,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct ChannelParamsExtraItems {
-    pub strategy: ChannelParamsExtraItemsStrategy,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ChannelParamsExtraItemsStrategy {
-    KEEP,
-    REMOVE,
+    Keep,
+    Remove,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -30,8 +26,17 @@ pub struct ChannelParams {
     pub topic: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub category: Option<String>,
-    #[serde(default = "Vec::default")]
-    pub permissions_overwrites: Vec<PermissionsOverwriteParams>,
+    #[serde(default = "ChannelParamsPermissionsOverwritesStrategy::default")]
+    pub permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ChannelParamsPermissionsOverwritesStrategy {
+    FromCategory,
+    Manual {
+        items: Vec<PermissionsOverwriteParams>,
+    },
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -40,11 +45,9 @@ pub enum ChannelParamsChannelType {
     VOICE,
 }
 
-impl Default for ChannelParamsExtraItems {
+impl Default for ChannelParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self {
-            strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-        }
+        Self::Remove
     }
 }
 
@@ -54,13 +57,19 @@ impl Default for ChannelParamsChannelType {
     }
 }
 
+impl Default for ChannelParamsPermissionsOverwritesStrategy {
+    fn default() -> Self {
+        Self::Manual { items: vec![] }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         params::{
             channel::{
-                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItems,
-                ChannelParamsExtraItemsStrategy, ChannelsParamsList,
+                ChannelParams, ChannelParamsChannelType, ChannelParamsExtraItemsStrategy,
+                ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
@@ -76,9 +85,11 @@ mod tests {
               topic: A nice evening
               category: category_1
               permissions_overwrites:
-              - role: role_1
-                allow: [ADMINISTRATOR]
-                deny: [SEND_MESSAGES]
+                strategy: MANUAL
+                items:
+                - role: role_1
+                  allow: [ADMINISTRATOR]
+                  deny: [SEND_MESSAGES]
             extra_items:
               strategy: KEEP
         ";
@@ -88,15 +99,15 @@ mod tests {
                 _type: ChannelParamsChannelType::VOICE,
                 topic: Some("A nice evening".to_string()),
                 category: Some("category_1".to_string()),
-                permissions_overwrites: vec![PermissionsOverwriteParams {
-                    role: "role_1".to_string(),
-                    allow: vec![Permission::ADMINISTRATOR],
-                    deny: vec![Permission::SEND_MESSAGES],
-                }],
+                permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                    items: vec![PermissionsOverwriteParams {
+                        role: "role_1".to_string(),
+                        allow: vec![Permission::ADMINISTRATOR],
+                        deny: vec![Permission::SEND_MESSAGES],
+                    }],
+                },
             }],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: ChannelsParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -125,11 +136,11 @@ mod tests {
                 _type: ChannelParamsChannelType::TEXT,
                 topic: None,
                 category: None,
-                permissions_overwrites: vec![],
+                permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                    items: vec![],
+                },
             }],
-            extra_items: ChannelParamsExtraItems {
-                strategy: ChannelParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: ChannelParamsExtraItemsStrategy::Remove,
         };
 
         let params_list: ChannelsParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

@@ -6,19 +6,15 @@ use crate::permission::Permission;
 pub struct RolesParamsList {
     #[serde(default = "Vec::default")]
     pub items: Vec<RoleParams>,
-    #[serde(default = "RoleParamsExtraItems::default")]
-    pub extra_items: RoleParamsExtraItems,
+    #[serde(default = "RoleParamsExtraItemsStrategy::default")]
+    pub extra_items: RoleParamsExtraItemsStrategy,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct RoleParamsExtraItems {
-    pub strategy: RoleParamsExtraItemsStrategy,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum RoleParamsExtraItemsStrategy {
-    KEEP,
-    REMOVE,
+    Keep,
+    Remove,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -32,20 +28,16 @@ pub struct RoleParams {
     pub is_mentionable: bool,
 }
 
-impl Default for RoleParamsExtraItems {
+impl Default for RoleParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self {
-            strategy: RoleParamsExtraItemsStrategy::REMOVE,
-        }
+        Self::Remove
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{
-        params::role::{
-            RoleParams, RoleParamsExtraItems, RoleParamsExtraItemsStrategy, RolesParamsList,
-        },
+        params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
         permission::Permission,
     };
 
@@ -71,9 +63,7 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            extra_items: RoleParamsExtraItems {
-                strategy: RoleParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: RoleParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: RolesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -106,9 +96,7 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            extra_items: RoleParamsExtraItems {
-                strategy: RoleParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: RoleParamsExtraItemsStrategy::Remove,
         };
 
         let params_list: RolesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

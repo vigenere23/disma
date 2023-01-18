@@ -3,7 +3,10 @@ use crate::{
     params::permission::PermissionsOverwriteParams,
 };
 
-use super::{ChannelParams, ChannelParamsChannelType, ChannelsParamsList};
+use super::{
+    ChannelParams, ChannelParamsChannelType, ChannelParamsPermissionsOverwritesStrategy,
+    ChannelsParamsList,
+};
 
 impl From<&ChannelsList<ExistingChannel>> for ChannelsParamsList {
     fn from(channels: &ChannelsList<ExistingChannel>) -> Self {
@@ -37,7 +40,9 @@ impl From<&ExistingChannel> for ChannelParams {
             topic: channel.topic.clone(),
             _type,
             category,
-            permissions_overwrites,
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                items: permissions_overwrites,
+            },
         }
     }
 }
@@ -57,7 +62,10 @@ mod tests {
         category::ExistingCategory,
         channel::{ChannelType, ChannelsList, ExistingChannel},
         params::{
-            channel::{ChannelParams, ChannelParamsChannelType, ChannelsParamsList},
+            channel::{
+                ChannelParams, ChannelParamsChannelType,
+                ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
+            },
             permission::PermissionsOverwriteParams,
         },
         permission::{
@@ -108,11 +116,13 @@ mod tests {
             category: Some(category.name.clone()),
             _type: ChannelParamsChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
-            permissions_overwrites: vec![PermissionsOverwriteParams {
-                role: role.name.clone(),
-                allow: vec![Permission::ADMINISTRATOR],
-                deny: vec![Permission::SEND_MESSAGES],
-            }],
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
+                items: vec![PermissionsOverwriteParams {
+                    role: role.name.clone(),
+                    allow: vec![Permission::ADMINISTRATOR],
+                    deny: vec![Permission::SEND_MESSAGES],
+                }],
+            },
         };
 
         (existing, params)

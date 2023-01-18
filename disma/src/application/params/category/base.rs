@@ -1,24 +1,22 @@
 use serde::{Deserialize, Serialize};
 
-use crate::params::{channel::ChannelParamsExtraItems, permission::PermissionsOverwriteParams};
+use crate::params::{
+    channel::ChannelParamsExtraItemsStrategy, permission::PermissionsOverwriteParams,
+};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default, Clone)]
 pub struct CategoriesParamsList {
     #[serde(default = "Vec::default")]
     pub items: Vec<CategoryParams>,
-    #[serde(default = "CategoryParamsExtraItems::default")]
-    pub extra_items: CategoryParamsExtraItems,
+    #[serde(default = "CategoryParamsExtraItemsStrategy::default")]
+    pub extra_items: CategoryParamsExtraItemsStrategy,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-pub struct CategoryParamsExtraItems {
-    pub strategy: CategoryParamsExtraItemsStrategy,
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CategoryParamsExtraItemsStrategy {
-    KEEP,
-    REMOVE,
+    Keep,
+    Remove,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -26,15 +24,15 @@ pub struct CategoryParams {
     pub name: String,
     #[serde(default = "Vec::default")]
     pub permissions_overwrites: Vec<PermissionsOverwriteParams>,
-    #[serde(default = "ChannelParamsExtraItems::default")]
-    pub extra_channels: ChannelParamsExtraItems,
+    #[serde(default = "bool::default")]
+    pub sync_permissions: bool,
+    #[serde(default = "ChannelParamsExtraItemsStrategy::default")]
+    pub extra_channels: ChannelParamsExtraItemsStrategy,
 }
 
-impl Default for CategoryParamsExtraItems {
+impl Default for CategoryParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self {
-            strategy: CategoryParamsExtraItemsStrategy::REMOVE,
-        }
+        Self::Remove
     }
 }
 
@@ -42,11 +40,8 @@ impl Default for CategoryParamsExtraItems {
 mod tests {
     use crate::{
         params::{
-            category::{
-                CategoriesParamsList, CategoryParams, CategoryParamsExtraItems,
-                CategoryParamsExtraItemsStrategy,
-            },
-            channel::{ChannelParamsExtraItems, ChannelParamsExtraItemsStrategy},
+            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
+            channel::ChannelParamsExtraItemsStrategy,
             permission::PermissionsOverwriteParams,
         },
         permission::Permission,
@@ -61,6 +56,7 @@ mod tests {
               - role: role_1
                 allow: [ADMINISTRATOR]
                 deny: [SEND_MESSAGES]
+              sync_permissions: true
               extra_channels:
                 strategy: KEEP
             extra_items:
@@ -74,13 +70,10 @@ mod tests {
                     allow: vec![Permission::ADMINISTRATOR],
                     deny: vec![Permission::SEND_MESSAGES],
                 }],
-                extra_channels: ChannelParamsExtraItems {
-                    strategy: ChannelParamsExtraItemsStrategy::KEEP,
-                },
+                sync_permissions: true,
+                extra_channels: ChannelParamsExtraItemsStrategy::Keep,
             }],
-            extra_items: CategoryParamsExtraItems {
-                strategy: CategoryParamsExtraItemsStrategy::KEEP,
-            },
+            extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: CategoriesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
@@ -107,11 +100,10 @@ mod tests {
             items: vec![CategoryParams {
                 name: "category_1".to_string(),
                 permissions_overwrites: vec![],
-                extra_channels: ChannelParamsExtraItems::default(),
+                sync_permissions: false,
+                extra_channels: ChannelParamsExtraItemsStrategy::default(),
             }],
-            extra_items: CategoryParamsExtraItems {
-                strategy: CategoryParamsExtraItemsStrategy::REMOVE,
-            },
+            extra_items: CategoryParamsExtraItemsStrategy::Remove,
         };
 
         let params_list: CategoriesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

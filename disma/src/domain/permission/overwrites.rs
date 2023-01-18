@@ -35,7 +35,17 @@ where
     items: Vec<PermissionsOverwrite<R>>,
 }
 
+impl<R: Role> Default for PermissionsOverwritesList<R> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<R: Role> PermissionsOverwritesList<R> {
+    pub fn new() -> Self {
+        Self { items: vec![] }
+    }
+
     pub fn find_by_role_name(&self, name: &str) -> Option<&PermissionsOverwrite<R>> {
         self.items
             .iter()
