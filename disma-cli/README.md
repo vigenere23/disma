@@ -66,11 +66,11 @@ disma list
 
 :warning: All commands needs the evironment variable `DISCORD_BOT_TOKEN` to be set.
 
-### 🢒 `list`
+### ➤ `list`
 
 List bot's accessible servers. If you don't see access to your server, make sure to [add your bot to it](#add-a-bot-to-a-discord-server-guild).
 
-### 🢒 `compile`
+### ➤ `compile`
 
 Compile a template config to a full config file. Only the handlebars format is supported for now. Will compile to the original format (JSON or YAML).
 
@@ -81,7 +81,7 @@ Compile a template config to a full config file. Only the handlebars format is s
 - `--output, -o <OUTPUT_FILE>` : Compiled config output file.
 - `--force, -f` : Bypass the user confirmation step.
 
-### 🢒 `save`
+### ➤ `save`
 
 Save a server (guild) configuration.
 
@@ -91,7 +91,7 @@ Save a server (guild) configuration.
 - `--output, -o <OUTPUT_FILE>` : Output file path. Both `.json` and `.yaml`/`.yml` files are supported.
 - `--force, -f` : Bypass the user confirmation step.
 
-### 🢒 `apply`
+### ➤ `apply`
 
 Apply changes to a server based on a configuration file.
 
@@ -109,7 +109,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 Some examples can be found [here](./docs/examples).
 
 
-### 🢒 `roles`
+### ➤ `roles`
 
 **Fields**
 
@@ -140,7 +140,7 @@ Some examples can be found [here](./docs/examples).
 - `strategy` (`string`): Strategy for handling extra roles. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
 
 
-### 🢒 `categories`
+### ➤ `categories`
 
 **Fields**
 
@@ -164,7 +164,7 @@ Some examples can be found [here](./docs/examples).
 - `strategy` (`string`): Strategy for handling extra categories. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
 
 
-### 🢒 `channels`
+### ➤ `channels`
 
 **Fields**
 
@@ -180,7 +180,7 @@ Some examples can be found [here](./docs/examples).
 - `category` (optional `string`) : Name of the channel's parent category.
   - ⚠️ Every channel needs to have a **unique combination of *name*, *category* and *type***.
 - `topic` (optional `string`) : Topic of the channel.
-- `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+- `permissions_overwrites`: Settings for setting the permissions overwrites.
 
 **Important notes**
 
@@ -188,6 +188,29 @@ Some examples can be found [here](./docs/examples).
   - To rename a channel, please rename it in the Discord interface first, then in the config.
 - Deleted channels will **lose all their messages**.
 - You currently cannot allow channels that are not listed in the config. This should be soon permitted, at least for channels associated to categories.
+
+#### `channels.items[*].permissions_overwrites`
+
+**Fields**
+
+- `strategy`: Strategy for setting the permissions overwrites.
+
+#### `channels.items[*].permissions_overwrites.MANUAL` (default)
+
+Manualy define the list of permissions overwrites.
+
+**Fields**
+
+- `items` (`PermissionsOverwrite[]`): List of permissions overwrites.
+  - default: `[]`
+
+#### `channels.items[*].permissions_overwrites.FROM_CATEGORY`
+
+Use permissions overwrites from category.
+
+**Important notes**
+
+- This option will **panic** if the channel is not associated to a category.
 
 #### `channels.extra_items`
 
@@ -198,7 +221,7 @@ Some examples can be found [here](./docs/examples).
 
 ### Types
 
-#### 🢒 `PermissionsOverwrite`
+#### ➤ `PermissionsOverwrite`
 
 Overwrites of permissions to apply to a specific context only. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permission-overwrites).
 
@@ -208,6 +231,6 @@ Overwrites of permissions to apply to a specific context only. You can read more
 - `allow` (`Permission[]`) : Specifically allowed permissions overwrites for the role.
 - `deny` (`Permission[]`) : Specifically denied permissions overwrites for the role.
 
-#### 🢒 `Permission`
+#### ➤ `Permission`
 
 Uppercase `string` that represents Discord permissions. You can read more on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags).

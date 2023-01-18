@@ -24,8 +24,6 @@ pub struct CategoryParams {
     pub name: String,
     #[serde(default = "Vec::default")]
     pub permissions_overwrites: Vec<PermissionsOverwriteParams>,
-    #[serde(default = "bool::default")]
-    pub sync_permissions: bool,
     #[serde(default = "ChannelParamsExtraItemsStrategy::default")]
     pub extra_channels: ChannelParamsExtraItemsStrategy,
 }
@@ -56,7 +54,6 @@ mod tests {
               - role: role_1
                 allow: [ADMINISTRATOR]
                 deny: [SEND_MESSAGES]
-              sync_permissions: true
               extra_channels:
                 strategy: KEEP
             extra_items:
@@ -70,7 +67,6 @@ mod tests {
                     allow: vec![Permission::ADMINISTRATOR],
                     deny: vec![Permission::SEND_MESSAGES],
                 }],
-                sync_permissions: true,
                 extra_channels: ChannelParamsExtraItemsStrategy::Keep,
             }],
             extra_items: CategoryParamsExtraItemsStrategy::Keep,
@@ -100,7 +96,6 @@ mod tests {
             items: vec![CategoryParams {
                 name: "category_1".to_string(),
                 permissions_overwrites: vec![],
-                sync_permissions: false,
                 extra_channels: ChannelParamsExtraItemsStrategy::default(),
             }],
             extra_items: CategoryParamsExtraItemsStrategy::Remove,

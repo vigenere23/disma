@@ -82,7 +82,6 @@ mod tests {
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
             }]),
-            sync_permissions: false,
             extra_channels_strategy,
         };
 

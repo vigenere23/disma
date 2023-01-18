@@ -23,7 +23,6 @@ impl PartialEq for AwaitingCategoriesList {
 pub struct AwaitingCategory {
     pub name: String,
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
-    pub sync_permissions: bool,
     pub extra_channels_strategy: Arc<dyn ExtraChannelsStrategy>,
 }
 
@@ -31,7 +30,6 @@ impl PartialEq for AwaitingCategory {
     fn eq(&self, other: &Self) -> bool {
         self.name == other.name
             && self.overwrites == other.overwrites
-            && self.sync_permissions == other.sync_permissions
             && self.extra_channels_strategy._type() == other.extra_channels_strategy._type()
     }
 }
