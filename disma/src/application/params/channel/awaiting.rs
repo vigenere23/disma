@@ -63,7 +63,7 @@ impl ChannelParams {
         let overwrites = match self.permissions_overwrites {
             ChannelParamsPermissionsOverwritesStrategy::FromCategory => match &category {
                 Some(category) => category.overwrites.clone(),
-                None => vec![].into(),
+                None => panic!("Cannot use FROM_CATEGORY permissions overwrites strategy for channel {} because it has no category.", self.name),
             },
             ChannelParamsPermissionsOverwritesStrategy::Manual { items } => items
                 .into_iter()
@@ -117,7 +117,6 @@ mod tests {
         AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![]),
-            sync_permissions: false,
             extra_channels_strategy: ChannelParamsExtraItemsStrategy::default().into(),
         }
     }
@@ -252,6 +251,23 @@ mod tests {
         let awaiting = params.into(&roles, &categories);
 
         assert_eq!(awaiting, expected_awaiting);
+    }
+
+    #[test]
+    #[should_panic]
+    fn given_permissions_overwrites_from_category_but_no_category_when_converting_params_to_awaiting_entity_it_panics(
+    ) {
+        let categories = given_awaiting_categories(vec!["category_1"]);
+        let roles = given_awaiting_roles(vec!["role_1"]);
+        let params = ChannelParams {
+            name: "channel_1".to_string(),
+            _type: ChannelParamsChannelType::VOICE,
+            category: None,
+            topic: Some("Nice sweater".to_string()),
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::FromCategory,
+        };
+
+        params.into(&roles, &categories);
     }
 
     #[test]

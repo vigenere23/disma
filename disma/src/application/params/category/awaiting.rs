@@ -47,7 +47,6 @@ impl CategoryParams {
         AwaitingCategory {
             name: self.name,
             overwrites: overwrites.into(),
-            sync_permissions: self.sync_permissions,
             extra_channels_strategy: self.extra_channels.into(),
         }
     }
@@ -84,7 +83,6 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            sync_permissions: true,
             extra_channels: ChannelParamsExtraItemsStrategy::Remove,
         };
 
@@ -95,7 +93,6 @@ mod tests {
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
-            sync_permissions: true,
             extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
         };
 
