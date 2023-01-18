@@ -182,6 +182,31 @@ mod tests {
         (params, awaiting)
     }
 
+    fn given_matching_params_and_awaiting_with_permissions_from_categories(
+        name: &str,
+        categories: &CategoriesList<AwaitingCategory>,
+    ) -> (ChannelParams, AwaitingChannel) {
+        let category = categories.to_list().first().unwrap();
+
+        let params = ChannelParams {
+            name: name.to_string(),
+            _type: ChannelParamsChannelType::VOICE,
+            category: Some(category.name.clone()),
+            topic: Some("Nice sweater".to_string()),
+            permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::FromCategory,
+        };
+
+        let awaiting = AwaitingChannel {
+            name: name.to_string(),
+            channel_type: ChannelType::VOICE,
+            category: Some(category.clone()),
+            topic: Some("Nice sweater".to_string()),
+            overwrites: category.overwrites.clone(),
+        };
+
+        (params, awaiting)
+    }
+
     fn given_matching_params_list_and_awaiting_list(
         name: &str,
         roles: &RolesList<AwaitingRole>,
@@ -210,6 +235,19 @@ mod tests {
         let roles = given_awaiting_roles(vec!["role_1"]);
         let (params, expected_awaiting) =
             given_matching_params_and_awaiting(name, &roles, &categories);
+
+        let awaiting = params.into(&roles, &categories);
+
+        assert_eq!(awaiting, expected_awaiting);
+    }
+
+    #[test]
+    fn given_permissions_overwrites_from_category_can_convert_params_to_awaiting_entity() {
+        let name = "channel_1";
+        let categories = given_awaiting_categories(vec!["category_1"]);
+        let roles = given_awaiting_roles(vec!["role_1"]);
+        let (params, expected_awaiting) =
+            given_matching_params_and_awaiting_with_permissions_from_categories(name, &categories);
 
         let awaiting = params.into(&roles, &categories);
 
