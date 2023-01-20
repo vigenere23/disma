@@ -4,6 +4,8 @@ function compile_coverage {
     output_type=$1
     output_path=$2
 
+    echo "Generating $output_type coverage..."
+
     grcov ./target/coverage/raw \
         --binary-path ../target/debug \
         -s . \
@@ -11,6 +13,14 @@ function compile_coverage {
         --ignore-not-existing \
         --ignore "/*" \
         -o $output_path
+
+    if [[ $? -eq 0 ]]; then
+        echo "$output_type coverage outputed to $output_path"
+        return 0
+    else
+        echo "Failed to generate $output_type coverage."
+        return 1
+    fi
 }
 
 package=$1
@@ -35,13 +45,10 @@ LLVM_PROFILE_FILE="target/coverage/raw/%p-%m.profraw" \
 cargo test
 
 if [[ "$mode" == "ci" ]]; then
-    echo "Generating lcov coverage file..."
-    compile_coverage lcov ./target/coverage/coverage.info
-    echo "Codecov Coverage file outputed to $package/target/coverage/coverage.info"
+    compile_coverage lcov ./target/coverage/coverage.info || exit 1
+    compile_coverage cobertura ./target/coverage/coverage.xml || exit 1
 elif [[ "$mode" == "local" ]]; then
-    echo "Generating HTML coverage file..."
-    compile_coverage html ./target/coverage/html
-    echo "HTML Coverage file outputed to $package/target/coverage/html/index.html"
+    compile_coverage html ./target/coverage/html || exit 1
 else
     echo "Invalid argument 'mode'. Supported modes are: 'ci', 'local'." >&2
     exit 1

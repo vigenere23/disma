@@ -15,9 +15,9 @@ flag_management:
   individual_flags:
     - name: disma
       paths:
-        - disma/target/coverage/coverage.info
+        - "disma/.*"
       carryforward: true
     - name: disma-cli
       paths:
-        - disma-cli/target/coverage/coverage.info
+        - "disma-cli/.*"
       carryforward: true
