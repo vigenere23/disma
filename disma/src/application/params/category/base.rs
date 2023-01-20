@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::params::{
-    channel::ChannelParamsExtraItemsStrategy, permission::PermissionsOverwriteParams,
-};
+use crate::params::permission::PermissionsOverwriteParams;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default, Clone)]
 pub struct CategoriesParamsList {
@@ -24,11 +22,25 @@ pub struct CategoryParams {
     pub name: String,
     #[serde(default = "Vec::default")]
     pub permissions_overwrites: Vec<PermissionsOverwriteParams>,
-    #[serde(default = "ChannelParamsExtraItemsStrategy::default")]
-    pub extra_channels: ChannelParamsExtraItemsStrategy,
+    #[serde(default = "CategoryParamsExtraChannelsStrategy::default")]
+    pub extra_channels: CategoryParamsExtraChannelsStrategy,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[serde(tag = "strategy", rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CategoryParamsExtraChannelsStrategy {
+    Keep,
+    Remove,
+    OverwritePermissionsFromCategory,
 }
 
 impl Default for CategoryParamsExtraItemsStrategy {
+    fn default() -> Self {
+        Self::Remove
+    }
+}
+
+impl Default for CategoryParamsExtraChannelsStrategy {
     fn default() -> Self {
         Self::Remove
     }
@@ -38,8 +50,10 @@ impl Default for CategoryParamsExtraItemsStrategy {
 mod tests {
     use crate::{
         params::{
-            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
-            channel::ChannelParamsExtraItemsStrategy,
+            category::{
+                CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
+                CategoryParamsExtraItemsStrategy,
+            },
             permission::PermissionsOverwriteParams,
         },
         permission::Permission,
@@ -67,7 +81,7 @@ mod tests {
                     allow: vec![Permission::ADMINISTRATOR],
                     deny: vec![Permission::SEND_MESSAGES],
                 }],
-                extra_channels: ChannelParamsExtraItemsStrategy::Keep,
+                extra_channels: CategoryParamsExtraChannelsStrategy::Keep,
             }],
             extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
@@ -96,7 +110,7 @@ mod tests {
             items: vec![CategoryParams {
                 name: "category_1".to_string(),
                 permissions_overwrites: vec![],
-                extra_channels: ChannelParamsExtraItemsStrategy::default(),
+                extra_channels: CategoryParamsExtraChannelsStrategy::default(),
             }],
             extra_items: CategoryParamsExtraItemsStrategy::Remove,
         };

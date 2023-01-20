@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::{ChannelType, ChannelsList, ExistingChannel},
+    channel::{AwaitingChannel, ChannelType, ChannelsList, ExistingChannel},
     guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
     permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{AwaitingRole, ExistingRole, RolesList},
@@ -166,7 +166,7 @@ impl GuildCommander for DiscordGuildClient {
 
     fn add_channel(
         &self,
-        channel: &crate::channel::AwaitingChannel,
+        channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
     ) {
@@ -181,7 +181,7 @@ impl GuildCommander for DiscordGuildClient {
     fn update_channel(
         &self,
         id: &str,
-        channel: &crate::channel::AwaitingChannel,
+        channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
     ) {

@@ -2,14 +2,21 @@ use std::sync::Arc;
 
 use crate::{
     category::{
-        AwaitingCategoriesList, AwaitingCategory, ExtraCategoriesStrategy, KeepExtraCategories,
-        RemoveExtraCategories,
+        AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExtraCategoriesStrategy,
+        KeepExtraCategories, RemoveExtraCategories,
+    },
+    channel::{
+        ExtraChannelsStrategy, KeepExtraChannels, OverwriteExtraChannelsPermissionsWithCategory,
+        RemoveExtraChannels,
     },
     permission::PermissionsOverwrite,
     role::{AwaitingRole, RolesList},
 };
 
-use super::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy};
+use super::{
+    CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
+    CategoryParamsExtraItemsStrategy,
+};
 
 impl CategoriesParamsList {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategoriesList {
@@ -48,6 +55,25 @@ impl CategoryParams {
             name: self.name,
             overwrites: overwrites.into(),
             extra_channels_strategy: self.extra_channels.into(),
+        }
+    }
+}
+
+impl CategoryParamsExtraChannelsStrategy {
+    pub fn into(
+        self,
+        roles: &RolesList<AwaitingRole>,
+        categories: &CategoriesList<AwaitingCategory>,
+    ) -> Arc<dyn ExtraChannelsStrategy> {
+        match self {
+            Self::Keep => Arc::from(KeepExtraChannels {}),
+            Self::Remove => Arc::from(RemoveExtraChannels {}),
+            Self::OverwritePermissionsFromCategory => {
+                Arc::from(OverwriteExtraChannelsPermissionsWithCategory {
+                    roles: roles.clone(),
+                    categories,
+                })
+            }
         }
     }
 }
