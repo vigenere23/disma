@@ -11,13 +11,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  disma:
+  disma-build:
+    name: disma:build
     uses: vigenere23/disma/.github/workflows/build.template.yml@master
     with:
       package: disma
 
-  disma-cli:
-    needs: disma
+  disma-cli-build:
+    name: disma-cli:build
+    needs: disma-build
     uses: vigenere23/disma/.github/workflows/build.template.yml@master
     with:
       package: disma-cli

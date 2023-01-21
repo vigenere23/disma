@@ -1,0 +1,86 @@
+on:
+  workflow_call:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: false
+        type: string
+      binary:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      package:
+        required: true
+        type: string
+      version:
+        required: false
+        type: string
+      binary:
+        required: true
+        type: string
+
+jobs:
+  github-create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get package version
+        id: version
+        run: echo "value=$(./scripts/version.sh ${{ inputs.package }})" >> $GITHUB_OUTPUT
+
+      - uses: ncipollo/release-action@v1
+        with:
+          skipIfReleaseExists: true
+          artifacts: README.md,LICENSE
+          tag: ${{ format('{0}/v{1}', inputs.package, inputs.version || steps.version.outputs.value) }}
+
+  github-upload-release:
+    needs: github-create-release
+
+    strategy:
+      matrix:
+        include:
+          # TODO : bash scripts do not work! e.g. for getting current version
+          # - target: x86_64-pc-windows-gnu
+          #   os: windows-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            **/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('./Cargo.lock') }}
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - name: Get package version
+        id: version
+        run: echo "value=$(./scripts/version.sh ${{ inputs.package }})" >> $GITHUB_OUTPUT
+
+      - uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: ${{ inputs.binary }}
+          target: ${{ matrix.target }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: refs/tags/${{ format('{0}/v{1}', inputs.package, inputs.version || steps.version.outputs.value) }}

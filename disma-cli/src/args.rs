@@ -1,7 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[clap(name = "Disma", about)]
+#[clap(version, about)]
 pub struct ArgParser {
     #[clap(subcommand)]
     pub command: Command,

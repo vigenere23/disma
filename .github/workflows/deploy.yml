@@ -1,4 +1,4 @@
-name: Publish
+name: Deploy
 
 on:
   push:
@@ -11,15 +11,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  disma:
+  disma-publish:
+    name: disma:publish
     uses: vigenere23/disma/.github/workflows/publish.template.yml@master
     with:
       package: disma
     secrets: inherit
 
-  disma-cli:
-    needs: disma
+  disma-cli-publish:
+    name: disma-cli:publish
+    needs: disma-publish
     uses: vigenere23/disma/.github/workflows/publish.template.yml@master
     with:
       package: disma-cli
+    secrets: inherit
+
+  disma-cli-release:
+    name: disma-cli:release
+    needs: disma-cli-publish
+    uses: vigenere23/disma/.github/workflows/release.template.yml@master
+    with:
+      package: disma-cli
+      binary: disma
     secrets: inherit

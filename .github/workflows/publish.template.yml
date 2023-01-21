@@ -4,12 +4,16 @@ on:
       package:
         required: true
         type: string
+      github-release:
+        required: false
+        type: boolean
+        default: false
     secrets:
       CRATES_IO_TOKEN:
         required: true
 
 jobs:
-  publish:
+  cargo-publish:
     env:
       CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
 
