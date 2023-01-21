@@ -76,6 +76,8 @@ impl CommandFactory for AwaitingChannelsList {
                     existing_channel,
                     &mut commands,
                     matching_awaiting_category,
+                    &existing_guild.roles,
+                    &existing_guild.categories,
                 );
             }
         }
@@ -183,6 +185,8 @@ pub trait ExtraChannelsStrategy {
         extra_channel: &ExistingChannel,
         commands: &mut Vec<CommandRef>,
         awaiting_category: Option<&AwaitingCategory>,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
     );
 }
 
@@ -211,6 +215,8 @@ impl ExtraChannelsStrategy for RemoveExtraChannels {
         extra_channel: &ExistingChannel,
         commands: &mut Vec<CommandRef>,
         _awaiting_category: Option<&AwaitingCategory>,
+        _roles: &RolesList<ExistingRole>,
+        _categories: &CategoriesList<ExistingCategory>,
     ) {
         let command = DeleteChannel::new(extra_channel.clone());
         commands.push(Arc::from(command));
@@ -229,14 +235,13 @@ impl ExtraChannelsStrategy for KeepExtraChannels {
         _extra_channel: &ExistingChannel,
         _commands: &mut Vec<CommandRef>,
         _awaiting_category: Option<&AwaitingCategory>,
+        _roles: &RolesList<ExistingRole>,
+        _categories: &CategoriesList<ExistingCategory>,
     ) {
     }
 }
 
-pub struct OverwriteExtraChannelsPermissionsWithCategory {
-    roles: RolesList<ExistingRole>,
-    categories: CategoriesList<ExistingCategory>,
-}
+pub struct OverwriteExtraChannelsPermissionsWithCategory {}
 
 impl ExtraChannelsStrategy for OverwriteExtraChannelsPermissionsWithCategory {
     fn _type(&self) -> ExtraChannelsStrategyType {
@@ -248,6 +253,8 @@ impl ExtraChannelsStrategy for OverwriteExtraChannelsPermissionsWithCategory {
         extra_channel: &ExistingChannel,
         commands: &mut Vec<CommandRef>,
         awaiting_category: Option<&AwaitingCategory>,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
     ) {
         if let Some(category) = awaiting_category {
             let awaiting_channel = AwaitingChannel {
@@ -260,8 +267,8 @@ impl ExtraChannelsStrategy for OverwriteExtraChannelsPermissionsWithCategory {
             let command = UpdateChannel::new(
                 extra_channel.clone(),
                 awaiting_channel,
-                self.roles.clone(),
-                self.categories.clone(),
+                roles.clone(),
+                categories.clone(),
             );
             commands.push(Arc::from(command));
         } else {
