@@ -155,7 +155,7 @@ Some examples can be found [here](./docs/examples).
   - ⚠️ Every category needs to have a **unique *name***.
 - `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
 - `extra_channels`:
-  - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+  - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`, `SYNC_PERMISSIONS`. Default: `REMOVE`. `SYNC_PERMISSIONS` updates permissions to match categorie's.
 
 #### `categories.extra_items`
 
