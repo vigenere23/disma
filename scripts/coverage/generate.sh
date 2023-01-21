@@ -45,7 +45,6 @@ LLVM_PROFILE_FILE="target/coverage/raw/%p-%m.profraw" \
 cargo test
 
 if [[ "$mode" == "ci" ]]; then
-    compile_coverage lcov ./target/coverage/coverage.info || exit 1
     compile_coverage cobertura ./target/coverage/coverage.xml || exit 1
 elif [[ "$mode" == "local" ]]; then
     compile_coverage html ./target/coverage/html || exit 1

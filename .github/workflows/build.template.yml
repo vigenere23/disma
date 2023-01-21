@@ -53,11 +53,3 @@ jobs:
 
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash) -F ${{ inputs.package }} -f ${{ inputs.package }}/target/coverage/coverage.xml
-
-      - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          base-path: ${{ inputs.package }}
-          flag-name: ${{ inputs.package }}
-          path-to-lcov: ${{ inputs.package }}/target/coverage/coverage.info
