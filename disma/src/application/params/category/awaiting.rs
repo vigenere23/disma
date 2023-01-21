@@ -6,8 +6,7 @@ use crate::{
         RemoveExtraCategories,
     },
     channel::{
-        ExtraChannelsStrategy, KeepExtraChannels, OverwriteExtraChannelsPermissionsWithCategory,
-        RemoveExtraChannels,
+        ExtraChannelsStrategy, KeepExtraChannels, RemoveExtraChannels, SyncExtraChannelsPermissions,
     },
     permission::PermissionsOverwrite,
     role::{AwaitingRole, RolesList},
@@ -64,9 +63,7 @@ impl CategoryParamsExtraChannelsStrategy {
         match self {
             Self::Keep => Arc::from(KeepExtraChannels {}),
             Self::Remove => Arc::from(RemoveExtraChannels {}),
-            Self::OverwritePermissionsFromCategory => {
-                Arc::from(OverwriteExtraChannelsPermissionsWithCategory {})
-            }
+            Self::SyncPermissions => Arc::from(SyncExtraChannelsPermissions {}),
         }
     }
 }

@@ -31,7 +31,7 @@ pub struct CategoryParams {
 pub enum CategoryParamsExtraChannelsStrategy {
     Keep,
     Remove,
-    OverwritePermissionsFromCategory,
+    SyncPermissions,
 }
 
 impl Default for CategoryParamsExtraItemsStrategy {

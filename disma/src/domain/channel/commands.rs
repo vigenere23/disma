@@ -241,9 +241,9 @@ impl ExtraChannelsStrategy for KeepExtraChannels {
     }
 }
 
-pub struct OverwriteExtraChannelsPermissionsWithCategory {}
+pub struct SyncExtraChannelsPermissions {}
 
-impl ExtraChannelsStrategy for OverwriteExtraChannelsPermissionsWithCategory {
+impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
     fn _type(&self) -> ExtraChannelsStrategyType {
         ExtraChannelsStrategyType::OverwritePermissionsWithCategory
     }
@@ -264,6 +264,10 @@ impl ExtraChannelsStrategy for OverwriteExtraChannelsPermissionsWithCategory {
                 category: Some(category.clone()),
                 overwrites: category.overwrites.clone(),
             };
+            if extra_channel == &awaiting_channel {
+                return;
+            }
+
             let command = UpdateChannel::new(
                 extra_channel.clone(),
                 awaiting_channel,
