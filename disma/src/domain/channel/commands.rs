@@ -2,7 +2,7 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
-    category::{CategoriesList, Category, ExistingCategory},
+    category::{AwaitingCategory, CategoriesList, Category, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
     commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
     diff::Differ,
@@ -72,7 +72,13 @@ impl CommandFactory for AwaitingChannelsList {
             };
 
             if matching_awaiting_channel.is_none() {
-                extra_items_strategy.handle_extra_channel(existing_channel, &mut commands);
+                extra_items_strategy.handle_extra_channel(
+                    existing_channel,
+                    &mut commands,
+                    matching_awaiting_category,
+                    &existing_guild.roles,
+                    &existing_guild.categories,
+                );
             }
         }
 
@@ -176,8 +182,11 @@ pub trait ExtraChannelsStrategy {
     fn _type(&self) -> ExtraChannelsStrategyType;
     fn handle_extra_channel(
         &self,
-        _extra_channel: &ExistingChannel,
-        _commands: &mut Vec<CommandRef>,
+        extra_channel: &ExistingChannel,
+        commands: &mut Vec<CommandRef>,
+        awaiting_category: Option<&AwaitingCategory>,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
     );
 }
 
@@ -185,6 +194,7 @@ pub trait ExtraChannelsStrategy {
 pub enum ExtraChannelsStrategyType {
     Keep,
     Remove,
+    OverwritePermissionsWithCategory,
 }
 
 impl Debug for dyn ExtraChannelsStrategy {
@@ -204,6 +214,9 @@ impl ExtraChannelsStrategy for RemoveExtraChannels {
         &self,
         extra_channel: &ExistingChannel,
         commands: &mut Vec<CommandRef>,
+        _awaiting_category: Option<&AwaitingCategory>,
+        _roles: &RolesList<ExistingRole>,
+        _categories: &CategoriesList<ExistingCategory>,
     ) {
         let command = DeleteChannel::new(extra_channel.clone());
         commands.push(Arc::from(command));
@@ -221,6 +234,49 @@ impl ExtraChannelsStrategy for KeepExtraChannels {
         &self,
         _extra_channel: &ExistingChannel,
         _commands: &mut Vec<CommandRef>,
+        _awaiting_category: Option<&AwaitingCategory>,
+        _roles: &RolesList<ExistingRole>,
+        _categories: &CategoriesList<ExistingCategory>,
     ) {
+    }
+}
+
+pub struct SyncExtraChannelsPermissions {}
+
+impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
+    fn _type(&self) -> ExtraChannelsStrategyType {
+        ExtraChannelsStrategyType::OverwritePermissionsWithCategory
+    }
+
+    fn handle_extra_channel(
+        &self,
+        extra_channel: &ExistingChannel,
+        commands: &mut Vec<CommandRef>,
+        awaiting_category: Option<&AwaitingCategory>,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    ) {
+        if let Some(category) = awaiting_category {
+            let awaiting_channel = AwaitingChannel {
+                name: extra_channel.name(),
+                topic: extra_channel.topic.clone(),
+                channel_type: extra_channel.channel_type(),
+                category: Some(category.clone()),
+                overwrites: category.overwrites.clone(),
+            };
+            if extra_channel == &awaiting_channel {
+                return;
+            }
+
+            let command = UpdateChannel::new(
+                extra_channel.clone(),
+                awaiting_channel,
+                roles.clone(),
+                categories.clone(),
+            );
+            commands.push(Arc::from(command));
+        } else {
+            panic!("Category cannot be empty for overriding permissions overwrites of extra channel {}", extra_channel.name());
+        }
     }
 }

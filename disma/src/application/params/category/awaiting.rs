@@ -5,11 +5,17 @@ use crate::{
         AwaitingCategoriesList, AwaitingCategory, ExtraCategoriesStrategy, KeepExtraCategories,
         RemoveExtraCategories,
     },
+    channel::{
+        ExtraChannelsStrategy, KeepExtraChannels, RemoveExtraChannels, SyncExtraChannelsPermissions,
+    },
     permission::PermissionsOverwrite,
     role::{AwaitingRole, RolesList},
 };
 
-use super::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy};
+use super::{
+    CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
+    CategoryParamsExtraItemsStrategy,
+};
 
 impl CategoriesParamsList {
     pub fn into(self, roles: &RolesList<AwaitingRole>) -> AwaitingCategoriesList {
@@ -52,6 +58,16 @@ impl CategoryParams {
     }
 }
 
+impl CategoryParamsExtraChannelsStrategy {
+    pub fn into(self) -> Arc<dyn ExtraChannelsStrategy> {
+        match self {
+            Self::Keep => Arc::from(KeepExtraChannels {}),
+            Self::Remove => Arc::from(RemoveExtraChannels {}),
+            Self::SyncPermissions => Arc::from(SyncExtraChannelsPermissions {}),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
@@ -60,8 +76,10 @@ mod tests {
         category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
         channel::RemoveExtraChannels,
         params::{
-            category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraItemsStrategy},
-            channel::ChannelParamsExtraItemsStrategy,
+            category::{
+                CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
+                CategoryParamsExtraItemsStrategy,
+            },
             permission::PermissionsOverwriteParams,
         },
         permission::{
@@ -83,7 +101,7 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            extra_channels: ChannelParamsExtraItemsStrategy::Remove,
+            extra_channels: CategoryParamsExtraChannelsStrategy::Remove,
         };
 
         let awaiting_entity = AwaitingCategory {
