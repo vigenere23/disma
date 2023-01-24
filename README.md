@@ -4,6 +4,8 @@
 
 [![Build](https://github.com/vigenere23/disma/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/vigenere23/disma/actions/workflows/build.yml)
 [![Deploy](https://github.com/vigenere23/disma/actions/workflows/deploy.yml/badge.svg)](https://github.com/vigenere23/disma/actions/workflows/deploy.yml)
+[![disma](https://img.shields.io/crates/v/disma?label=disma)](https://crates.io/crates/disma)
+[![disma-cli](https://img.shields.io/crates/v/disma-cli?label=disma-cli)](https://crates.io/crates/disma-cli)
 
 **👨🏼‍🔧 Discord server management has never been easier!**
 
