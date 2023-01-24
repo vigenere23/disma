@@ -3,6 +3,7 @@
 # Disma
 
 [![Build](https://github.com/vigenere23/disma/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/vigenere23/disma/actions/workflows/build.yml)
+[![Deploy](https://github.com/vigenere23/disma/actions/workflows/deploy.yml/badge.svg)](https://github.com/vigenere23/disma/actions/workflows/deploy.yml)
 
 **👨🏼‍🔧 Discord server management has never been easier!**
 
