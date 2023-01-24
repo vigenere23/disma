@@ -13,12 +13,15 @@ on:
   workflow_dispatch:
     inputs:
       package:
+        description: Monorepo package
         required: true
         type: string
       version:
+        description: Version of the package to release
         required: false
         type: string
       binary:
+        description: Executable command to build
         required: true
         type: string
 
@@ -36,7 +39,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           skipIfReleaseExists: true
-          artifacts: README.md,LICENSE
+          artifacts: LICENSE,README.md,schema.json
           tag: ${{ format('{0}/v{1}', inputs.package, inputs.version || steps.version.outputs.value) }}
 
   github-upload-release:
