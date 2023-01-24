@@ -1,5 +1,9 @@
 # ⚙️ Guild configuration
 
+The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild). A [JSON Schema](https://github.com/vigenere23/disma/blob/master/schema.json) is also available.
+
+**Table of content**
+
 - [`roles`](#roles)
   - [`roles.items[*]`](#rolesitems)
   - [`roles.extra_items`](#rolesextra_items)
@@ -14,14 +18,12 @@
   - [`PermissionsOverwrite`](#permissionsoverwrite)
   - [`Permission`](#permission)
 
-The configuration file can be either a JSON file (`.json`) or a YAML file (`.yaml` or `.yml`). YAML file can include anchors and merges. It is used to describe the wanted state or a Discord server (guild). A [JSON Schema](https://github.com/vigenere23/disma/blob/master/schema.json) is also available.
-
 ## `roles`
 
 **Fields**
 
 - `items`: List of roles.
-- `extra_items`: Extra items config.
+- `extra_items`: Extra items params.
 
 ### `roles.items[*]`
 
@@ -29,7 +31,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 
 - `name` (`string`) : Name of the role.
   - ⚠️ Every role needs to have a **unique _name_**.
-- `permissions` (`string[]`) : List of permissions by name. You can read more about Discord's permissions on the [Discord Developer Portal](https://discord.com/developers/docs/topics/permissions).
+- `permissions` (`Permission[]`) : List of [permissions](#permission).
 - `show_in_sidebar` (`bool`) : Show connection status of members with this role in the Members sidebar. The members will be categorized by role.
 - `is_mentionable` (`bool`) : Allow everyone to mention this role with `@` (ex: `@team-01`).
 - `color` (optional `string`) : Color of the role, in hexadecimal format (without the `#`).
@@ -51,7 +53,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 **Fields**
 
 - `items`: List of categories.
-- `extra_items`: Extra items config.
+- `extra_items`: Extra items params.
 
 ### `categories.items[*]`
 
@@ -59,7 +61,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 
 - `name` (`string`) : Name of the category.
   - ⚠️ Every category needs to have a **unique _name_**.
-- `permissions_overwrites` (`PermissionsOverwrite[]`) : List of permissions overwrites.
+- `permissions_overwrites` (`PermissionsOverwrite[]`) : List of [permissions overwrites](#permissionsoverwrite).
 - `extra_channels`:
   - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`, `SYNC_PERMISSIONS`. Default: `REMOVE`. `SYNC_PERMISSIONS` updates permissions to match categorie's.
 
@@ -74,7 +76,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 **Fields**
 
 - `items`: List of channels.
-- `extra_items`: Extra items config.
+- `extra_items`: Extra items params.
 
 ### `channels.items[*]`
 
@@ -85,7 +87,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 - `category` (optional `string`) : Name of the channel's parent category.
   - ⚠️ Every channel needs to have a **unique combination of _name_, _category_ and _type_**.
 - `topic` (optional `string`) : Topic of the channel.
-- `permissions_overwrites`: Settings for setting the permissions overwrites.
+- `permissions_overwrites`: Params for setting the permissions overwrites.
 
 **Important notes**
 
@@ -106,7 +108,7 @@ Manualy define the list of permissions overwrites.
 
 **Fields**
 
-- `items` (`PermissionsOverwrite[]`): List of permissions overwrites.
+- `items` (`PermissionsOverwrite[]`): List of [permissions overwrites](#permissionsoverwrite).
   - default: `[]`
 
 #### `FROM_CATEGORY`
@@ -132,8 +134,8 @@ Overwrites of permissions to apply to a specific context only. You can read more
 **Fields**
 
 - `role` (`string`) : Name of the role to apply overwrites to.
-- `allow` (`Permission[]`) : Specifically allowed permissions overwrites for the role.
-- `deny` (`Permission[]`) : Specifically denied permissions overwrites for the role.
+- `allow` (`Permission[]`) : Specifically allowed these [permissions](#permission). for the role.
+- `deny` (`Permission[]`) : Specifically denied these [permissions](#permission). for the role.
 
 ### `Permission`
 
