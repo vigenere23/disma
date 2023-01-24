@@ -1,12 +1,10 @@
-[⬅ Main page](https://github.com/vigenere23/disma)
-
 <div align="center">
 
 # Disma - CLI
 
 [![disma-cli](https://img.shields.io/crates/v/disma-cli)](https://crates.io/crates/disma-cli)
 
-**👨🏼‍🔧 Discord server management has never been easier!**
+**Command line interface for [disma](https://github.com/vigenere23/disma).**
 
 </div>
 
