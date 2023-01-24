@@ -1,34 +1,34 @@
 roles:
   items:
-  - name: '@everyone'
-    permissions: []
-    show_in_sidebar: false
-    is_mentionable: false
-  - name: disma
-    permissions:
-    - ADMINISTRATOR
-    show_in_sidebar: false
-    is_mentionable: false
+    - name: "@everyone"
+      permissions: []
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: disma
+      permissions:
+        - ADMINISTRATOR
+      show_in_sidebar: false
+      is_mentionable: false
   extra_items:
     strategy: REMOVE
 
 categories:
   items:
-  - name: Category
-    permissions_overwrites:
-    - role: '@everyone'
-      allow:
-      - MANAGE_CHANNELS
-    extra_channels:
-      strategy: SYNC_PERMISSIONS
+    - name: Category
+      permissions_overwrites:
+        - role: "@everyone"
+          allow:
+            - MANAGE_CHANNELS
+      extra_channels:
+        strategy: SYNC_PERMISSIONS
   extra_items:
     strategy: REMOVE
 
 channels:
   items:
-  - category: Category
-    name: text
-    permissions_overwrites:
-      strategy: FROM_CATEGORY
+    - category: Category
+      name: text
+      permissions_overwrites:
+        strategy: FROM_CATEGORY
   extra_items:
     strategy: REMOVE
