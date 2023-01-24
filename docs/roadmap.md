@@ -36,4 +36,4 @@
 - [ ] Cli
   - [ ] Examples
   - [ ] Guide
-  - [ ] JSON and YAML schemas for config
+  - [x] JSON and YAML schemas for config
