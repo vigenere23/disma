@@ -4,6 +4,7 @@
 
 [![Build](https://github.com/vigenere23/disma/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/vigenere23/disma/actions/workflows/build.yml)
 [![Deploy](https://github.com/vigenere23/disma/actions/workflows/deploy.yml/badge.svg)](https://github.com/vigenere23/disma/actions/workflows/deploy.yml)
+[![Website](https://img.shields.io/website?down_color=red&down_message=down&up_color=blue&up_message=up&url=https%3A%2F%2Fvigenere23.github.io%2Fdisma%2F)](https://vigenere23.github.io/disma/)
 [![disma](https://img.shields.io/crates/v/disma?label=disma)](https://crates.io/crates/disma)
 [![disma-cli](https://img.shields.io/crates/v/disma-cli?label=disma-cli)](https://crates.io/crates/disma-cli)
 
