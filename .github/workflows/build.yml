@@ -23,3 +23,34 @@ jobs:
     uses: vigenere23/disma/.github/workflows/build.template.yml@master
     with:
       package: disma-cli
+
+  deploy-website:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: site
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.26.1
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.13.0"
+          cache: "pnpm"
+          cache-dependency-path: "site/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build --base=/disma
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: site/dist
