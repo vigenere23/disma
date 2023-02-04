@@ -1,7 +1,7 @@
 import { Component } from "solid-js"
 import { LinkButton } from "./Button"
 import { Logo } from "./Logo"
-import { FaBrandsGithub, FaSolidCubes } from "solid-icons/fa"
+import { FaBrandsGithub } from "solid-icons/fa"
 
 export const Header: Component = () => {
   return (
@@ -14,11 +14,6 @@ export const Header: Component = () => {
           text="Repo"
           link="https://github.com/vigenere23/disma"
           icon={FaBrandsGithub}
-        ></LinkButton>
-        <LinkButton
-          text="Crate"
-          link="https://crates.io/disma-cli"
-          icon={FaSolidCubes}
         ></LinkButton>
       </div>
     </header>

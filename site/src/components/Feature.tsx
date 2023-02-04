@@ -1,18 +1,25 @@
 import { Component, For, JSXElement } from "solid-js"
-import { Feature, features } from "../data/features"
+import { Feature, features, Power, powers } from "../data/features"
 import { CodeBlock } from "./CodeBlock"
 
 export const FeatureSection: Component = () => {
   return (
     <section>
       <Features></Features>
-      {/* <Powers></Powers> */}
+      <Powers></Powers>
     </section>
   )
 }
 
-const SectionHeading: Component<{ children: JSXElement }> = ({ children }) => {
-  return <h2 class="mb-16 text-center text-5xl">{children}</h2>
+const SectionHeading: Component<{
+  children: JSXElement
+  className?: string
+}> = ({ children, className }) => {
+  return (
+    <h2 class={`text-center text-5xl ${className ? className : ""}`}>
+      {children}
+    </h2>
+  )
 }
 
 const Features: Component = () => {
@@ -21,8 +28,8 @@ const Features: Component = () => {
   }
 
   return (
-    <div class="my-12 mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-4 sm:px-8">
-      <SectionHeading>Features</SectionHeading>
+    <div class="mx-auto flex w-full max-w-6xl flex-col items-center justify-center py-16 px-4 sm:px-8">
+      <SectionHeading className="mb-16">Features</SectionHeading>
       <For each={features}>
         {(feature, index) => (
           <>
@@ -32,6 +39,7 @@ const Features: Component = () => {
             <FeatureItem
               feature={feature}
               reversed={isReversed(index())}
+              className={`${index() + 1 < features.length ? "pb-16" : ""}`}
             ></FeatureItem>
           </>
         )}
@@ -43,14 +51,21 @@ const Features: Component = () => {
 type FeatureItemProps = {
   feature: Feature
   reversed: boolean
+  className?: string
 }
 
-const FeatureItem: Component<FeatureItemProps> = ({ feature, reversed }) => {
+const FeatureItem: Component<FeatureItemProps> = ({
+  feature,
+  reversed,
+  className,
+}) => {
   return (
     <div
       class={`flex flex-col ${
         reversed ? "md:flex-row-reverse" : "md:flex-row"
-      } w-full items-center justify-between py-12 md:py-16`}
+      } ${
+        className ? className : ""
+      } w-full items-center justify-between pt-16`}
     >
       <div
         class={`md:grow md:basis-6/12 ${
@@ -74,8 +89,29 @@ const FeatureItem: Component<FeatureItemProps> = ({ feature, reversed }) => {
 
 const Powers: Component = () => {
   return (
-    <div>
-      <SectionHeading>Powers</SectionHeading>
+    <div class="py-16">
+      <SectionHeading className="mb-32">Powers</SectionHeading>
+      <div class="mx-auto grid w-full max-w-3xl grid-cols-2 gap-4 px-4 sm:gap-8 sm:px-8 md:grid-cols-3">
+        <For each={powers}>
+          {(power) => <PowerItem power={power}></PowerItem>}
+        </For>
+      </div>
+    </div>
+  )
+}
+
+type PowerItemProps = {
+  power: Power
+}
+
+const PowerItem: Component<PowerItemProps> = ({ power }) => {
+  return (
+    <div class="flex cursor-pointer flex-col items-center rounded-md bg-dark-1 px-4 py-8 text-center text-light-1 shadow-2xl transition-all hover:opacity-90 hover:shadow-dark-4 sm:px-8">
+      <div class="flex aspect-square w-full max-w-[90px] items-center justify-center rounded-full bg-light-1 text-dark-1">
+        {power.icon()}
+      </div>
+      <h3 class="my-6 text-3xl">{power.title}</h3>
+      <p>{power.description}</p>
     </div>
   )
 }

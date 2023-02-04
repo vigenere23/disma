@@ -10,8 +10,10 @@ export const App: Component = () => {
     <div>
       <Header></Header>
       <Hero></Hero>
-      <Intro></Intro>
-      <FeatureSection></FeatureSection>
+      <main class="py-16">
+        <Intro></Intro>
+        <FeatureSection></FeatureSection>
+      </main>
       <Footer></Footer>
     </div>
   )

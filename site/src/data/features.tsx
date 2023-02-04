@@ -1,5 +1,12 @@
-import { IconTypes } from "solid-icons"
-import { FaSolidFireFlameCurved } from "solid-icons/fa"
+import {
+  FaSolidBolt,
+  FaSolidBriefcase,
+  FaSolidCodeFork,
+  FaSolidGem,
+  FaSolidLightbulb,
+} from "solid-icons/fa"
+import { ImCheckmark } from "solid-icons/im"
+import { JSXElement } from "solid-js"
 
 export type Feature = {
   title: string
@@ -90,13 +97,38 @@ channels:
 export type Power = {
   title: string
   description: string
-  icon: IconTypes
+  icon: () => JSXElement
 }
 
 export const powers: Power[] = [
   {
+    title: "Simple",
+    description: "Just a small YAML file, with schema validation",
+    icon: () => <FaSolidLightbulb size={36}></FaSolidLightbulb>,
+  },
+  {
     title: "Fast",
-    description: "",
-    icon: FaSolidFireFlameCurved,
+    description: "Builded with Rust, one of the fastest language",
+    icon: () => <FaSolidBolt size={36}></FaSolidBolt>,
+  },
+  {
+    title: "Portable",
+    description: "Easily install with curl, no Cargo needed",
+    icon: () => <FaSolidBriefcase size={36}></FaSolidBriefcase>,
+  },
+  {
+    title: "Ready",
+    description: "Already-made templates for the most common configs",
+    icon: () => <ImCheckmark size={36}></ImCheckmark>,
+  },
+  {
+    title: "Flexible",
+    description: "Create your own implementation with the core library",
+    icon: () => <FaSolidCodeFork size={36}></FaSolidCodeFork>,
+  },
+  {
+    title: "Complete",
+    description: "Manage everything, from roles  all the way to channels",
+    icon: () => <FaSolidGem size={36}></FaSolidGem>,
   },
 ]
