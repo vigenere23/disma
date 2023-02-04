@@ -24,6 +24,14 @@
     @apply font-mono font-medium !important;
   }
 
+  pre[class*="language-"] {
+    @apply !m-0;
+  }
+
+  code[class*="language-"] {
+    padding-right: 16px;
+  }
+
   code[class*="language-"] .block,
   pre[class*="language-"] .block {
     display: inline !important;

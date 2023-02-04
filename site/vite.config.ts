@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     solidPlugin(),
     prismjsPlugin({
-      languages: ["rust", "handlebars", "bash", "yaml"],
+      languages: ["handlebars", "bash", "yaml", "diff"],
     }),
   ],
   server: {

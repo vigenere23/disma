@@ -10,6 +10,7 @@ specifiers:
   solid-icons: ^1.0.4
   solid-js: ^1.6.9
   tailwindcss: ^3.2.4
+  typed.js: ^2.0.12
   typescript: ^4.9.4
   vite: ^4.0.4
   vite-plugin-prismjs: ^0.0.8
@@ -25,6 +26,7 @@ devDependencies:
   solid-icons: 1.0.4_solid-js@1.6.9
   solid-js: 1.6.9
   tailwindcss: 3.2.4_postcss@8.4.21
+  typed.js: 2.0.12
   typescript: 4.9.4
   vite: 4.0.4
   vite-plugin-prismjs: 0.0.8_prismjs@1.29.0
@@ -1343,6 +1345,10 @@ packages:
     engines: {node: '>=8.0'}
     dependencies:
       is-number: 7.0.0
+    dev: true
+
+  /typed.js/2.0.12:
+    resolution: {integrity: sha512-lyACZh1cu+vpfYY3DG/bvsGLXXbdoDDpWxmqta10IQUdMXisMXOEyl+jos+YT9uBbzK4QaKYBjT3R0kTJO0Slw==}
     dev: true
 
   /typescript/4.9.4:
