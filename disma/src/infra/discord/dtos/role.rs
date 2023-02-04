@@ -43,7 +43,7 @@ impl Into<ExistingRole> for RoleResponse {
     fn into(self) -> ExistingRole {
         let color = match self.color {
             0 => None,
-            color => Some(format!("{:0>6}", format!("{:x}", color))),
+            color => Some(format!("{:0>6}", format!("{color:x}"))),
         };
 
         ExistingRole {

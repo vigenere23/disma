@@ -20,17 +20,17 @@ impl DiscordApi {
         let client = Client::new()
             .base_url("https://discord.com/api/v9")
             .header(USER_AGENT, "")
-            .header(AUTHORIZATION, &format!("Bot {}", bot_token));
+            .header(AUTHORIZATION, &format!("Bot {bot_token}"));
         Self { client }
     }
 
     pub fn list_roles(&self, guild_id: &str) -> Result<Vec<RoleResponse>, String> {
-        let url = format!("/guilds/{}/roles", guild_id);
+        let url = format!("/guilds/{guild_id}/roles");
         self.client.clone().get(&url).send().unwrap().parsed_body()
     }
 
     pub fn add_role(&self, guild_id: &str, body: RoleRequest) -> Result<RoleResponse, String> {
-        let url = format!("/guilds/{}/roles", guild_id);
+        let url = format!("/guilds/{guild_id}/roles");
         let response =
             self.handle_request(|| self.client.clone().post(&url).json_body(body)?.send());
         self.handle_response(response)
@@ -43,7 +43,7 @@ impl DiscordApi {
         role_id: &str,
         body: RoleRequest,
     ) -> Result<RoleResponse, String> {
-        let url = format!("/guilds/{}/roles/{}", guild_id, role_id);
+        let url = format!("/guilds/{guild_id}/roles/{role_id}");
         let response =
             self.handle_request(|| self.client.clone().patch(&url).json_body(body)?.send());
         self.handle_response(response)
@@ -51,7 +51,7 @@ impl DiscordApi {
     }
 
     pub fn delete_role(&self, guild_id: &str, role_id: &str) -> Result<(), String> {
-        let url = format!("/guilds/{}/roles/{}", guild_id, role_id);
+        let url = format!("/guilds/{guild_id}/roles/{role_id}");
         let response = self.handle_request(|| self.client.clone().delete(&url).send());
         self.handle_response(response).map(|_| ())
     }
@@ -63,7 +63,7 @@ impl DiscordApi {
     }
 
     pub fn list_channels(&self, guild_id: &str) -> Result<Vec<ChannelResponse>, String> {
-        let url = format!("/guilds/{}/channels", guild_id);
+        let url = format!("/guilds/{guild_id}/channels");
         let response = self.handle_request(|| self.client.clone().get(&url).send());
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())
@@ -74,7 +74,7 @@ impl DiscordApi {
         guild_id: &str,
         body: ChannelRequest,
     ) -> Result<ChannelResponse, String> {
-        let url = format!("/guilds/{}/channels", guild_id);
+        let url = format!("/guilds/{guild_id}/channels");
         let response =
             self.handle_request(|| self.client.clone().post(&url).json_body(body)?.send());
         self.handle_response(response)
@@ -86,7 +86,7 @@ impl DiscordApi {
         id: &str,
         body: ChannelRequest,
     ) -> Result<ChannelResponse, String> {
-        let url = format!("/channels/{}", id);
+        let url = format!("/channels/{id}");
         let response =
             self.handle_request(|| self.client.clone().patch(&url).json_body(body)?.send());
         self.handle_response(response)
@@ -94,7 +94,7 @@ impl DiscordApi {
     }
 
     pub fn delete_channel(&self, id: &str) -> Result<(), String> {
-        let url = format!("/channels/{}", id);
+        let url = format!("/channels/{id}");
         let response = self.handle_request(|| self.client.clone().delete(&url).send());
         self.handle_response(response).map(|_| ())
     }
@@ -106,7 +106,7 @@ impl DiscordApi {
         let result = f();
 
         match result {
-            Err(message) => panic!("Error while sending Discord request : {}", message),
+            Err(message) => panic!("Error while sending Discord request : {message}"),
             Ok(response) => response,
         }
     }

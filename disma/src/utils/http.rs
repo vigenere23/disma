@@ -116,10 +116,7 @@ impl Request {
 
     pub fn json_body<T: Serialize>(mut self, body: T) -> Result<Self, String> {
         let json_body = serde_json::to_string(&body).map_err(|error| {
-            format!(
-                "Error occured while serializing json body. Error: {}",
-                error
-            )
+            format!("Error occured while serializing json body. Error: {error}")
         })?;
 
         self.body = Some(json_body);
@@ -139,12 +136,12 @@ impl Request {
 
         let http_response = request
             .send()
-            .map_err(|error| format!("Could not send request. Error: {}", error))?;
+            .map_err(|error| format!("Could not send request. Error: {error}"))?;
 
         let status = http_response.status();
         let text_content = http_response
             .text()
-            .map_err(|error| format!("Could not fetch response text content. Error: {}", error))?;
+            .map_err(|error| format!("Could not fetch response text content. Error: {error}"))?;
 
         let response = Response::new(self, status, &text_content);
         Ok(response)

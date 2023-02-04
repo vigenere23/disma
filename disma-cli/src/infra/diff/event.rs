@@ -7,13 +7,13 @@ impl CommandEventListener for CliCommandEventListener {
         match event_type {
             CommandEventType::BeforeExecution => match description {
                 CommandDescription::Create(entity, name) => {
-                    print!("- 🆕 Adding {:?} {name}...", entity)
+                    print!("- 🆕 Adding {entity:?} {name}...")
                 }
                 CommandDescription::Delete(entity, name) => {
-                    print!("- 🗑️  Removing {:?} {name}...", entity)
+                    print!("- 🗑️  Removing {entity:?} {name}...")
                 }
                 CommandDescription::Update(entity, name, _diff) => {
-                    print!("- 🔄 Updating {:?} {name}...", entity)
+                    print!("- 🔄 Updating {entity:?} {name}...")
                 }
             },
             CommandEventType::AfterExecution => println!("Done"),

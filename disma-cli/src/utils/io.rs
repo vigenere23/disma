@@ -6,7 +6,7 @@ use yaml_rust::{YamlEmitter, YamlLoader};
 
 fn serialize_json<T: Serialize>(object: &T, file_path: &Path) {
     let file_content = serde_json::to_string_pretty(object).unwrap();
-    fs::write(file_path, format!("{}\n", file_content)).unwrap();
+    fs::write(file_path, format!("{file_content}\n")).unwrap();
 }
 
 fn deserialize_json<T: DeserializeOwned>(file_path: &Path) -> T {

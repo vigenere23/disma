@@ -115,7 +115,7 @@ impl PermissionsList {
             code |= permission.code()
         }
 
-        format!("{}", code)
+        code.to_string()
     }
 
     pub fn to_list(&self) -> Vec<Permission> {

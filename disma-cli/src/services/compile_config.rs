@@ -46,7 +46,7 @@ impl CompileConfig {
         if !force && output_path.exists() {
             println!(
                 "{}",
-                format!("➜ ❗ A file named '{}' already exists.", output_file).bold()
+                format!("➜ ❗ A file named '{output_file}' already exists.").bold()
             );
 
             if !ask_user_confirmation("Do you still want to proceeed?") {
