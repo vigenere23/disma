@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="21.166666mm"
+   height="21.166666mm"
+   viewBox="0 0 21.166666 21.166666"
+   version="1.1"
+   id="svg5"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient2466">
+      <stop
+         style="stop-color:#f9f8fb;stop-opacity:1;"
+         offset="0"
+         id="stop2464" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient1734">
+      <stop
+         style="stop-color:#272c35;stop-opacity:1;"
+         offset="0"
+         id="stop1732" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient2466"
+       id="linearGradient2468"
+       x1="81.219902"
+       y1="30.282421"
+       x2="108.17651"
+       y2="30.282421"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.77272726,0,0,0.77272726,-45.781672,8.5452763)" />
+    <linearGradient
+       xlink:href="#linearGradient1734"
+       id="linearGradient3046"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.52226623,0.68394381)"
+       x1="23.005816"
+       y1="31.261387"
+       x2="32.827141"
+       y2="31.261387" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-16.810878,-21.361995)">
+    <circle
+       style="fill:url(#linearGradient2468);fill-opacity:1;stroke-width:0.20445"
+       id="path1004"
+       cx="27.394211"
+       cy="31.945328"
+       r="10.583333" />
+    <text
+       xml:space="preserve"
+       style="font-size:14.1111px;fill:url(#linearGradient3046);fill-opacity:1;stroke-width:0.264583"
+       x="22.709326"
+       y="36.489101"
+       id="text113"><tspan
+         id="tspan111"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.1111px;font-family:Kanit;-inkscape-font-specification:Kanit;fill:url(#linearGradient3046);fill-opacity:1;stroke-width:0.264583"
+         x="22.709326"
+         y="36.489101">D</tspan></text>
+  </g>
+</svg>
