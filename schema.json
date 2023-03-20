@@ -99,6 +99,13 @@
               "name": {
                 "type": "string"
               },
+              "topic": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["TEXT", "VOICE"]
+              },
               "category": {
                 "type": "string"
               },
