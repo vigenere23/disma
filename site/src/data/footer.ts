@@ -10,7 +10,7 @@ export const footerLinks: FooterLink[] = [
   },
   {
     text: "Crates.io",
-    link: "https://crates.io/disma-cli",
+    link: "https://crates.io/crates/disma-cli",
   },
   // TODO docs.rs
 ]
