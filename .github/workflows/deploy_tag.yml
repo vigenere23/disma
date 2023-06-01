@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - "*/v*.*.*"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  disma_publish-crate:
+    name: disma:publish-crate
+    uses: ./.github/workflows/publish.template.yml
+    with:
+      package: disma
+    secrets: inherit
+
+  disma-cli_publish-crate:
+    name: disma-cli:publish-crate
+    needs: disma_publish-crate
+    uses: ./.github/workflows/publish.template.yml
+    with:
+      package: disma-cli
+    secrets: inherit
+
+  disma-cli_github_release:
+    name: disma-cli:github-release
+    needs: disma-cli_publish-crate
+    uses: ./.github/workflows/release.template.yml
+    with:
+      package: disma-cli
+      binary: disma
+    secrets: inherit
