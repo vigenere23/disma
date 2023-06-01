@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "master"
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  disma_build:
+    name: disma:build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma
+
+  disma-cli_build:
+    name: disma-cli:build
+    needs: disma_build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma-cli

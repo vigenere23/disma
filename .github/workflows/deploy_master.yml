@@ -1,29 +1,16 @@
-name: Build
+name: Deploy
 
 on:
   push:
     branches:
       - "master"
-  pull_request:
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
-  disma-build:
-    name: disma:build
-    uses: vigenere23/disma/.github/workflows/build.template.yml@master
-    with:
-      package: disma
-
-  disma-cli-build:
-    name: disma-cli:build
-    needs: disma-build
-    uses: vigenere23/disma/.github/workflows/build.template.yml@master
-    with:
-      package: disma-cli
-
   deploy-website:
     runs-on: ubuntu-latest
 
