@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::{error::Error, fmt::Display};
+
 use reqwest::{
     header::{HeaderMap, HeaderName, HeaderValue, CONTENT_TYPE},
     Method, StatusCode,
@@ -7,7 +9,7 @@ use reqwest::{
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct Client {
     base_url: String,
     base_headers: HeaderMap,
@@ -66,6 +68,31 @@ impl Client {
 }
 
 #[derive(Debug)]
+pub enum HttpError {
+    SendingRequest(String),
+    ParsingTextResponse(String),
+    SendingJsonPayload(String),
+}
+
+impl Display for HttpError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::SendingRequest(description) => {
+                f.write_str(&format!("Could not send request. Error: {description}"))
+            }
+            Self::SendingJsonPayload(description) => f.write_str(&format!(
+                "Error occured while serializing json body. Error: {description}"
+            )),
+            Self::ParsingTextResponse(description) => f.write_str(&format!(
+                "Could not fetch response text content. Error: {description}"
+            )),
+        }
+    }
+}
+
+impl Error for HttpError {}
+
+#[derive(Debug)]
 pub struct Request {
     method: Method,
     url: String,
@@ -114,16 +141,15 @@ impl Request {
         self
     }
 
-    pub fn json_body<T: Serialize>(mut self, body: T) -> Result<Self, String> {
-        let json_body = serde_json::to_string(&body).map_err(|error| {
-            format!("Error occured while serializing json body. Error: {error}")
-        })?;
+    pub fn json_body<T: Serialize>(mut self, body: T) -> Result<Self, HttpError> {
+        let json_body = serde_json::to_string(&body)
+            .map_err(|error| HttpError::SendingJsonPayload(error.to_string()))?;
 
         self.body = Some(json_body);
         Ok(self.header(CONTENT_TYPE, "application/json"))
     }
 
-    pub fn send(self) -> Result<Response, String> {
+    pub fn send(self) -> Result<Response, HttpError> {
         let client = reqwest::blocking::Client::new();
         let mut request = client
             .request(self.method.clone(), self.url.clone())
@@ -136,12 +162,12 @@ impl Request {
 
         let http_response = request
             .send()
-            .map_err(|error| format!("Could not send request. Error: {error}"))?;
+            .map_err(|error| HttpError::SendingRequest(error.to_string()))?;
 
         let status = http_response.status();
         let text_content = http_response
             .text()
-            .map_err(|error| format!("Could not fetch response text content. Error: {error}"))?;
+            .map_err(|error| HttpError::ParsingTextResponse(error.to_string()))?;
 
         let response = Response::new(self, status, &text_content);
         Ok(response)

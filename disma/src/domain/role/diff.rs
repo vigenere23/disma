@@ -72,9 +72,9 @@ mod tests {
         };
 
         let target = AwaitingRole {
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
-            color: color.clone(),
+            color,
             is_mentionable,
             show_in_sidebar,
         };
@@ -108,9 +108,9 @@ mod tests {
         };
 
         let target = AwaitingRole {
-            name: name.clone(),
-            permissions: permissions.clone(),
-            color: color.clone(),
+            name,
+            permissions,
+            color,
             is_mentionable: true,
             show_in_sidebar,
         };
@@ -144,9 +144,9 @@ mod tests {
         };
 
         let target = AwaitingRole {
-            name: name.clone(),
-            permissions: permissions.clone(),
-            color: color.clone(),
+            name,
+            permissions,
+            color,
             is_mentionable,
             show_in_sidebar: false,
         };
@@ -180,8 +180,8 @@ mod tests {
         };
 
         let target = AwaitingRole {
-            name: name.clone(),
-            permissions: permissions.clone(),
+            name,
+            permissions,
             color: Some("ab83ba".to_string()),
             is_mentionable,
             show_in_sidebar,

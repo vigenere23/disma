@@ -3,6 +3,7 @@ use std::sync::Arc;
 use colored::Colorize;
 use disma::diff::Diff;
 
+#[derive(Default)]
 pub struct DiffFormater {}
 pub type DiffFormaterRef = Arc<DiffFormater>;
 
