@@ -21,13 +21,13 @@ mod tests {
     use super::OptionEq;
 
     fn assert_eq<T: PartialEq>(value1: &Option<T>, value2: &Option<T>) {
-        assert!(value1.option_eq(&value2));
-        assert!(value2.option_eq(&value1));
+        assert!(value1.option_eq(value2));
+        assert!(value2.option_eq(value1));
     }
 
     fn assert_ne<T: PartialEq>(value1: &Option<T>, value2: &Option<T>) {
-        assert!(!value1.option_eq(&value2));
-        assert!(!value2.option_eq(&value1));
+        assert!(!value1.option_eq(value2));
+        assert!(!value2.option_eq(value1));
     }
 
     #[test]

@@ -41,7 +41,7 @@ mod tests {
     fn given_existing_role_with(name: String) -> ExistingRole {
         ExistingRole {
             id: "something".to_string(),
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             color: Some("a3bb30".to_string()),
             is_mentionable: true,
@@ -51,7 +51,7 @@ mod tests {
 
     fn given_awaiting_role_with(name: String) -> AwaitingRole {
         AwaitingRole {
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             color: None,
             is_mentionable: false,
@@ -76,7 +76,7 @@ mod tests {
         };
 
         let target = AwaitingCategory {
-            name: name.clone(),
+            name,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_awaiting_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
@@ -90,7 +90,7 @@ mod tests {
         let expected_diffs = vec![Diff::Update(
             "overwrites".to_string(),
             vec![Diff::Update(
-                role_name.clone(),
+                role_name,
                 vec![
                     Diff::Update(
                         "allow".to_string(),

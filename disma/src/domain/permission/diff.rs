@@ -71,7 +71,7 @@ mod tests {
 
     fn given_awaiting_role_with_name(name: String) -> AwaitingRole {
         AwaitingRole {
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
             color: None,
             is_mentionable: true,
@@ -82,7 +82,7 @@ mod tests {
     fn given_existing_role_with_name(name: String) -> ExistingRole {
         ExistingRole {
             id: "something".to_string(),
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
             color: None,
             is_mentionable: true,
@@ -114,7 +114,7 @@ mod tests {
             deny: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
         };
         let target = PermissionsOverwrite {
-            role: given_awaiting_role_with_name(role_name.clone()),
+            role: given_awaiting_role_with_name(role_name),
             allow: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
             deny: PermissionsList::from(vec![Permission::USE_VAD]),
         };
@@ -159,7 +159,7 @@ mod tests {
         let diffs = origin.diffs_with(&target);
 
         let expected_diffs = vec![Diff::Update(
-            role_name.clone(),
+            role_name,
             vec![
                 Diff::Update(
                     "allow".to_string(),

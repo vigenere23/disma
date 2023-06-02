@@ -64,7 +64,7 @@ mod tests {
     fn given_existing_role_with(name: String) -> ExistingRole {
         ExistingRole {
             id: "something".to_string(),
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             color: Some("a3bb30".to_string()),
             is_mentionable: true,
@@ -74,7 +74,7 @@ mod tests {
 
     fn given_awaiting_role_with(name: String) -> AwaitingRole {
         AwaitingRole {
-            name: name.clone(),
+            name,
             permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             color: None,
             is_mentionable: false,
@@ -85,14 +85,14 @@ mod tests {
     fn given_existing_category_with_name(name: String) -> ExistingCategory {
         ExistingCategory {
             id: "something".to_string(),
-            name: name.clone(),
+            name,
             overwrites: PermissionsOverwritesList::from(vec![]),
         }
     }
 
     fn given_awaiting_category_with_name(name: String) -> AwaitingCategory {
         AwaitingCategory {
-            name: name.clone(),
+            name,
             overwrites: PermissionsOverwritesList::from(vec![]),
             extra_channels_strategy: Arc::from(KeepExtraChannels {}),
         }
@@ -113,9 +113,9 @@ mod tests {
         };
 
         let target = AwaitingChannel {
-            name: name.clone(),
+            name,
             topic: Some("Not here".to_string()),
-            channel_type: channel_type.clone(),
+            channel_type,
             category: None,
             overwrites: PermissionsOverwritesList::from(vec![]),
         };
@@ -147,8 +147,8 @@ mod tests {
         };
 
         let target = AwaitingChannel {
-            name: name.clone(),
-            topic: topic.clone(),
+            name,
+            topic,
             channel_type: ChannelType::VOICE,
             category: None,
             overwrites: PermissionsOverwritesList::from(vec![]),
@@ -182,9 +182,9 @@ mod tests {
         };
 
         let target = AwaitingChannel {
-            name: name.clone(),
-            topic: topic.clone(),
-            channel_type: channel_type.clone(),
+            name,
+            topic,
+            channel_type,
             category: Some(given_awaiting_category_with_name("category_b".to_string())),
             overwrites: PermissionsOverwritesList::from(vec![]),
         };
@@ -222,9 +222,9 @@ mod tests {
         };
 
         let target = AwaitingChannel {
-            name: name.clone(),
-            topic: topic.clone(),
-            channel_type: channel_type.clone(),
+            name,
+            topic,
+            channel_type,
             category: None,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 role: given_awaiting_role_with(role_name.clone()),
@@ -238,7 +238,7 @@ mod tests {
         let expected_diffs = vec![Diff::Update(
             "overwrites".to_string(),
             vec![Diff::Update(
-                role_name.clone(),
+                role_name,
                 vec![
                     Diff::Update(
                         "allow".to_string(),

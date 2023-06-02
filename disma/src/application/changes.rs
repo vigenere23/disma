@@ -196,9 +196,9 @@ mod tests {
         let guild_params = given_empty_guild_params();
 
         let service = ChangesService::new(
-            guild_commander.clone(),
+            guild_commander,
             given_guild_querier_for(GUILD_ID, existing_guild),
-            event_listener.clone(),
+            event_listener,
         );
 
         let diffs = service.list_changes(GUILD_ID, guild_params);
@@ -266,9 +266,9 @@ mod tests {
         ];
 
         let service = ChangesService::new(
-            guild_commander.clone(),
+            guild_commander,
             given_guild_querier_for(GUILD_ID, existing_guild),
-            event_listener.clone(),
+            event_listener,
         );
 
         let diffs = service.list_changes(GUILD_ID, guild_params);
@@ -285,9 +285,9 @@ mod tests {
         let guild_params = given_empty_guild_params();
 
         let service = ChangesService::new(
-            guild_commander.clone(),
+            guild_commander,
             given_guild_querier_for(GUILD_ID, existing_guild),
-            event_listener.clone(),
+            event_listener,
         );
 
         service.apply_changes(GUILD_ID, guild_params);
@@ -306,7 +306,7 @@ mod tests {
 
         let existing_guild = ExistingGuild {
             roles: RolesList::from(vec![
-                role_to_not_change.clone(),
+                role_to_not_change,
                 role_to_update.clone(),
                 role_to_delete.clone(),
             ]),
@@ -316,7 +316,7 @@ mod tests {
         let guild_params = GuildParams {
             roles: given_roles_params_list_for(vec![
                 created_role.clone(),
-                unchanged_role.clone(),
+                unchanged_role,
                 updated_role.clone(),
             ]),
             categories: given_categories_params_list_for(vec![]),
@@ -333,7 +333,7 @@ mod tests {
             .will_return_default();
 
         let service = ChangesService::new(
-            guild_commander.clone(),
+            guild_commander,
             given_guild_querier_for(GUILD_ID, existing_guild),
             event_listener.clone(),
         );
