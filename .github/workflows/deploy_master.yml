@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy-website:
+  build-website:
     runs-on: ubuntu-latest
 
     defaults:
@@ -37,7 +37,27 @@ jobs:
       - name: Build
         run: pnpm build --base=/disma
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload artifact for Github Pages
+        uses: actions/upload-pages-artifact@v1
         with:
-          folder: site/dist
+          name: build
+          path: site/dist
+
+  deploy-website:
+    needs: build-website
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to Github Pages
+        uses: actions/deploy-pages@v1
+        with:
+          artifact_name: build
+          timeout: "100000"
