@@ -48,6 +48,10 @@ pub enum Permission {
     SEND_MESSAGES_IN_THREADS,
     USE_EMBEDDED_ACTIVITIES,
     MODERATE_MEMBERS,
+    VIEW_CREATOR_MONETIZATION_ANALYTICS,
+    USE_SOUNDBOARD,
+    USE_EXTERNAL_SOUNDS,
+    SEND_VOICE_MESSAGES,
 }
 
 impl Permission {
@@ -94,6 +98,10 @@ impl Permission {
             Self::SEND_MESSAGES_IN_THREADS => 1 << 38,
             Self::USE_EMBEDDED_ACTIVITIES => 1 << 39,
             Self::MODERATE_MEMBERS => 1 << 40,
+            Self::VIEW_CREATOR_MONETIZATION_ANALYTICS => 1 << 41,
+            Self::USE_SOUNDBOARD => 1 << 42,
+            Self::USE_EXTERNAL_SOUNDS => 1 << 45,
+            Self::SEND_VOICE_MESSAGES => 1 << 46,
         }
     }
 }
