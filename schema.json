@@ -203,7 +203,11 @@
         "USE_EXTERNAL_STICKERS",
         "SEND_MESSAGES_IN_THREADS",
         "USE_EMBEDDED_ACTIVITIES",
-        "MODERATE_MEMBERS"
+        "MODERATE_MEMBERS",
+        "VIEW_CREATOR_MONETIZATION_ANALYTICS",
+        "USE_SOUNDBOARD",
+        "USE_EXTERNAL_SOUNDS",
+        "SEND_VOICE_MESSAGES"
       ]
     },
     "permissions": {
