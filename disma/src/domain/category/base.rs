@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 pub trait Category: Clone {
-    fn name(&self) -> String;
+    fn name(&self) -> &str;
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -32,11 +32,11 @@ impl<C: Category> From<Vec<C>> for CategoriesList<C> {
         let mut category_names: HashSet<String> = HashSet::new();
 
         for category in categories.iter() {
-            if category_names.contains(&category.name()) {
+            if category_names.contains(category.name()) {
                 panic!("All categories must have unique names.");
             }
 
-            category_names.insert(category.name().clone());
+            category_names.insert(category.name().to_string());
         }
 
         Self { items: categories }

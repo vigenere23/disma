@@ -15,9 +15,9 @@ impl Differ<ChannelType> for ChannelType {
 }
 
 pub trait Channel {
-    fn name(&self) -> String;
-    fn category_name(&self) -> Option<String>;
-    fn channel_type(&self) -> ChannelType;
+    fn name(&self) -> &str;
+    fn category_name(&self) -> Option<&str>;
+    fn channel_type(&self) -> &ChannelType;
 
     fn unique_name(&self) -> String {
         format!(
@@ -41,12 +41,7 @@ impl<C> ChannelsList<C>
 where
     C: Channel,
 {
-    pub fn find(
-        &self,
-        name: &str,
-        _type: ChannelType,
-        category_name: Option<String>,
-    ) -> Option<&C> {
+    pub fn find(&self, name: &str, _type: &ChannelType, category_name: Option<&str>) -> Option<&C> {
         self.items.iter().find(|channel| {
             channel.name() == name
                 && channel.channel_type() == _type

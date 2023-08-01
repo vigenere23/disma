@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 pub trait Role: Clone {
-    fn name(&self) -> String;
+    fn name(&self) -> &str;
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -27,11 +27,11 @@ impl<R: Role> From<Vec<R>> for RolesList<R> {
         let mut role_names: HashSet<String> = HashSet::new();
 
         for role in roles.iter() {
-            if role_names.contains(&role.name()) {
+            if role_names.contains(role.name()) {
                 panic!("All roles must have unique names.");
             }
 
-            role_names.insert(role.name().clone());
+            role_names.insert(role.name().to_string());
         }
 
         Self { items: roles }

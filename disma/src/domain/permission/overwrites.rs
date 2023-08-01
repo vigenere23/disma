@@ -66,10 +66,10 @@ impl PartialEq<PermissionsOverwritesList<AwaitingRole>>
         }
 
         let mut overwrites = self.to_list().clone();
-        overwrites.sort_by(|a, b| a.role.name().cmp(&b.role.name()));
+        overwrites.sort_by(|a, b| a.role.name().cmp(b.role.name()));
 
         let mut other_overwrited = other.to_list().clone();
-        other_overwrited.sort_by(|a, b| a.role.name().cmp(&b.role.name()));
+        other_overwrited.sort_by(|a, b| a.role.name().cmp(b.role.name()));
 
         for (overwrite, other_overwrite) in overwrites.iter().zip(other_overwrited.iter()) {
             if overwrite != other_overwrite {
@@ -86,11 +86,11 @@ impl<R: Role> From<Vec<PermissionsOverwrite<R>>> for PermissionsOverwritesList<R
         let mut role_names: HashSet<String> = HashSet::new();
 
         for overwrite in overwrites.iter() {
-            if role_names.contains(&overwrite.role.name()) {
+            if role_names.contains(overwrite.role.name()) {
                 panic!("All overwrites must have unique roles.");
             }
 
-            role_names.insert(overwrite.role.name().clone());
+            role_names.insert(overwrite.role.name().to_string());
         }
 
         Self { items: overwrites }

@@ -35,7 +35,7 @@ where
 {
     fn from(permissions: &PermissionsOverwrite<R>) -> Self {
         Self {
-            role: permissions.role.name(),
+            role: permissions.role.name().to_string(),
             allow: permissions.allow.to_list(),
             deny: permissions.deny.to_list(),
         }

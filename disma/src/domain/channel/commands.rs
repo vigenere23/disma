@@ -63,7 +63,7 @@ impl CommandFactory for AwaitingChannelsList {
 
             let matching_awaiting_category = existing_channel
                 .category_name()
-                .map(|category_name| self.categories.find_by_name(&category_name))
+                .map(|category_name| self.categories.find_by_name(category_name))
                 .unwrap_or_default();
 
             let extra_items_strategy = match matching_awaiting_category {
@@ -258,9 +258,9 @@ impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
     ) {
         if let Some(category) = awaiting_category {
             let awaiting_channel = AwaitingChannel {
-                name: extra_channel.name(),
+                name: extra_channel.name().to_string(),
                 topic: extra_channel.topic.clone(),
-                channel_type: extra_channel.channel_type(),
+                channel_type: extra_channel.channel_type().clone(),
                 category: Some(category.clone()),
                 overwrites: category.overwrites.clone(),
             };

@@ -32,15 +32,15 @@ pub struct AwaitingChannel {
 }
 
 impl Channel for AwaitingChannel {
-    fn name(&self) -> String {
-        self.name.clone()
+    fn name(&self) -> &str {
+        &self.name
     }
 
-    fn category_name(&self) -> Option<String> {
+    fn category_name(&self) -> Option<&str> {
         self.category.as_ref().map(|category| category.name())
     }
 
-    fn channel_type(&self) -> ChannelType {
-        self.channel_type.clone()
+    fn channel_type(&self) -> &ChannelType {
+        &self.channel_type
     }
 }

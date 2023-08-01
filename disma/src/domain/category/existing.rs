@@ -16,8 +16,8 @@ impl ToString for ExistingCategory {
 }
 
 impl Category for ExistingCategory {
-    fn name(&self) -> String {
-        self.name.clone()
+    fn name(&self) -> &str {
+        &self.name
     }
 }
 

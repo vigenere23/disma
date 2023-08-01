@@ -27,7 +27,7 @@ pub struct AwaitingRole {
 }
 
 impl Role for AwaitingRole {
-    fn name(&self) -> String {
-        self.name.clone()
+    fn name(&self) -> &str {
+        &self.name
     }
 }

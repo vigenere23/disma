@@ -13,8 +13,8 @@ pub struct ExistingRole {
 }
 
 impl Role for ExistingRole {
-    fn name(&self) -> String {
-        self.name.clone()
+    fn name(&self) -> &str {
+        &self.name
     }
 }
 
