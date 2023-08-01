@@ -4,7 +4,7 @@ use crate::{
     role::ExistingRole,
 };
 
-use super::{Channel, ChannelType};
+use super::{Channel, ChannelType, UniqueChannelName};
 
 #[derive(Debug, Clone)]
 pub struct ExistingChannel {
@@ -16,16 +16,18 @@ pub struct ExistingChannel {
     pub overwrites: PermissionsOverwritesList<ExistingRole>,
 }
 
+impl ExistingChannel {
+    pub fn category_name(&self) -> Option<&str> {
+        self.category.as_ref().map(|category| category.name())
+    }
+}
+
 impl Channel for ExistingChannel {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn category_name(&self) -> Option<&str> {
-        self.category.as_ref().map(|category| category.name())
-    }
-
-    fn channel_type(&self) -> &ChannelType {
-        &self.channel_type
+    fn unique_name(&self) -> UniqueChannelName {
+        UniqueChannelName::from(&self.name, &self.channel_type, self.category_name())
     }
 }

@@ -6,7 +6,7 @@ use crate::{
     role::AwaitingRole,
 };
 
-use super::{Channel, ChannelType, ChannelsList, ExtraChannelsStrategy};
+use super::{Channel, ChannelType, ChannelsList, ExtraChannelsStrategy, UniqueChannelName};
 
 #[derive(Debug, Clone)]
 pub struct AwaitingChannelsList {
@@ -31,16 +31,18 @@ pub struct AwaitingChannel {
     pub overwrites: PermissionsOverwritesList<AwaitingRole>,
 }
 
+impl AwaitingChannel {
+    pub fn category_name(&self) -> Option<&str> {
+        self.category.as_ref().map(|category| category.name())
+    }
+}
+
 impl Channel for AwaitingChannel {
     fn name(&self) -> &str {
         &self.name
     }
 
-    fn category_name(&self) -> Option<&str> {
-        self.category.as_ref().map(|category| category.name())
-    }
-
-    fn channel_type(&self) -> &ChannelType {
-        &self.channel_type
+    fn unique_name(&self) -> UniqueChannelName {
+        UniqueChannelName::from(&self.name, &self.channel_type, self.category_name())
     }
 }

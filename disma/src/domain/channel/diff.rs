@@ -3,7 +3,7 @@ use crate::{
     utils::{misc::IfThen, option::OptionEq},
 };
 
-use super::{AwaitingChannel, Channel, ExistingChannel};
+use super::{AwaitingChannel, ExistingChannel};
 
 impl PartialEq<AwaitingChannel> for ExistingChannel {
     fn eq(&self, other: &AwaitingChannel) -> bool {

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::diff::{Diff, Differ};
 
 use strum::{Display, EnumString};
@@ -14,19 +16,39 @@ impl Differ<ChannelType> for ChannelType {
     }
 }
 
+#[derive(PartialEq, Debug)]
+pub struct UniqueChannelName {
+    channel_name: String,
+    channel_type: ChannelType,
+    category_name: String,
+}
+
+impl UniqueChannelName {
+    pub fn from(
+        channel_name: &str,
+        channel_type: &ChannelType,
+        category_name: Option<&str>,
+    ) -> Self {
+        Self {
+            channel_name: channel_name.to_string(),
+            channel_type: channel_type.clone(),
+            category_name: category_name.unwrap_or_default().to_string(),
+        }
+    }
+}
+
+impl Display for UniqueChannelName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&format!(
+            "{}:{} ({})",
+            &self.category_name, &self.channel_name, &self.channel_type
+        ))
+    }
+}
+
 pub trait Channel {
     fn name(&self) -> &str;
-    fn category_name(&self) -> Option<&str>;
-    fn channel_type(&self) -> &ChannelType;
-
-    fn unique_name(&self) -> String {
-        format!(
-            "{}:{} ({})",
-            &self.category_name().unwrap_or_default(),
-            &self.name(),
-            &self.channel_type().to_string()
-        )
-    }
+    fn unique_name(&self) -> UniqueChannelName;
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -41,12 +63,10 @@ impl<C> ChannelsList<C>
 where
     C: Channel,
 {
-    pub fn find(&self, name: &str, _type: &ChannelType, category_name: Option<&str>) -> Option<&C> {
-        self.items.iter().find(|channel| {
-            channel.name() == name
-                && channel.channel_type() == _type
-                && channel.category_name() == category_name
-        })
+    pub fn find_by_unique_name(&self, unique_name: &UniqueChannelName) -> Option<&C> {
+        self.items
+            .iter()
+            .find(|channel| &channel.unique_name() == unique_name)
     }
 
     pub fn to_list(&self) -> &Vec<C> {

@@ -10,7 +10,7 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-use super::AwaitingChannelsList;
+use super::{AwaitingChannelsList, UniqueChannelName};
 
 impl CommandFactory for AwaitingChannelsList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
@@ -22,11 +22,13 @@ impl CommandFactory for AwaitingChannelsList {
                 .as_ref()
                 .map(|category| category.name());
 
-            match existing_guild.channels.find(
-                &awaiting_channel.name,
-                awaiting_channel.channel_type(),
-                category_name,
-            ) {
+            match existing_guild
+                .channels
+                .find_by_unique_name(&UniqueChannelName::from(
+                    &awaiting_channel.name,
+                    &awaiting_channel.channel_type,
+                    category_name,
+                )) {
                 Some(existing_channel) => {
                     if existing_channel != awaiting_channel {
                         let command = UpdateChannel::new(
@@ -55,11 +57,12 @@ impl CommandFactory for AwaitingChannelsList {
                 .as_ref()
                 .map(|category| category.name());
 
-            let matching_awaiting_channel = self.items.find(
-                &existing_channel.name,
-                existing_channel.channel_type(),
-                category_name,
-            );
+            let matching_awaiting_channel =
+                self.items.find_by_unique_name(&UniqueChannelName::from(
+                    &existing_channel.name,
+                    &existing_channel.channel_type,
+                    category_name,
+                ));
 
             let matching_awaiting_category = existing_channel
                 .category_name()
@@ -112,7 +115,10 @@ impl Command for AddChannel {
     }
 
     fn describe(&self) -> CommandDescription {
-        CommandDescription::Create(CommandEntity::Channel, self.channel.unique_name())
+        CommandDescription::Create(
+            CommandEntity::Channel,
+            self.channel.unique_name().to_string(),
+        )
     }
 }
 
@@ -152,7 +158,7 @@ impl Command for UpdateChannel {
     fn describe(&self) -> CommandDescription {
         CommandDescription::Update(
             CommandEntity::Channel,
-            self.existing_channel.unique_name(),
+            self.existing_channel.unique_name().to_string(),
             self.existing_channel.diffs_with(&self.awaiting_channel),
         )
     }
@@ -174,7 +180,10 @@ impl Command for DeleteChannel {
     }
 
     fn describe(&self) -> CommandDescription {
-        CommandDescription::Delete(CommandEntity::Channel, self.channel.unique_name())
+        CommandDescription::Delete(
+            CommandEntity::Channel,
+            self.channel.unique_name().to_string(),
+        )
     }
 }
 
@@ -260,7 +269,7 @@ impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
             let awaiting_channel = AwaitingChannel {
                 name: extra_channel.name().to_string(),
                 topic: extra_channel.topic.clone(),
-                channel_type: extra_channel.channel_type().clone(),
+                channel_type: extra_channel.channel_type.clone(),
                 category: Some(category.clone()),
                 overwrites: category.overwrites.clone(),
             };
