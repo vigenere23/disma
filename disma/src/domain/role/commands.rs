@@ -7,7 +7,7 @@ use crate::{
     guild::{ExistingGuild, GuildCommanderRef},
 };
 
-use super::{AwaitingRole, AwaitingRolesList, ExistingRole};
+use super::{AwaitingRole, AwaitingRolesList, ExistingRole, ListComparison};
 
 pub trait ExtraRolesStrategyTrait {}
 
@@ -15,30 +15,29 @@ impl CommandFactory for AwaitingRolesList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
         let mut commands: Vec<CommandRef> = Vec::new();
 
-        for awaiting_role in self.items.to_list() {
-            match existing_guild.roles.find_by_name(&awaiting_role.name) {
-                Some(existing_role) => {
-                    if existing_role != awaiting_role {
-                        let command = UpdateRole::new(
-                            existing_role.clone(),
-                            awaiting_role.clone(),
-                            existing_role.diffs_with(awaiting_role),
-                        );
-                        commands.push(Arc::from(command));
-                    }
-                }
-                None => {
-                    let command = AddRole::new(awaiting_role.clone());
-                    commands.push(Arc::from(command));
-                }
+        let ListComparison {
+            extra_other: extra_existing,
+            extra_self: extra_awaiting,
+            same,
+        } = self.items.compare_by_name(&existing_guild.roles);
+
+        for awaiting_role in extra_awaiting.into_iter() {
+            let command = AddRole::new(awaiting_role.clone());
+            commands.push(Arc::from(command));
+        }
+
+        for (awaiting_role, existing_role) in same.into_iter() {
+            let diffs = existing_role.diffs_with(awaiting_role);
+
+            if !diffs.is_empty() {
+                let command = UpdateRole::new(existing_role.clone(), awaiting_role.clone(), diffs);
+                commands.push(Arc::from(command));
             }
         }
 
-        for existing_role in existing_guild.roles.to_list() {
-            if self.items.find_by_name(&existing_role.name).is_none() {
-                self.extra_items_strategy
-                    .handle_extra_role(existing_role, &mut commands);
-            }
+        for existing_role in extra_existing.into_iter() {
+            self.extra_items_strategy
+                .handle_extra_role(existing_role, &mut commands);
         }
 
         commands
