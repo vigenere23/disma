@@ -37,16 +37,6 @@ impl Differ<AwaitingRole> for ExistingRole {
     }
 }
 
-impl PartialEq<AwaitingRole> for ExistingRole {
-    fn eq(&self, other: &AwaitingRole) -> bool {
-        self.name == other.name
-            && self.permissions == other.permissions
-            && self.color == other.color
-            && self.is_mentionable == other.is_mentionable
-            && self.show_in_sidebar == other.show_in_sidebar
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::{
