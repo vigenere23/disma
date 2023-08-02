@@ -2,12 +2,13 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
+    base::ListComparison,
     commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
     diff::{Diff, Differ},
     guild::{ExistingGuild, GuildCommanderRef},
 };
 
-use super::{AwaitingRole, AwaitingRolesList, ExistingRole, ListComparison};
+use super::{AwaitingRole, AwaitingRolesList, ExistingRole};
 
 pub trait ExtraRolesStrategyTrait {}
 
@@ -27,10 +28,7 @@ impl CommandFactory for AwaitingRolesList {
         }
 
         for (awaiting_role, existing_role) in same.into_iter() {
-            let diffs = existing_role.diffs_with(awaiting_role);
-
-            if !diffs.is_empty() {
-                let command = UpdateRole::new(existing_role.clone(), awaiting_role.clone(), diffs);
+            if let Ok(command) = UpdateRole::try_new(existing_role, awaiting_role) {
                 commands.push(Arc::from(command));
             }
         }
@@ -71,12 +69,24 @@ pub struct UpdateRole {
 }
 
 impl UpdateRole {
-    pub fn new(existing_role: ExistingRole, awaiting_role: AwaitingRole, diffs: Vec<Diff>) -> Self {
-        Self {
-            existing_role,
-            awaiting_role,
-            diffs,
+    pub fn try_new(
+        existing_role: &ExistingRole,
+        awaiting_role: &AwaitingRole,
+    ) -> Result<Self, String> {
+        let diffs = existing_role.diffs_with(awaiting_role);
+
+        if diffs.is_empty() {
+            return Err(format!(
+                "No diffs between roles {} and {}",
+                existing_role.name, awaiting_role.name
+            ));
         }
+
+        Ok(Self {
+            existing_role: existing_role.clone(),
+            awaiting_role: awaiting_role.clone(),
+            diffs,
+        })
     }
 }
 

@@ -1,6 +1,9 @@
 use std::fmt::Display;
 
-use crate::diff::{Diff, Differ};
+use crate::{
+    base::ListComparison,
+    diff::{Diff, Differ},
+};
 
 use strum::{Display, EnumString};
 
@@ -71,6 +74,37 @@ where
 
     pub fn to_list(&self) -> &Vec<C> {
         &self.items
+    }
+
+    pub fn compare_by_unique_name<'a, C2: Channel>(
+        &'a self,
+        other: &'a ChannelsList<C2>,
+    ) -> ListComparison<&C, &C2> {
+        let mut extra_self: Vec<&C> = Vec::new();
+        let mut extra_other: Vec<&C2> = Vec::new();
+        let mut same: Vec<(&C, &C2)> = Vec::new();
+
+        for self_item in self.to_list() {
+            match other.find_by_unique_name(&self_item.unique_name()) {
+                Some(other_item) => same.push((self_item, other_item)),
+                None => extra_self.push(self_item),
+            }
+        }
+
+        for other_item in other.to_list() {
+            if self
+                .find_by_unique_name(&other_item.unique_name())
+                .is_none()
+            {
+                extra_other.push(other_item)
+            }
+        }
+
+        ListComparison {
+            extra_self,
+            extra_other,
+            same,
+        }
     }
 }
 

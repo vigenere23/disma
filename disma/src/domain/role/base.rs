@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use crate::base::ListComparison;
+
 pub trait Role: Clone {
     fn name(&self) -> &str;
 }
@@ -10,12 +12,6 @@ where
     R: Role,
 {
     items: Vec<R>,
-}
-
-pub struct ListComparison<R1, R2> {
-    pub extra_self: Vec<R1>,
-    pub extra_other: Vec<R2>,
-    pub same: Vec<(R1, R2)>,
 }
 
 impl<R: Role> RolesList<R> {

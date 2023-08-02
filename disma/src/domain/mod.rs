@@ -1,3 +1,4 @@
+pub mod base;
 pub mod category;
 pub mod channel;
 pub mod commands;

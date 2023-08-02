@@ -2,87 +2,65 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
-    category::{AwaitingCategory, CategoriesList, Category, ExistingCategory},
+    base::ListComparison,
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
     commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
-    diff::Differ,
+    diff::{Diff, Differ},
     guild::{ExistingGuild, GuildCommanderRef},
     role::{ExistingRole, RolesList},
 };
 
-use super::{AwaitingChannelsList, UniqueChannelName};
+use super::AwaitingChannelsList;
 
 impl CommandFactory for AwaitingChannelsList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
         let mut commands: Vec<CommandRef> = Vec::new();
 
-        for awaiting_channel in self.items.to_list() {
-            let category_name = awaiting_channel
-                .category
-                .as_ref()
-                .map(|category| category.name());
+        let ListComparison {
+            extra_self: extra_awaiting,
+            extra_other: extra_existing,
+            same,
+        } = self.items.compare_by_unique_name(&existing_guild.channels);
 
-            match existing_guild
-                .channels
-                .find_by_unique_name(&UniqueChannelName::from(
-                    &awaiting_channel.name,
-                    &awaiting_channel.channel_type,
-                    category_name,
-                )) {
-                Some(existing_channel) => {
-                    if existing_channel != awaiting_channel {
-                        let command = UpdateChannel::new(
-                            existing_channel.clone(),
-                            awaiting_channel.clone(),
-                            existing_guild.roles.clone(),
-                            existing_guild.categories.clone(),
-                        );
-                        commands.push(Arc::from(command));
-                    }
-                }
-                None => {
-                    let command = AddChannel::new(
-                        awaiting_channel.clone(),
-                        existing_guild.roles.clone(),
-                        existing_guild.categories.clone(),
-                    );
-                    commands.push(Arc::from(command));
-                }
+        for awaiting_channel in extra_awaiting.into_iter() {
+            let command = AddChannel::new(
+                awaiting_channel.clone(),
+                existing_guild.roles.clone(),
+                existing_guild.categories.clone(),
+            );
+            commands.push(Arc::from(command));
+        }
+
+        for (awaiting_channel, existing_channel) in same.into_iter() {
+            if let Ok(command) = UpdateChannel::try_new(
+                existing_channel.clone(),
+                awaiting_channel.clone(),
+                existing_guild.roles.clone(),
+                existing_guild.categories.clone(),
+            ) {
+                commands.push(Arc::from(command));
             }
         }
 
-        for existing_channel in existing_guild.channels.to_list() {
-            let category_name = existing_channel
-                .category
-                .as_ref()
-                .map(|category| category.name());
-
-            let matching_awaiting_channel =
-                self.items.find_by_unique_name(&UniqueChannelName::from(
-                    &existing_channel.name,
-                    &existing_channel.channel_type,
-                    category_name,
-                ));
-
+        for existing_channel in extra_existing.into_iter() {
             let matching_awaiting_category = existing_channel
                 .category_name()
                 .map(|category_name| self.categories.find_by_name(category_name))
                 .unwrap_or_default();
 
             let extra_items_strategy = match matching_awaiting_category {
-                Some(category) => category.extra_channels_strategy.clone(),
-                None => self.extra_items_strategy.clone(),
+                Some(category) => &category.extra_channels_strategy,
+                None => &self.extra_items_strategy,
             };
 
-            if matching_awaiting_channel.is_none() {
-                extra_items_strategy.handle_extra_channel(
-                    existing_channel,
-                    &mut commands,
-                    matching_awaiting_category,
-                    &existing_guild.roles,
-                    &existing_guild.categories,
-                );
-            }
+            extra_items_strategy.handle_extra_channel(
+                existing_channel,
+                &mut commands,
+                matching_awaiting_category,
+                &existing_guild.roles,
+                &existing_guild.categories,
+            );
         }
 
         commands
@@ -127,21 +105,32 @@ pub struct UpdateChannel {
     awaiting_channel: AwaitingChannel,
     roles: RolesList<ExistingRole>,
     categories: CategoriesList<ExistingCategory>,
+    diffs: Vec<Diff>,
 }
 
 impl UpdateChannel {
-    pub fn new(
+    pub fn try_new(
         existing_channel: ExistingChannel,
         awaiting_channel: AwaitingChannel,
         roles: RolesList<ExistingRole>,
         categories: CategoriesList<ExistingCategory>,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, String> {
+        let diffs = existing_channel.diffs_with(&awaiting_channel);
+
+        if diffs.is_empty() {
+            return Err(format!(
+                "No diffs between channels {} and {}",
+                existing_channel.name, awaiting_channel.name
+            ));
+        };
+
+        Ok(Self {
             existing_channel,
             awaiting_channel,
             roles,
             categories,
-        }
+            diffs,
+        })
     }
 }
 
@@ -159,7 +148,7 @@ impl Command for UpdateChannel {
         CommandDescription::Update(
             CommandEntity::Channel,
             self.existing_channel.unique_name().to_string(),
-            self.existing_channel.diffs_with(&self.awaiting_channel),
+            self.diffs.clone(),
         )
     }
 }
@@ -273,17 +262,15 @@ impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
                 category: Some(category.clone()),
                 overwrites: category.overwrites.clone(),
             };
-            if extra_channel == &awaiting_channel {
-                return;
-            }
 
-            let command = UpdateChannel::new(
+            if let Ok(command) = UpdateChannel::try_new(
                 extra_channel.clone(),
                 awaiting_channel,
                 roles.clone(),
                 categories.clone(),
-            );
-            commands.push(Arc::from(command));
+            ) {
+                commands.push(Arc::from(command));
+            }
         } else {
             panic!("Category cannot be empty for overriding permissions overwrites of extra channel {}", extra_channel.name());
         }

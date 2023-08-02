@@ -1,19 +1,9 @@
 use crate::{
     diff::{Diff, Differ},
-    utils::{misc::IfThen, option::OptionEq},
+    utils::misc::IfThen,
 };
 
 use super::{AwaitingChannel, ExistingChannel};
-
-impl PartialEq<AwaitingChannel> for ExistingChannel {
-    fn eq(&self, other: &AwaitingChannel) -> bool {
-        self.name == other.name
-            && self.topic == other.topic
-            && self.channel_type == other.channel_type
-            && self.category_name().option_eq(&other.category_name())
-            && self.overwrites == other.overwrites
-    }
-}
 
 impl Differ<AwaitingChannel> for ExistingChannel {
     fn diffs_with(&self, awaiting: &AwaitingChannel) -> Vec<Diff> {
