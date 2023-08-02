@@ -2,9 +2,10 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
+    base::ListComparison,
     category::{AwaitingCategory, ExistingCategory},
     commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
-    diff::Differ,
+    diff::{Diff, Differ},
     guild::{ExistingGuild, GuildCommanderRef},
     role::{ExistingRole, RolesList},
 };
@@ -15,34 +16,31 @@ impl CommandFactory for AwaitingCategoriesList {
     fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
         let mut commands: Vec<CommandRef> = Vec::new();
 
-        for awaiting_category in self.items.to_list() {
-            match existing_guild
-                .categories
-                .find_by_name(&awaiting_category.name)
-            {
-                Some(existing_category) => {
-                    if existing_category != awaiting_category {
-                        let command = UpdateCategory::new(
-                            existing_category.clone(),
-                            awaiting_category.clone(),
-                            existing_guild.roles.clone(),
-                        );
-                        commands.push(Arc::from(command));
-                    }
-                }
-                None => {
-                    let command =
-                        AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
-                    commands.push(Arc::from(command));
-                }
+        let ListComparison {
+            extra_other: extra_existing,
+            extra_self: extra_awaiting,
+            same,
+        } = self.items.compare_by_name(&existing_guild.categories);
+
+        for awaiting_category in extra_awaiting.into_iter() {
+            let command = AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
+            commands.push(Arc::from(command));
+        }
+
+        for (awaiting_category, existing_category) in same.into_iter() {
+            // TODO replace with try_new
+            if let Ok(command) = UpdateCategory::try_new(
+                existing_category.clone(),
+                awaiting_category.clone(),
+                existing_guild.roles.clone(),
+            ) {
+                commands.push(Arc::from(command));
             }
         }
 
-        for existing_category in existing_guild.categories.to_list() {
-            if self.items.find_by_name(&existing_category.name).is_none() {
-                self.extra_items_strategy
-                    .handle_extra_category(existing_category, &mut commands);
-            }
+        for existing_category in extra_existing.into_iter() {
+            self.extra_items_strategy
+                .handle_extra_category(existing_category, &mut commands);
         }
 
         commands
@@ -74,19 +72,30 @@ pub struct UpdateCategory {
     existing_category: ExistingCategory,
     awaiting_category: AwaitingCategory,
     roles: RolesList<ExistingRole>,
+    diffs: Vec<Diff>,
 }
 
 impl UpdateCategory {
-    pub fn new(
+    pub fn try_new(
         existing_category: ExistingCategory,
         awaiting_category: AwaitingCategory,
         roles: RolesList<ExistingRole>,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, String> {
+        let diffs = existing_category.diffs_with(&awaiting_category);
+
+        if diffs.is_empty() {
+            return Err(format!(
+                "No diffs between categories {} and {}",
+                existing_category.name, awaiting_category.name
+            ));
+        }
+
+        Ok(Self {
             existing_category,
             awaiting_category,
             roles,
-        }
+            diffs,
+        })
     }
 }
 
@@ -103,7 +112,7 @@ impl Command for UpdateCategory {
         CommandDescription::Update(
             CommandEntity::Category,
             self.existing_category.name.clone(),
-            self.existing_category.diffs_with(&self.awaiting_category),
+            self.diffs.clone(),
         )
     }
 }

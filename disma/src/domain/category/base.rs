@@ -1,5 +1,7 @@
 use std::collections::HashSet;
 
+use crate::base::ListComparison;
+
 pub trait Category: Clone {
     fn name(&self) -> &str;
 }
@@ -24,6 +26,34 @@ impl<C: Category> CategoriesList<C> {
 
     pub fn to_list(&self) -> &Vec<C> {
         &self.items
+    }
+
+    pub fn compare_by_name<'a, C2: Category>(
+        &'a self,
+        other: &'a CategoriesList<C2>,
+    ) -> ListComparison<&C, &C2> {
+        let mut extra_self: Vec<&C> = Vec::new();
+        let mut extra_other: Vec<&C2> = Vec::new();
+        let mut same: Vec<(&C, &C2)> = Vec::new();
+
+        for self_item in self.to_list() {
+            match other.find_by_name(self_item.name()) {
+                Some(other_item) => same.push((self_item, other_item)),
+                None => extra_self.push(self_item),
+            }
+        }
+
+        for other_item in other.to_list() {
+            if self.find_by_name(other_item.name()).is_none() {
+                extra_other.push(other_item)
+            }
+        }
+
+        ListComparison {
+            extra_self,
+            extra_other,
+            same,
+        }
     }
 }
 

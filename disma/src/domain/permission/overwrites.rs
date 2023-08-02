@@ -1,9 +1,6 @@
 use std::collections::HashSet;
 
-use crate::{
-    permission::PermissionsList,
-    role::{AwaitingRole, ExistingRole, Role},
-};
+use crate::{permission::PermissionsList, role::Role};
 
 #[derive(Debug, Clone)]
 pub struct PermissionsOverwrite<T>
@@ -54,30 +51,6 @@ impl<R: Role> PermissionsOverwritesList<R> {
 
     pub fn to_list(&self) -> &Vec<PermissionsOverwrite<R>> {
         &self.items
-    }
-}
-
-impl PartialEq<PermissionsOverwritesList<AwaitingRole>>
-    for PermissionsOverwritesList<ExistingRole>
-{
-    fn eq(&self, other: &PermissionsOverwritesList<AwaitingRole>) -> bool {
-        if self.to_list().len() != other.to_list().len() {
-            return false;
-        }
-
-        let mut overwrites = self.to_list().clone();
-        overwrites.sort_by(|a, b| a.role.name().cmp(b.role.name()));
-
-        let mut other_overwrited = other.to_list().clone();
-        other_overwrited.sort_by(|a, b| a.role.name().cmp(b.role.name()));
-
-        for (overwrite, other_overwrite) in overwrites.iter().zip(other_overwrited.iter()) {
-            if overwrite != other_overwrite {
-                return false;
-            }
-        }
-
-        true
     }
 }
 

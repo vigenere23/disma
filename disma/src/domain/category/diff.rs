@@ -18,12 +18,6 @@ impl Differ<AwaitingCategory> for ExistingCategory {
     }
 }
 
-impl PartialEq<AwaitingCategory> for ExistingCategory {
-    fn eq(&self, other: &AwaitingCategory) -> bool {
-        self.name == other.name && self.overwrites == other.overwrites
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use std::sync::Arc;
