@@ -1,8 +1,10 @@
 #[cfg(test)]
 pub mod tests {
     use crate::params::{
-        category::CategoriesParamsList, channel::ChannelsParamsList, guild::GuildParams,
-        role::RolesParamsList,
+        category::CategoriesParamsList,
+        channel::ChannelsParamsList,
+        guild::GuildParams,
+        role::{RoleParams, RolesParamsList},
     };
 
     pub struct GuildParamsFixture {
@@ -22,6 +24,11 @@ pub mod tests {
 
         pub fn default() -> GuildParams {
             Self::new().build()
+        }
+
+        pub fn with_role(mut self, role: RoleParams) -> Self {
+            self.roles.items.push(role);
+            self
         }
 
         pub fn build(self) -> GuildParams {

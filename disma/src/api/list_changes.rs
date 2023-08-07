@@ -49,8 +49,12 @@ mod tests {
     use mock_it::eq;
 
     use crate::{
+        commands::{CommandDescription, CommandEntity},
         core::changes::role::RoleChangesService,
         guild::GuildQuerierMock,
+        params::role::RoleParams,
+        permission::PermissionsList,
+        role::ExistingRole,
         test::fixtures::{
             existing::tests::ExistingGuildFixture, params::tests::GuildParamsFixture,
         },
@@ -61,7 +65,7 @@ mod tests {
     static GUILD_ID: &str = "abc";
 
     #[test]
-    fn given_no_changes_it_returns_no_changes() {
+    fn when_no_changes_it_returns_empty_list() {
         let querier = GuildQuerierMock::new();
         let empty_guild = ExistingGuildFixture::default();
         let params_with_no_changes = GuildParamsFixture::default();
@@ -78,5 +82,52 @@ mod tests {
         let changes = usecase.execute(GUILD_ID, params_with_no_changes);
 
         assert_eq!(changes, Vec::new());
+    }
+
+    #[test]
+    fn can_list_role_changes() {
+        let querier = GuildQuerierMock::new();
+        let role_to_remove = ExistingRole {
+            id: String::from("to_remove"),
+            name: String::from("to_remove"),
+            permissions: PermissionsList::from(Vec::new()),
+            color: None,
+            is_mentionable: true,
+            show_in_sidebar: false,
+        };
+        let role_to_add_params = RoleParams {
+            name: String::from("to_add"),
+            permissions: Vec::new(),
+            color: None,
+            is_mentionable: true,
+            show_in_sidebar: false,
+        };
+        // TODO role to update
+
+        querier.when_get_guild(eq(GUILD_ID)).will_return(
+            ExistingGuildFixture::new()
+                .with_role(role_to_remove.clone())
+                .build(),
+        );
+
+        let usecase = ListChangesUseCase {
+            querier: Arc::from(querier),
+            role_changes_service: Arc::from(RoleChangesService {}),
+        };
+
+        let changes = usecase.execute(
+            GUILD_ID,
+            GuildParamsFixture::new()
+                .with_role(role_to_add_params.clone())
+                .build(),
+        );
+
+        assert_eq!(
+            changes,
+            vec![
+                CommandDescription::Create(CommandEntity::Role, role_to_add_params.name),
+                CommandDescription::Delete(CommandEntity::Role, role_to_remove.name)
+            ]
+        );
     }
 }

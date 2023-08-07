@@ -26,6 +26,11 @@ pub mod tests {
             Self::new().build()
         }
 
+        pub fn with_role(mut self, role: ExistingRole) -> Self {
+            self.roles.add(role);
+            self
+        }
+
         pub fn build(self) -> ExistingGuild {
             ExistingGuild {
                 roles: self.roles,

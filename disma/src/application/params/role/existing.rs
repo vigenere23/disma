@@ -4,7 +4,7 @@ use super::{RoleParams, RolesParamsList};
 
 impl From<&RolesList<ExistingRole>> for RolesParamsList {
     fn from(roles: &RolesList<ExistingRole>) -> Self {
-        let items = roles.to_list().iter().map(Into::into).collect();
+        let items = roles.to_list().into_iter().map(Into::into).collect();
 
         RolesParamsList {
             items,

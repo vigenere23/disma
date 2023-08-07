@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 use crate::base::ListComparison;
 
@@ -11,16 +11,32 @@ pub struct RolesList<R>
 where
     R: Role,
 {
-    items: Vec<R>,
+    roles_by_name: HashMap<String, R>,
 }
 
 impl<R: Role> RolesList<R> {
-    pub fn find_by_name(&self, name: &str) -> Option<&R> {
-        self.items.iter().find(|role| role.name() == name)
+    pub fn new() -> Self {
+        Self {
+            roles_by_name: HashMap::new(),
+        }
     }
 
-    pub fn to_list(&self) -> &Vec<R> {
-        &self.items
+    pub fn find_by_name(&self, name: &str) -> Option<&R> {
+        self.roles_by_name.get(name)
+    }
+
+    pub fn add(&mut self, role: R) {
+        if self.roles_by_name.contains_key(role.name()) {
+            // TODO replace with Result
+            panic!("All roles must have unique names.");
+        }
+
+        self.roles_by_name.insert(role.name().to_string(), role);
+    }
+
+    pub fn to_list(&self) -> Vec<&R> {
+        // TODO remove cloning
+        self.roles_by_name.values().collect()
     }
 
     pub fn compare_by_name<'a, R2: Role>(
@@ -52,18 +68,20 @@ impl<R: Role> RolesList<R> {
     }
 }
 
+impl<R: Role> Default for RolesList<R> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<R: Role> From<Vec<R>> for RolesList<R> {
     fn from(roles: Vec<R>) -> Self {
-        let mut role_names: HashSet<String> = HashSet::new();
+        let mut roles_list = RolesList::new();
 
-        for role in roles.iter() {
-            if role_names.contains(role.name()) {
-                panic!("All roles must have unique names.");
-            }
-
-            role_names.insert(role.name().to_string());
+        for role in roles.into_iter() {
+            roles_list.add(role);
         }
 
-        Self { items: roles }
+        roles_list
     }
 }
