@@ -34,7 +34,12 @@ impl Into<AwaitingGuild> for GuildParams {
 
 impl From<&ExistingGuild> for GuildParams {
     fn from(guild: &ExistingGuild) -> Self {
-        let roles: Vec<RoleParams> = guild.roles.to_list().iter().map(RoleParams::from).collect();
+        let roles: Vec<RoleParams> = guild
+            .roles
+            .to_list()
+            .into_iter()
+            .map(RoleParams::from)
+            .collect();
 
         let categories: Vec<CategoryParams> = guild
             .categories

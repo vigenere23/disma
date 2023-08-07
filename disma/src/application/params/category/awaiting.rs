@@ -92,7 +92,7 @@ mod tests {
         name: &str,
         roles: &RolesList<AwaitingRole>,
     ) -> (CategoryParams, AwaitingCategory) {
-        let role = roles.to_list().first().unwrap();
+        let role = roles.to_list().first().cloned().unwrap();
 
         let params = CategoryParams {
             name: name.to_string(),
