@@ -11,3 +11,5 @@ pub use infra::*;
 
 mod api;
 pub(crate) mod core;
+
+pub(crate) mod test;

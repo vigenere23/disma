@@ -23,7 +23,7 @@ impl ListChangesUseCase {
             .role_changes_service
             .list_changes(&existing_guild, &awaiting_guild);
 
-        return role_changes
+        role_changes
             .into_iter()
             .map(|change| match change {
                 RoleChange::Create(awaiting) => {
@@ -38,7 +38,7 @@ impl ListChangesUseCase {
                     CommandDescription::Delete(CommandEntity::Role, existing.name)
                 }
             })
-            .collect();
+            .collect()
     }
 }
 
@@ -49,46 +49,33 @@ mod tests {
     use mock_it::eq;
 
     use crate::{
-        category::CategoriesList,
-        channel::ChannelsList,
         core::changes::role::RoleChangesService,
-        guild::{ExistingGuild, GuildQuerierMock},
-        params::{
-            category::CategoriesParamsList, channel::ChannelsParamsList, guild::GuildParams,
-            role::RolesParamsList,
+        guild::GuildQuerierMock,
+        test::fixtures::{
+            existing::tests::ExistingGuildFixture, params::tests::GuildParamsFixture,
         },
-        role::RolesList,
     };
 
     use super::ListChangesUseCase;
 
-    const GUILD_ID: &str = "abc";
+    static GUILD_ID: &str = "abc";
 
     #[test]
-    fn list_role_changes() {
+    fn given_no_changes_it_returns_no_changes() {
         let querier = GuildQuerierMock::new();
+        let empty_guild = ExistingGuildFixture::default();
+        let params_with_no_changes = GuildParamsFixture::default();
 
         querier
             .when_get_guild(eq(GUILD_ID))
-            .will_return(ExistingGuild {
-                roles: RolesList::from(Vec::new()),
-                categories: CategoriesList::from(Vec::new()),
-                channels: ChannelsList::from(Vec::new()),
-            });
+            .will_return(empty_guild);
 
         let usecase = ListChangesUseCase {
             querier: Arc::from(querier),
             role_changes_service: Arc::from(RoleChangesService {}),
         };
 
-        let changes = usecase.execute(
-            GUILD_ID,
-            GuildParams {
-                roles: RolesParamsList::default(),
-                categories: CategoriesParamsList::default(),
-                channels: ChannelsParamsList::default(),
-            },
-        );
+        let changes = usecase.execute(GUILD_ID, params_with_no_changes);
 
         assert_eq!(changes, Vec::new());
     }

@@ -30,11 +30,11 @@ impl ApplyChangesUseCase {
             &mut delete_commands,
         );
 
-        return create_commands
+        create_commands
             .into_iter()
             .chain(update_commands.into_iter())
             .chain(delete_commands.into_iter())
-            .collect();
+            .collect()
     }
 
     fn add_role_commands(
@@ -47,7 +47,7 @@ impl ApplyChangesUseCase {
     ) {
         let role_changes = self
             .role_changes_service
-            .list_changes(&self.querier.get_guild(guild_id), &awaiting_guild);
+            .list_changes(&self.querier.get_guild(guild_id), awaiting_guild);
 
         for role_change in role_changes {
             match role_change {

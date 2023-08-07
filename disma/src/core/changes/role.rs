@@ -37,6 +37,6 @@ impl RoleChangesService {
             .into_iter()
             .map(|existing| RoleChange::Delete(existing.clone()));
 
-        return to_create.chain(to_update).chain(to_delete).collect();
+        to_create.chain(to_update).chain(to_delete).collect()
     }
 }
