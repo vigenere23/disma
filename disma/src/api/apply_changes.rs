@@ -75,11 +75,9 @@ mod tests {
     use crate::{
         core::changes::role::RoleChangesService,
         guild::{GuildCommanderMock, GuildQuerierMock},
-        params::role::RoleParams,
-        permission::PermissionsList,
-        role::ExistingRole,
         test::fixtures::{
-            existing::tests::ExistingGuildFixture, params::tests::GuildParamsFixture,
+            existing::{guild::tests::ExistingGuildFixture, role::tests::ExistingRoleFixture},
+            params::{guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture},
         },
     };
 
@@ -92,36 +90,13 @@ mod tests {
         let querier = GuildQuerierMock::new();
         let commander = GuildCommanderMock::new();
 
-        let role_to_remove = ExistingRole {
-            id: "to_remove".to_string(),
-            name: "to_remove".to_string(),
-            permissions: PermissionsList::from(Vec::new()),
-            color: None,
-            is_mentionable: false,
-            show_in_sidebar: false,
-        };
-        let role_to_add_params = RoleParams {
-            name: "to_add".to_string(),
-            permissions: Vec::new(),
-            color: None,
-            is_mentionable: false,
-            show_in_sidebar: false,
-        };
-        let role_to_update = ExistingRole {
-            id: "to_update".to_string(),
-            name: "to_update".to_string(),
-            permissions: PermissionsList::from(Vec::new()),
-            color: None,
-            is_mentionable: false,
-            show_in_sidebar: false,
-        };
-        let role_to_update_params = RoleParams {
-            name: "to_update".to_string(),
-            permissions: Vec::new(),
-            color: Some("124f5d".to_string()),
-            is_mentionable: false,
-            show_in_sidebar: false,
-        };
+        let role_to_remove = ExistingRoleFixture::new().with_name("to_remove").build();
+        let role_to_add_params = RoleParamsFixture::new().with_name("to_add").build();
+        let role_to_update = ExistingRoleFixture::new().with_name("to_update").build();
+        let role_to_update_params = RoleParamsFixture::new()
+            .with_name("to_update")
+            .with_color("124f5d")
+            .build();
 
         querier.when_get_guild(eq(GUILD_ID)).will_return(
             ExistingGuildFixture::new()
