@@ -51,6 +51,7 @@ mod tests {
     use crate::{
         commands::{CommandDescription, CommandEntity},
         core::changes::role::RoleChangesService,
+        diff::Diff,
         guild::GuildQuerierMock,
         params::role::RoleParams,
         permission::PermissionsList,
@@ -88,25 +89,40 @@ mod tests {
     fn can_list_role_changes() {
         let querier = GuildQuerierMock::new();
         let role_to_remove = ExistingRole {
-            id: String::from("to_remove"),
-            name: String::from("to_remove"),
+            id: "to_remove".to_string(),
+            name: "to_remove".to_string(),
             permissions: PermissionsList::from(Vec::new()),
             color: None,
-            is_mentionable: true,
+            is_mentionable: false,
             show_in_sidebar: false,
         };
         let role_to_add_params = RoleParams {
-            name: String::from("to_add"),
+            name: "to_add".to_string(),
             permissions: Vec::new(),
             color: None,
-            is_mentionable: true,
+            is_mentionable: false,
             show_in_sidebar: false,
         };
-        // TODO role to update
+        let role_to_update = ExistingRole {
+            id: "to_update".to_string(),
+            name: "to_update".to_string(),
+            permissions: PermissionsList::from(Vec::new()),
+            color: None,
+            is_mentionable: false,
+            show_in_sidebar: false,
+        };
+        let role_to_update_params = RoleParams {
+            name: "to_update".to_string(),
+            permissions: Vec::new(),
+            color: Some("124f5d".to_string()),
+            is_mentionable: false,
+            show_in_sidebar: false,
+        };
 
         querier.when_get_guild(eq(GUILD_ID)).will_return(
             ExistingGuildFixture::new()
                 .with_role(role_to_remove.clone())
+                .with_role(role_to_update.clone())
                 .build(),
         );
 
@@ -119,6 +135,7 @@ mod tests {
             GUILD_ID,
             GuildParamsFixture::new()
                 .with_role(role_to_add_params.clone())
+                .with_role(role_to_update_params.clone())
                 .build(),
         );
 
@@ -126,6 +143,14 @@ mod tests {
             changes,
             vec![
                 CommandDescription::Create(CommandEntity::Role, role_to_add_params.name),
+                CommandDescription::Update(
+                    CommandEntity::Role,
+                    role_to_update.name,
+                    vec![Diff::Update(
+                        "color".to_string(),
+                        vec![Diff::Add("124f5d".to_string())]
+                    )]
+                ),
                 CommandDescription::Delete(CommandEntity::Role, role_to_remove.name)
             ]
         );
