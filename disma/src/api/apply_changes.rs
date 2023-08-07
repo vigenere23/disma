@@ -14,6 +14,7 @@ pub struct ApplyChangesUseCase {
 }
 
 impl ApplyChangesUseCase {
+    #[allow(dead_code)]
     pub fn execute(&self, guild_id: &str, params: GuildParams) -> Vec<CommandRef> {
         let mut create_commands = Vec::<CommandRef>::new();
         let mut update_commands = Vec::<CommandRef>::new();

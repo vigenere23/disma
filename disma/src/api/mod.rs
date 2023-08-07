@@ -1,2 +1,2 @@
-mod apply_changes;
-mod list_changes;
+pub mod apply_changes;
+pub mod list_changes;
