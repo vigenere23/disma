@@ -28,6 +28,11 @@ pub mod tests {
             }
         }
 
+        pub fn with_id(mut self, id: &str) -> Self {
+            self.id = id.to_string();
+            self
+        }
+
         pub fn with_name(mut self, name: &str) -> Self {
             self.name = name.to_string();
             self
