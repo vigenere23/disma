@@ -32,6 +32,11 @@ pub mod tests {
             self
         }
 
+        pub fn with_channel(mut self, channel: ExistingChannel) -> Self {
+            self.channels.push(channel);
+            self
+        }
+
         pub fn build(self) -> ExistingGuild {
             ExistingGuild {
                 roles: self.roles,

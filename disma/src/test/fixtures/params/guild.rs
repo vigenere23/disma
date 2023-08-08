@@ -2,7 +2,7 @@
 pub mod tests {
     use crate::params::{
         category::{CategoriesParamsList, CategoryParams},
-        channel::ChannelsParamsList,
+        channel::{ChannelParams, ChannelsParamsList},
         guild::GuildParams,
         role::{RoleParams, RolesParamsList},
     };
@@ -29,6 +29,11 @@ pub mod tests {
 
         pub fn with_category(mut self, category: CategoryParams) -> Self {
             self.categories.items.push(category);
+            self
+        }
+
+        pub fn with_channel(mut self, channel: ChannelParams) -> Self {
+            self.channels.items.push(channel);
             self
         }
 

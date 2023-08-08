@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{collections::HashMap, fmt::Display};
 
 use crate::{
     base::ListComparison,
@@ -59,21 +59,38 @@ pub struct ChannelsList<C>
 where
     C: Channel,
 {
-    items: Vec<C>,
+    channels_by_name: HashMap<String, C>,
 }
 
 impl<C> ChannelsList<C>
 where
     C: Channel,
 {
-    pub fn find_by_unique_name(&self, unique_name: &UniqueChannelName) -> Option<&C> {
-        self.items
-            .iter()
-            .find(|channel| &channel.unique_name() == unique_name)
+    pub fn new() -> Self {
+        Self {
+            channels_by_name: HashMap::new(),
+        }
     }
 
-    pub fn to_list(&self) -> &Vec<C> {
-        &self.items
+    pub fn find_by_unique_name(&self, unique_name: &UniqueChannelName) -> Option<&C> {
+        self.channels_by_name.get(&unique_name.to_string())
+    }
+
+    pub fn push(&mut self, channel: C) {
+        if self
+            .channels_by_name
+            .contains_key(&channel.unique_name().to_string())
+        {
+            // TODO replace with Result
+            panic!("All channels must have unique names.");
+        }
+
+        self.channels_by_name
+            .insert(channel.unique_name().to_string(), channel);
+    }
+
+    pub fn to_list(&self) -> Vec<&C> {
+        self.channels_by_name.values().collect()
     }
 
     pub fn compare_by_unique_name<'a, C2: Channel>(
@@ -108,12 +125,24 @@ where
     }
 }
 
+impl<C: Channel> Default for ChannelsList<C> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<C> From<Vec<C>> for ChannelsList<C>
 where
     C: Channel,
 {
     fn from(items: Vec<C>) -> Self {
-        Self { items }
+        let mut channels_list = ChannelsList::new();
+
+        for channel in items.into_iter() {
+            channels_list.push(channel);
+        }
+
+        channels_list
     }
 }
 

@@ -51,7 +51,7 @@ impl From<&ExistingGuild> for GuildParams {
         let channels: Vec<ChannelParams> = guild
             .channels
             .to_list()
-            .iter()
+            .into_iter()
             .map(|channel| channel.into())
             .collect();
 
