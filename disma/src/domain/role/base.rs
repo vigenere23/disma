@@ -25,7 +25,7 @@ impl<R: Role> RolesList<R> {
         self.roles_by_name.get(name)
     }
 
-    pub fn add(&mut self, role: R) {
+    pub fn push(&mut self, role: R) {
         if self.roles_by_name.contains_key(role.name()) {
             // TODO replace with Result
             panic!("All roles must have unique names.");
@@ -35,7 +35,6 @@ impl<R: Role> RolesList<R> {
     }
 
     pub fn to_list(&self) -> Vec<&R> {
-        // TODO remove cloning
         self.roles_by_name.values().collect()
     }
 
@@ -79,7 +78,7 @@ impl<R: Role> From<Vec<R>> for RolesList<R> {
         let mut roles_list = RolesList::new();
 
         for role in roles.into_iter() {
-            roles_list.add(role);
+            roles_list.push(role);
         }
 
         roles_list
