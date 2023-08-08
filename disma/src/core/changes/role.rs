@@ -31,21 +31,17 @@ impl RoleChangesService {
         let to_create = extra_awaiting
             .into_iter()
             .map(|awaiting| RoleChange::Create(awaiting.clone()));
-        let to_update = same
-            .into_iter()
-            .map(|(awaiting, existing)| {
-                let diffs = existing.diffs_with(&awaiting);
-                match diffs.is_empty() {
-                    true => None,
-                    false => Some(RoleChange::Update(
-                        existing.clone(),
-                        awaiting.clone(),
-                        diffs,
-                    )),
-                }
-            })
-            .filter(|change| change.is_some())
-            .map(|change| change.unwrap());
+        let to_update = same.into_iter().filter_map(|(awaiting, existing)| {
+            let diffs = existing.diffs_with(awaiting);
+            match diffs.is_empty() {
+                true => None,
+                false => Some(RoleChange::Update(
+                    existing.clone(),
+                    awaiting.clone(),
+                    diffs,
+                )),
+            }
+        });
         let to_delete = extra_existing
             .into_iter()
             .map(|existing| RoleChange::Delete(existing.clone()));
