@@ -2,9 +2,11 @@ use std::sync::Arc;
 
 use crate::{
     category::{AddCategory, DeleteCategory, UpdateCategory},
+    channel::{AddChannel, DeleteChannel, UpdateChannel},
     commands::CommandRef,
     core::changes::{
         category::{CategoryChange, CategoryChangesService},
+        channel::{ChannelChange, ChannelChangesService},
         role::{RoleChange, RoleChangesService},
     },
     guild::{AwaitingGuild, GuildCommander, GuildQuerier},
@@ -17,6 +19,7 @@ pub struct ApplyChangesUseCase {
     commander: Arc<dyn GuildCommander>,
     role_changes_service: Arc<RoleChangesService>,
     category_changes_service: Arc<CategoryChangesService>,
+    channel_changes_service: Arc<ChannelChangesService>,
 }
 
 impl ApplyChangesUseCase {
@@ -37,6 +40,14 @@ impl ApplyChangesUseCase {
         );
 
         self.add_category_commands(
+            guild_id,
+            &awaiting_guild,
+            &mut create_commands,
+            &mut update_commands,
+            &mut delete_commands,
+        );
+
+        self.add_channel_commands(
             guild_id,
             &awaiting_guild,
             &mut create_commands,
@@ -112,6 +123,45 @@ impl ApplyChangesUseCase {
             }
         }
     }
+
+    fn add_channel_commands(
+        &self,
+        guild_id: &str,
+        awaiting_guild: &AwaitingGuild,
+        create_commands: &mut Vec<CommandRef>,
+        update_commands: &mut Vec<CommandRef>,
+        delete_commands: &mut Vec<CommandRef>,
+    ) {
+        let existing_guild = self.querier.get_guild(guild_id);
+        let channel_changes = self
+            .channel_changes_service
+            .list_changes(&existing_guild, awaiting_guild);
+
+        for channel_change in channel_changes {
+            match channel_change {
+                ChannelChange::Create(awaiting) => {
+                    create_commands.push(Arc::from(AddChannel::new(
+                        awaiting,
+                        existing_guild.roles.clone(),
+                        existing_guild.categories.clone(),
+                    )))
+                }
+                ChannelChange::Update(existing, awaiting, _) => update_commands.push(Arc::from(
+                    // No longer need to try depending on diff
+                    UpdateChannel::try_new(
+                        existing.clone(),
+                        awaiting.clone(),
+                        existing_guild.roles.clone(),
+                        existing_guild.categories.clone(),
+                    )
+                    .unwrap(),
+                )),
+                ChannelChange::Delete(existing) => {
+                    delete_commands.push(Arc::from(DeleteChannel::new(existing)))
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -121,17 +171,20 @@ mod tests {
     use mock_it::{any, eq};
 
     use crate::{
-        core::changes::{category::CategoryChangesService, role::RoleChangesService},
+        core::changes::{
+            category::CategoryChangesService, channel::ChannelChangesService,
+            role::RoleChangesService,
+        },
         guild::{AwaitingGuild, GuildCommanderMock, GuildQuerierMock},
         params::permission::PermissionsOverwriteParams,
         test::fixtures::{
             existing::{
-                category::tests::ExistingCategoryFixture, guild::tests::ExistingGuildFixture,
-                role::tests::ExistingRoleFixture,
+                category::tests::ExistingCategoryFixture, channel::tests::ExistingChannelFixture,
+                guild::tests::ExistingGuildFixture, role::tests::ExistingRoleFixture,
             },
             params::{
-                category::tests::CategoryParamsFixture, guild::tests::GuildParamsFixture,
-                role::tests::RoleParamsFixture,
+                category::tests::CategoryParamsFixture, channel::tests::ChannelParamsFixture,
+                guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture,
             },
         },
     };
@@ -140,6 +193,7 @@ mod tests {
 
     static GUILD_ID: &str = "abc";
     static A_ROLE_NAME: &str = "role";
+    static A_CATEGORY_NAME: &str = "a_category";
 
     fn create_usecase(
         querier: &GuildQuerierMock,
@@ -150,6 +204,7 @@ mod tests {
             commander: Arc::from(commander.clone()),
             role_changes_service: Arc::from(RoleChangesService {}),
             category_changes_service: Arc::from(CategoryChangesService {}),
+            channel_changes_service: Arc::from(ChannelChangesService {}),
         }
     }
 
@@ -161,7 +216,7 @@ mod tests {
         commander.when_delete_role(any()).will_return_default();
     }
 
-    fn prepare_commander_for_channels(commander: &GuildCommanderMock) {
+    fn prepare_commander_for_categories(commander: &GuildCommanderMock) {
         commander
             .when_add_category(any(), any())
             .will_return_default();
@@ -169,6 +224,16 @@ mod tests {
             .when_update_category(any(), any(), any())
             .will_return_default();
         commander.when_delete_category(any()).will_return_default();
+    }
+
+    fn prepare_commander_for_channels(commander: &GuildCommanderMock) {
+        commander
+            .when_add_channel(any(), any(), any())
+            .will_return_default();
+        commander
+            .when_update_channel(any(), any(), any(), any())
+            .will_return_default();
+        commander.when_delete_channel(any()).will_return_default();
     }
 
     #[test]
@@ -250,7 +315,7 @@ mod tests {
         querier
             .when_get_guild(eq(GUILD_ID))
             .will_return(existing_guild.clone());
-        prepare_commander_for_channels(&commander);
+        prepare_commander_for_categories(&commander);
 
         let usecase = create_usecase(&querier, &commander);
 
@@ -276,5 +341,93 @@ mod tests {
             eq(&existing_guild.roles),
         );
         commander.expect_delete_category(eq(&category_to_remove.id));
+    }
+
+    #[test]
+    fn can_apply_channel_changes() {
+        let querier = GuildQuerierMock::new();
+        let commander = GuildCommanderMock::new();
+
+        let channel_to_remove = ExistingChannelFixture::new()
+            .with_name("to_remove")
+            .with_id("to_remove")
+            .build();
+        let channel_to_add_params = ChannelParamsFixture::new().with_name("to_add").build();
+        let channel_to_update = ExistingChannelFixture::new().with_name("to_update").build();
+        let channel_not_to_update = ExistingChannelFixture::new()
+            .with_name("not_to_update")
+            .build();
+        let channel_to_update_params = ChannelParamsFixture::new()
+            .with_name("to_update")
+            .with_topic("new_topic")
+            .build();
+        let channel_not_to_update_params = ChannelParamsFixture::new()
+            .with_name("not_to_update")
+            // TODO keep like that or change that should not trigger update
+            .build();
+        let channel_to_change_category = ExistingChannelFixture::new()
+            .with_name("category_change")
+            .with_id("category_change")
+            .build();
+        let channel_to_change_category_params = ChannelParamsFixture::new()
+            .with_name("category_change")
+            .with_category(A_CATEGORY_NAME)
+            .build();
+
+        let existing_guild = ExistingGuildFixture::new()
+            .with_category(
+                ExistingCategoryFixture::new()
+                    .with_name(A_CATEGORY_NAME)
+                    .build(),
+            )
+            .with_channel(channel_to_remove.clone())
+            .with_channel(channel_to_update.clone())
+            .with_channel(channel_not_to_update.clone())
+            .with_channel(channel_to_change_category.clone())
+            .build();
+        querier
+            .when_get_guild(eq(GUILD_ID))
+            .will_return(existing_guild.clone());
+        prepare_commander_for_categories(&commander);
+        prepare_commander_for_channels(&commander);
+
+        let usecase = create_usecase(&querier, &commander);
+
+        let params = GuildParamsFixture::new()
+            .with_category(
+                CategoryParamsFixture::new()
+                    .with_name(A_CATEGORY_NAME)
+                    .build(),
+            )
+            .with_channel(channel_to_add_params.clone())
+            .with_channel(channel_to_update_params.clone())
+            .with_channel(channel_not_to_update_params.clone())
+            .with_channel(channel_to_change_category_params.clone())
+            .build();
+        usecase.execute(GUILD_ID, params.clone());
+
+        // TODO the fact that these need access to the awaiting_guild and existing_guild roles list
+        // is a smell : maybe categories should not contain entire roles
+        // TODO does not verify that commander methods are not called
+        let awaiting_guild: AwaitingGuild = params.into();
+        commander.expect_add_channel(
+            eq(&channel_to_add_params.into(
+                &awaiting_guild.roles.items,
+                &awaiting_guild.categories.items,
+            )),
+            eq(&existing_guild.roles),
+            eq(&existing_guild.categories),
+        );
+        commander.expect_update_channel(
+            eq(&channel_to_update.id),
+            eq(&channel_to_update_params.into(
+                &awaiting_guild.roles.items,
+                &awaiting_guild.categories.items,
+            )),
+            eq(&existing_guild.roles),
+            eq(&existing_guild.categories),
+        );
+        commander.expect_delete_channel(eq(&channel_to_remove.id));
+        commander.expect_delete_channel(eq(&channel_to_change_category.id));
     }
 }

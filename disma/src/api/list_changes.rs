@@ -117,15 +117,19 @@ mod tests {
         diff::Diff,
         guild::GuildQuerierMock,
         params::permission::PermissionsOverwriteParams,
-        test::fixtures::{
-            existing::{
-                category::tests::ExistingCategoryFixture, channel::tests::ExistingChannelFixture,
-                guild::tests::ExistingGuildFixture, role::tests::ExistingRoleFixture,
+        test::{
+            fixtures::{
+                existing::{
+                    category::tests::ExistingCategoryFixture,
+                    channel::tests::ExistingChannelFixture, guild::tests::ExistingGuildFixture,
+                    role::tests::ExistingRoleFixture,
+                },
+                params::{
+                    category::tests::CategoryParamsFixture, channel::tests::ChannelParamsFixture,
+                    guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture,
+                },
             },
-            params::{
-                category::tests::CategoryParamsFixture, channel::tests::ChannelParamsFixture,
-                guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture,
-            },
+            utils::vec::tests::assert_contains_exactly_in_any_order,
         },
     };
 
@@ -336,28 +340,28 @@ mod tests {
         );
 
         // TODO should contain the UniqueChannelName and not the pre-computed string
-        assert_eq!(
-            changes,
-            vec![
+        assert_contains_exactly_in_any_order(
+            &changes,
+            &vec![
+                CommandDescription::Create(CommandEntity::Channel, ":to_add (TEXT)".to_string()),
                 CommandDescription::Create(
                     CommandEntity::Channel,
-                    "a_category:category_change (TEXT)".to_string()
+                    "a_category:category_change (TEXT)".to_string(),
                 ),
-                CommandDescription::Create(CommandEntity::Channel, ":to_add (TEXT)".to_string()),
                 CommandDescription::Update(
                     CommandEntity::Channel,
                     ":to_update (TEXT)".to_string(),
                     vec![Diff::Update(
                         "topic".to_string(),
-                        vec![Diff::Add("new_topic".to_string())]
-                    )]
+                        vec![Diff::Add("new_topic".to_string())],
+                    )],
                 ),
                 CommandDescription::Delete(
                     CommandEntity::Channel,
-                    ":category_change (TEXT)".to_string()
+                    ":category_change (TEXT)".to_string(),
                 ),
                 CommandDescription::Delete(CommandEntity::Channel, ":to_remove (TEXT)".to_string()),
-            ]
+            ],
         );
     }
 }
