@@ -6,7 +6,6 @@ use crate::{
         category::{CategoryChange, CategoryChangesService},
         role::{RoleChange, RoleChangesService},
     },
-    diff::Differ,
     guild::{AwaitingGuild, ExistingGuild, GuildQuerier},
     params::guild::GuildParams,
 };
@@ -25,8 +24,6 @@ impl ListChangesUseCase {
 
         self.list_role_changes(&existing_guild, &awaiting_guild)
             .chain(self.list_category_changes(&existing_guild, &awaiting_guild))
-            .filter(|change| change.is_some())
-            .map(|change| change.unwrap())
             .collect()
     }
 
@@ -34,31 +31,21 @@ impl ListChangesUseCase {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> impl Iterator<Item = Option<CommandDescription>> {
+    ) -> impl Iterator<Item = CommandDescription> {
         let role_changes = self
             .role_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
         role_changes.into_iter().map(|change| match change {
-            RoleChange::Create(awaiting) => Some(CommandDescription::Create(
-                CommandEntity::Role,
-                awaiting.name,
-            )),
-            RoleChange::Update(existing, awaiting) => {
-                let diffs = existing.diffs_with(&awaiting);
-                match diffs.is_empty() {
-                    true => None,
-                    false => Some(CommandDescription::Update(
-                        CommandEntity::Role,
-                        existing.name.clone(),
-                        diffs,
-                    )),
-                }
+            RoleChange::Create(awaiting) => {
+                CommandDescription::Create(CommandEntity::Role, awaiting.name)
             }
-            RoleChange::Delete(existing) => Some(CommandDescription::Delete(
-                CommandEntity::Role,
-                existing.name,
-            )),
+            RoleChange::Update(existing, _, diffs) => {
+                CommandDescription::Update(CommandEntity::Role, existing.name.clone(), diffs)
+            }
+            RoleChange::Delete(existing) => {
+                CommandDescription::Delete(CommandEntity::Role, existing.name)
+            }
         })
     }
 
@@ -66,31 +53,21 @@ impl ListChangesUseCase {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> impl Iterator<Item = Option<CommandDescription>> {
+    ) -> impl Iterator<Item = CommandDescription> {
         let category_changes = self
             .category_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
         category_changes.into_iter().map(|change| match change {
-            CategoryChange::Create(awaiting) => Some(CommandDescription::Create(
-                CommandEntity::Category,
-                awaiting.name,
-            )),
-            CategoryChange::Update(existing, awaiting) => {
-                let diffs = existing.diffs_with(&awaiting);
-                match diffs.is_empty() {
-                    true => None,
-                    false => Some(CommandDescription::Update(
-                        CommandEntity::Category,
-                        existing.name.clone(),
-                        diffs,
-                    )),
-                }
+            CategoryChange::Create(awaiting) => {
+                CommandDescription::Create(CommandEntity::Category, awaiting.name)
             }
-            CategoryChange::Delete(existing) => Some(CommandDescription::Delete(
-                CommandEntity::Category,
-                existing.name,
-            )),
+            CategoryChange::Update(existing, _, diffs) => {
+                CommandDescription::Update(CommandEntity::Category, existing.name.clone(), diffs)
+            }
+            CategoryChange::Delete(existing) => {
+                CommandDescription::Delete(CommandEntity::Category, existing.name)
+            }
         })
     }
 }

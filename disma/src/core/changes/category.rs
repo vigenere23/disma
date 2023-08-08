@@ -1,12 +1,13 @@
 use crate::{
     base::ListComparison,
     category::{AwaitingCategory, ExistingCategory},
+    diff::{Diff, Differ},
     guild::{AwaitingGuild, ExistingGuild},
 };
 
 pub enum CategoryChange {
     Create(AwaitingCategory),
-    Update(ExistingCategory, AwaitingCategory),
+    Update(ExistingCategory, AwaitingCategory, Vec<Diff>),
     Delete(ExistingCategory),
 }
 
@@ -32,7 +33,19 @@ impl CategoryChangesService {
             .map(|awaiting| CategoryChange::Create(awaiting.clone()));
         let to_update = same
             .into_iter()
-            .map(|(awaiting, existing)| CategoryChange::Update(existing.clone(), awaiting.clone()));
+            .map(|(awaiting, existing)| {
+                let diffs = existing.diffs_with(&awaiting);
+                match diffs.is_empty() {
+                    true => None,
+                    false => Some(CategoryChange::Update(
+                        existing.clone(),
+                        awaiting.clone(),
+                        diffs,
+                    )),
+                }
+            })
+            .filter(|change| change.is_some())
+            .map(|change| change.unwrap());
         let to_delete = extra_existing
             .into_iter()
             .map(|existing| CategoryChange::Delete(existing.clone()));

@@ -1,12 +1,13 @@
 use crate::{
     base::ListComparison,
+    diff::{Diff, Differ},
     guild::{AwaitingGuild, ExistingGuild},
     role::{AwaitingRole, ExistingRole},
 };
 
 pub enum RoleChange {
     Create(AwaitingRole),
-    Update(ExistingRole, AwaitingRole),
+    Update(ExistingRole, AwaitingRole, Vec<Diff>),
     Delete(ExistingRole),
 }
 
@@ -32,7 +33,19 @@ impl RoleChangesService {
             .map(|awaiting| RoleChange::Create(awaiting.clone()));
         let to_update = same
             .into_iter()
-            .map(|(awaiting, existing)| RoleChange::Update(existing.clone(), awaiting.clone()));
+            .map(|(awaiting, existing)| {
+                let diffs = existing.diffs_with(&awaiting);
+                match diffs.is_empty() {
+                    true => None,
+                    false => Some(RoleChange::Update(
+                        existing.clone(),
+                        awaiting.clone(),
+                        diffs,
+                    )),
+                }
+            })
+            .filter(|change| change.is_some())
+            .map(|change| change.unwrap());
         let to_delete = extra_existing
             .into_iter()
             .map(|existing| RoleChange::Delete(existing.clone()));

@@ -55,7 +55,8 @@ impl ApplyChangesUseCase {
                 RoleChange::Create(awaiting) => {
                     create_commands.push(Arc::from(AddRole::new(awaiting)))
                 }
-                RoleChange::Update(existing, awaiting) => update_commands.push(Arc::from(
+                RoleChange::Update(existing, awaiting, _) => update_commands.push(Arc::from(
+                    // No longer need to try depending on diff
                     UpdateRole::try_new(&existing, &awaiting).unwrap(),
                 )),
                 RoleChange::Delete(existing) => {
