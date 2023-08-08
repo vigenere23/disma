@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 
 use crate::base::ListComparison;
 
@@ -11,12 +11,18 @@ pub struct CategoriesList<C>
 where
     C: Category,
 {
-    items: Vec<C>,
+    categories_by_name: HashMap<String, C>,
 }
 
 impl<C: Category> CategoriesList<C> {
+    pub fn new() -> Self {
+        Self {
+            categories_by_name: HashMap::new(),
+        }
+    }
+
     pub fn find_by_name(&self, name: &str) -> Option<&C> {
-        self.items.iter().find(|category| category.name() == name)
+        self.categories_by_name.get(name)
     }
 
     pub fn find_by_name_panic(&self, name: &str) -> &C {
@@ -24,8 +30,18 @@ impl<C: Category> CategoriesList<C> {
             .unwrap_or_else(|| panic!("No category found with name {name}."))
     }
 
-    pub fn to_list(&self) -> &Vec<C> {
-        &self.items
+    pub fn push(&mut self, category: C) {
+        if self.categories_by_name.contains_key(category.name()) {
+            // TODO replace with Result
+            panic!("All categories must have unique names.");
+        }
+
+        self.categories_by_name
+            .insert(category.name().to_string(), category);
+    }
+
+    pub fn to_list(&self) -> Vec<&C> {
+        self.categories_by_name.values().collect()
     }
 
     pub fn compare_by_name<'a, C2: Category>(
@@ -57,18 +73,20 @@ impl<C: Category> CategoriesList<C> {
     }
 }
 
+impl<C: Category> Default for CategoriesList<C> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<C: Category> From<Vec<C>> for CategoriesList<C> {
     fn from(categories: Vec<C>) -> Self {
-        let mut category_names: HashSet<String> = HashSet::new();
+        let mut categories_list = CategoriesList::new();
 
-        for category in categories.iter() {
-            if category_names.contains(category.name()) {
-                panic!("All categories must have unique names.");
-            }
-
-            category_names.insert(category.name().to_string());
+        for category in categories.into_iter() {
+            categories_list.push(category);
         }
 
-        Self { items: categories }
+        categories_list
     }
 }

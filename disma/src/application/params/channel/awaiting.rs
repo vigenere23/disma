@@ -150,7 +150,7 @@ mod tests {
         categories: &CategoriesList<AwaitingCategory>,
     ) -> (ChannelParams, AwaitingChannel) {
         let role = roles.to_list().first().cloned().unwrap();
-        let category = categories.to_list().first().unwrap();
+        let category = categories.to_list().first().cloned().unwrap();
 
         let params = ChannelParams {
             name: name.to_string(),
@@ -185,7 +185,7 @@ mod tests {
         name: &str,
         categories: &CategoriesList<AwaitingCategory>,
     ) -> (ChannelParams, AwaitingChannel) {
-        let category = categories.to_list().first().unwrap();
+        let category = categories.to_list().first().cloned().unwrap();
 
         let params = ChannelParams {
             name: name.to_string(),

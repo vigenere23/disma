@@ -44,7 +44,7 @@ impl From<&ExistingGuild> for GuildParams {
         let categories: Vec<CategoryParams> = guild
             .categories
             .to_list()
-            .iter()
+            .into_iter()
             .map(CategoryParams::from)
             .collect();
 

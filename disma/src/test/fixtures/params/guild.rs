@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod tests {
     use crate::params::{
-        category::CategoriesParamsList,
+        category::{CategoriesParamsList, CategoryParams},
         channel::ChannelsParamsList,
         guild::GuildParams,
         role::{RoleParams, RolesParamsList},
@@ -24,6 +24,11 @@ pub mod tests {
 
         pub fn with_role(mut self, role: RoleParams) -> Self {
             self.roles.items.push(role);
+            self
+        }
+
+        pub fn with_category(mut self, category: CategoryParams) -> Self {
+            self.categories.items.push(category);
             self
         }
 

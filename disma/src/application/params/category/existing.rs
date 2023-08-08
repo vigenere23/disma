@@ -7,7 +7,7 @@ use super::{CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStr
 
 impl From<&CategoriesList<ExistingCategory>> for CategoriesParamsList {
     fn from(categories: &CategoriesList<ExistingCategory>) -> Self {
-        let items = categories.to_list().iter().map(Into::into).collect();
+        let items = categories.to_list().into_iter().map(Into::into).collect();
 
         CategoriesParamsList {
             items,

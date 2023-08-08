@@ -23,7 +23,12 @@ pub mod tests {
         }
 
         pub fn with_role(mut self, role: ExistingRole) -> Self {
-            self.roles.add(role);
+            self.roles.push(role);
+            self
+        }
+
+        pub fn with_category(mut self, category: ExistingCategory) -> Self {
+            self.categories.push(category);
             self
         }
 
