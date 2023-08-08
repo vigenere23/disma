@@ -22,10 +22,6 @@ pub mod tests {
             }
         }
 
-        pub fn default() -> GuildParams {
-            Self::new().build()
-        }
-
         pub fn with_role(mut self, role: RoleParams) -> Self {
             self.roles.items.push(role);
             self

@@ -4,7 +4,7 @@ use crate::{
     commands::{CommandDescription, CommandEntity},
     core::changes::role::{RoleChange, RoleChangesService},
     diff::Differ,
-    guild::{AwaitingGuild, GuildQuerier},
+    guild::{AwaitingGuild, ExistingGuild, GuildQuerier},
     params::guild::GuildParams,
 };
 
@@ -19,26 +19,32 @@ impl ListChangesUseCase {
         let awaiting_guild: AwaitingGuild = params.into();
         let existing_guild = self.querier.get_guild(guild_id);
 
+        self.list_role_changes(&existing_guild, &awaiting_guild)
+            .collect()
+    }
+
+    fn list_role_changes(
+        &self,
+        existing_guild: &ExistingGuild,
+        awaiting_guild: &AwaitingGuild,
+    ) -> impl Iterator<Item = CommandDescription> {
         let role_changes = self
             .role_changes_service
-            .list_changes(&existing_guild, &awaiting_guild);
+            .list_changes(existing_guild, awaiting_guild);
 
-        role_changes
-            .into_iter()
-            .map(|change| match change {
-                RoleChange::Create(awaiting) => {
-                    CommandDescription::Create(CommandEntity::Role, awaiting.name)
-                }
-                RoleChange::Update(existing, awaiting) => CommandDescription::Update(
-                    CommandEntity::Role,
-                    existing.name.clone(),
-                    existing.diffs_with(&awaiting),
-                ),
-                RoleChange::Delete(existing) => {
-                    CommandDescription::Delete(CommandEntity::Role, existing.name)
-                }
-            })
-            .collect()
+        role_changes.into_iter().map(|change| match change {
+            RoleChange::Create(awaiting) => {
+                CommandDescription::Create(CommandEntity::Role, awaiting.name)
+            }
+            RoleChange::Update(existing, awaiting) => CommandDescription::Update(
+                CommandEntity::Role,
+                existing.name.clone(),
+                existing.diffs_with(&awaiting),
+            ),
+            RoleChange::Delete(existing) => {
+                CommandDescription::Delete(CommandEntity::Role, existing.name)
+            }
+        })
     }
 }
 
@@ -66,8 +72,8 @@ mod tests {
     #[test]
     fn when_no_changes_it_returns_empty_list() {
         let querier = GuildQuerierMock::new();
-        let empty_guild = ExistingGuildFixture::default();
-        let params_with_no_changes = GuildParamsFixture::default();
+        let empty_guild = ExistingGuildFixture::new().build();
+        let params_with_no_changes = GuildParamsFixture::new().build();
 
         querier
             .when_get_guild(eq(GUILD_ID))

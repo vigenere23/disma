@@ -22,10 +22,6 @@ pub mod tests {
             }
         }
 
-        pub fn default() -> ExistingGuild {
-            Self::new().build()
-        }
-
         pub fn with_role(mut self, role: ExistingRole) -> Self {
             self.roles.add(role);
             self
