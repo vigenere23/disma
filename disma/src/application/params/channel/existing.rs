@@ -10,7 +10,7 @@ use super::{
 
 impl From<&ChannelsList<ExistingChannel>> for ChannelsParamsList {
     fn from(channels: &ChannelsList<ExistingChannel>) -> Self {
-        let items = channels.to_list().iter().map(Into::into).collect();
+        let items = channels.to_list().into_iter().map(Into::into).collect();
 
         ChannelsParamsList {
             items,
