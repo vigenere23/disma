@@ -1,29 +1,26 @@
 use std::sync::Arc;
 
 use crate::{
-    category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::{AwaitingChannel, ChannelType, ChannelsList, ExistingChannel},
-    guild::{ExistingGuild, GuildCommander, GuildQuerier, GuildSummary},
+    category::{CategoriesList, ExistingCategory},
+    channel::{ChannelType, ChannelsList, ExistingChannel},
+    guild::{ExistingGuild, GuildQuerier, GuildSummary},
     permission::{PermissionsOverwrite, PermissionsOverwritesList},
-    role::{AwaitingRole, ExistingRole, RolesList},
+    role::{ExistingRole, RolesList},
 };
 
-use super::{
-    api::DiscordApi,
-    dtos::{channel::ChannelRequest, role::RoleRequest},
-};
+use super::api::DiscordApi;
 
-pub struct DiscordClient {
+pub struct HttpGuildQuerier {
     api: Arc<DiscordApi>,
 }
 
-impl DiscordClient {
+impl HttpGuildQuerier {
     pub fn new(api: Arc<DiscordApi>) -> Self {
         Self { api }
     }
 }
 
-impl GuildQuerier for DiscordClient {
+impl GuildQuerier for HttpGuildQuerier {
     fn get_guild(&self, guild_id: &str) -> ExistingGuild {
         let roles: Vec<ExistingRole> = self
             .api
@@ -106,91 +103,5 @@ impl GuildQuerier for DiscordClient {
             .into_iter()
             .map(|guild| guild.into())
             .collect()
-    }
-}
-
-pub struct DiscordGuildClient {
-    api: Arc<DiscordApi>,
-    guild_id: String,
-}
-
-impl DiscordGuildClient {
-    pub fn new(api: Arc<DiscordApi>, guild_id: &str) -> Self {
-        Self {
-            api,
-            guild_id: String::from(guild_id),
-        }
-    }
-}
-
-impl GuildCommander for DiscordGuildClient {
-    fn add_role(&self, role: &AwaitingRole) {
-        self.api
-            .add_role(&self.guild_id, RoleRequest::from(role))
-            .unwrap();
-    }
-
-    fn update_role(&self, id: &str, role: &AwaitingRole) {
-        self.api
-            .update_role(&self.guild_id, id, RoleRequest::from(role))
-            .unwrap();
-    }
-
-    fn delete_role(&self, id: &str) {
-        self.api.delete_role(&self.guild_id, id).unwrap();
-    }
-
-    fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
-        self.api
-            .add_channel(
-                &self.guild_id,
-                ChannelRequest::from_category(category, roles),
-            )
-            .unwrap();
-    }
-
-    fn update_category(
-        &self,
-        id: &str,
-        category: &AwaitingCategory,
-        roles: &RolesList<ExistingRole>,
-    ) {
-        self.api
-            .update_channel(id, ChannelRequest::from_category(category, roles))
-            .unwrap();
-    }
-
-    fn delete_category(&self, id: &str) {
-        self.api.delete_channel(id).unwrap();
-    }
-
-    fn add_channel(
-        &self,
-        channel: &AwaitingChannel,
-        roles: &RolesList<ExistingRole>,
-        categories: &CategoriesList<ExistingCategory>,
-    ) {
-        self.api
-            .add_channel(
-                &self.guild_id,
-                ChannelRequest::from_channel(channel, roles, categories),
-            )
-            .unwrap();
-    }
-
-    fn update_channel(
-        &self,
-        id: &str,
-        channel: &AwaitingChannel,
-        roles: &RolesList<ExistingRole>,
-        categories: &CategoriesList<ExistingCategory>,
-    ) {
-        self.api
-            .update_channel(id, ChannelRequest::from_channel(channel, roles, categories))
-            .unwrap();
-    }
-
-    fn delete_channel(&self, id: &str) {
-        self.api.delete_channel(id).unwrap();
     }
 }

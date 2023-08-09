@@ -177,14 +177,13 @@ mod tests {
         },
         guild::{AwaitingGuild, GuildCommanderMock, GuildQuerierMock},
         params::permission::PermissionsOverwriteParams,
-        test::fixtures::{
+        tests::fixtures::{
             existing::{
-                category::tests::ExistingCategoryFixture, channel::tests::ExistingChannelFixture,
-                guild::tests::ExistingGuildFixture, role::tests::ExistingRoleFixture,
+                ExistingCategoryFixture, ExistingChannelFixture, ExistingGuildFixture,
+                ExistingRoleFixture,
             },
             params::{
-                category::tests::CategoryParamsFixture, channel::tests::ChannelParamsFixture,
-                guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture,
+                CategoryParamsFixture, ChannelParamsFixture, GuildParamsFixture, RoleParamsFixture,
             },
         },
     };
