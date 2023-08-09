@@ -3,11 +3,8 @@ use std::sync::Arc;
 use disma::{
     changes::ChangesService,
     commands::CommandEventListenerRef,
-    discord::{
-        api::DiscordApi,
-        client::{DiscordClient, DiscordGuildClient},
-    },
     guild::{GuildCommander, GuildQuerier},
+    impls::discord::{api::DiscordApi, HttpGuildCommander, HttpGuildQuerier},
 };
 
 use crate::{
@@ -46,28 +43,16 @@ impl Get<Arc<DiscordApi>> for Injector {
     }
 }
 
-impl Get<Arc<DiscordClient>> for Injector {
-    fn get(&self) -> Arc<DiscordClient> {
-        Arc::from(DiscordClient::new(self.get()))
-    }
-}
-
-impl Get<Arc<DiscordGuildClient>> for Injector {
-    fn get(&self) -> Arc<DiscordGuildClient> {
-        let guild_id = self.guild_id.clone().expect("Missing guild id.");
-        Arc::from(DiscordGuildClient::new(self.get(), &guild_id))
-    }
-}
-
 impl Get<Arc<dyn GuildQuerier>> for Injector {
     fn get(&self) -> Arc<dyn GuildQuerier> {
-        <Self as Get<Arc<DiscordClient>>>::get(self)
+        Arc::from(HttpGuildQuerier::new(self.get()))
     }
 }
 
 impl Get<Arc<dyn GuildCommander>> for Injector {
     fn get(&self) -> Arc<dyn GuildCommander> {
-        <Self as Get<Arc<DiscordGuildClient>>>::get(self)
+        let guild_id = self.guild_id.clone().expect("Missing guild id.");
+        Arc::from(HttpGuildCommander::new(self.get(), &guild_id))
     }
 }
 

@@ -117,19 +117,18 @@ mod tests {
         diff::Diff,
         guild::GuildQuerierMock,
         params::permission::PermissionsOverwriteParams,
-        test::{
+        tests::{
             fixtures::{
                 existing::{
-                    category::tests::ExistingCategoryFixture,
-                    channel::tests::ExistingChannelFixture, guild::tests::ExistingGuildFixture,
-                    role::tests::ExistingRoleFixture,
+                    ExistingCategoryFixture, ExistingChannelFixture, ExistingGuildFixture,
+                    ExistingRoleFixture,
                 },
                 params::{
-                    category::tests::CategoryParamsFixture, channel::tests::ChannelParamsFixture,
-                    guild::tests::GuildParamsFixture, role::tests::RoleParamsFixture,
+                    CategoryParamsFixture, ChannelParamsFixture, GuildParamsFixture,
+                    RoleParamsFixture,
                 },
             },
-            utils::vec::tests::assert_contains_exactly_in_any_order,
+            utils::vec::assert_contains_exactly_in_any_order,
         },
     };
 

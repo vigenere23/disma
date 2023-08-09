@@ -1,15 +1,20 @@
-pub mod utils;
-
+// TODO remove
 mod application;
 pub use application::*;
 
+// TODO remove
 mod domain;
 pub use domain::*;
 
-mod infra;
-pub use infra::*;
+pub mod impls;
 
+// TODO release
 mod api;
+
+// TODO probably release
 pub(crate) mod core;
 
-pub(crate) mod test;
+pub(crate) mod utils;
+
+#[cfg(test)]
+pub(crate) mod tests;

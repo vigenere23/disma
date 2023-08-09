@@ -22,6 +22,7 @@ pub enum DiscordError {
     InvalidCredentials,
     InsuffiscientPermissions,
     InvalidRequest(String),
+    ClientError(String),
     Unknown(u16, String),
 }
 
@@ -32,6 +33,7 @@ impl Display for DiscordError {
             Self::InsuffiscientPermissions => f.write_str("Insufficient permissions. The bot is either not in the right guild, does not have the Manage Role permission or has lower permissions than the objects it wants to modify or delete."),
             Self::InvalidRequest(description) => f.write_str(&format!("Invalid request. This should not happen... Make sure to file an issue if persistent. Error : {description}")),
             Self::Unknown(status, description) => f.write_str(&format!("Unhandled Discord response status {status}. This issue is temporary, make sure that Discord's APIs are up and running. Make sure to file an issue if persistent. Error : {description}")),
+            Self::ClientError(description) => f.write_str(&format!("Invalid parameters. {description}"))
         }
     }
 }
@@ -156,9 +158,7 @@ impl DiscordApi {
             | StatusCode::NO_CONTENT => Ok(response),
             StatusCode::UNAUTHORIZED => Err(DiscordError::InvalidCredentials),
             StatusCode::FORBIDDEN => Err(DiscordError::InsuffiscientPermissions),
-            StatusCode::BAD_REQUEST => {
-                Err(DiscordError::InvalidRequest(response.text_body().into()))
-            }
+            StatusCode::BAD_REQUEST => Err(DiscordError::ClientError(response.text_body().into())),
             _ => Err(DiscordError::Unknown(
                 response.status.as_u16(),
                 response.text_body().into(),
