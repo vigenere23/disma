@@ -1,9 +1,9 @@
-pub mod actions;
-pub mod args;
-pub mod infra;
-pub mod injector;
-pub mod services;
-pub mod utils;
+mod actions;
+mod args;
+mod infra;
+mod injector;
+mod services;
+mod utils;
 
 use clap::Parser;
 
