@@ -40,79 +40,39 @@ impl ApplyChangesUseCase {
     }
 
     pub fn execute(&self, guild_id: &str, params: GuildParams) {
-        let mut create_commands = Vec::<CommandRef>::new();
-        let mut update_commands = Vec::<CommandRef>::new();
-        let mut delete_commands = Vec::<CommandRef>::new();
-
         let awaiting_guild: AwaitingGuild = params.into();
 
-        self.add_role_commands(
-            guild_id,
-            &awaiting_guild,
-            &mut create_commands,
-            &mut update_commands,
-            &mut delete_commands,
-        );
-
-        self.add_category_commands(
-            guild_id,
-            &awaiting_guild,
-            &mut create_commands,
-            &mut update_commands,
-            &mut delete_commands,
-        );
-
-        self.add_channel_commands(
-            guild_id,
-            &awaiting_guild,
-            &mut create_commands,
-            &mut update_commands,
-            &mut delete_commands,
-        );
-
-        create_commands
-            .into_iter()
-            .chain(update_commands.into_iter())
-            .chain(delete_commands.into_iter())
-            .for_each(|command| command.execute(&self.commander));
+        self.apply_role_commands(guild_id, &awaiting_guild);
+        self.apply_category_commands(guild_id, &awaiting_guild);
+        self.apply_channel_commands(guild_id, &awaiting_guild);
     }
 
-    fn add_role_commands(
-        &self,
-        guild_id: &str,
-        awaiting_guild: &AwaitingGuild,
-        create_commands: &mut Vec<CommandRef>,
-        update_commands: &mut Vec<CommandRef>,
-        delete_commands: &mut Vec<CommandRef>,
-    ) {
+    fn apply_role_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+        let mut commands = Vec::<CommandRef>::new();
+
         let role_changes = self
             .role_changes_service
             .list_changes(&self.querier.get_guild(guild_id), awaiting_guild);
 
         for role_change in role_changes {
             match role_change {
-                RoleChange::Create(awaiting) => {
-                    create_commands.push(Arc::from(AddRole::new(awaiting)))
-                }
-                RoleChange::Update(existing, awaiting, _) => update_commands.push(Arc::from(
+                RoleChange::Create(awaiting) => commands.push(Arc::from(AddRole::new(awaiting))),
+                RoleChange::Update(existing, awaiting, _) => commands.push(Arc::from(
                     // No longer need to try depending on diff
                     UpdateRole::try_new(&existing, &awaiting).unwrap(),
                 )),
-                RoleChange::Delete(existing) => {
-                    delete_commands.push(Arc::from(DeleteRole::new(existing)))
-                }
+                RoleChange::Delete(existing) => commands.push(Arc::from(DeleteRole::new(existing))),
             }
         }
+
+        commands
+            .into_iter()
+            .for_each(|command| command.execute(&self.commander));
     }
 
-    fn add_category_commands(
-        &self,
-        guild_id: &str,
-        awaiting_guild: &AwaitingGuild,
-        create_commands: &mut Vec<CommandRef>,
-        update_commands: &mut Vec<CommandRef>,
-        delete_commands: &mut Vec<CommandRef>,
-    ) {
+    fn apply_category_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+        let mut commands = Vec::<CommandRef>::new();
+
         let existing_guild = self.querier.get_guild(guild_id);
         let category_changes = self
             .category_changes_service
@@ -120,10 +80,11 @@ impl ApplyChangesUseCase {
 
         for category_change in category_changes {
             match category_change {
-                CategoryChange::Create(awaiting) => create_commands.push(Arc::from(
-                    AddCategory::new(awaiting, existing_guild.roles.clone()),
-                )),
-                CategoryChange::Update(existing, awaiting, _) => update_commands.push(Arc::from(
+                CategoryChange::Create(awaiting) => commands.push(Arc::from(AddCategory::new(
+                    awaiting,
+                    existing_guild.roles.clone(),
+                ))),
+                CategoryChange::Update(existing, awaiting, _) => commands.push(Arc::from(
                     // No longer need to try depending on diff
                     UpdateCategory::try_new(
                         existing.clone(),
@@ -133,20 +94,19 @@ impl ApplyChangesUseCase {
                     .unwrap(),
                 )),
                 CategoryChange::Delete(existing) => {
-                    delete_commands.push(Arc::from(DeleteCategory::new(existing)))
+                    commands.push(Arc::from(DeleteCategory::new(existing)))
                 }
             }
         }
+
+        commands
+            .into_iter()
+            .for_each(|command| command.execute(&self.commander));
     }
 
-    fn add_channel_commands(
-        &self,
-        guild_id: &str,
-        awaiting_guild: &AwaitingGuild,
-        create_commands: &mut Vec<CommandRef>,
-        update_commands: &mut Vec<CommandRef>,
-        delete_commands: &mut Vec<CommandRef>,
-    ) {
+    fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+        let mut commands = Vec::<CommandRef>::new();
+
         let existing_guild = self.querier.get_guild(guild_id);
         let channel_changes = self
             .channel_changes_service
@@ -154,14 +114,12 @@ impl ApplyChangesUseCase {
 
         for channel_change in channel_changes {
             match channel_change {
-                ChannelChange::Create(awaiting) => {
-                    create_commands.push(Arc::from(AddChannel::new(
-                        awaiting,
-                        existing_guild.roles.clone(),
-                        existing_guild.categories.clone(),
-                    )))
-                }
-                ChannelChange::Update(existing, awaiting, _) => update_commands.push(Arc::from(
+                ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
+                    awaiting,
+                    existing_guild.roles.clone(),
+                    existing_guild.categories.clone(),
+                ))),
+                ChannelChange::Update(existing, awaiting, _) => commands.push(Arc::from(
                     // No longer need to try depending on diff
                     UpdateChannel::try_new(
                         existing.clone(),
@@ -172,10 +130,14 @@ impl ApplyChangesUseCase {
                     .unwrap(),
                 )),
                 ChannelChange::Delete(existing) => {
-                    delete_commands.push(Arc::from(DeleteChannel::new(existing)))
+                    commands.push(Arc::from(DeleteChannel::new(existing)))
                 }
             }
         }
+
+        commands
+            .into_iter()
+            .for_each(|command| command.execute(&self.commander));
     }
 }
 
