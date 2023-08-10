@@ -60,7 +60,7 @@ impl AddCategory {
 
 impl Command for AddCategory {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.add_category(&self.category, &self.roles);
+        guild.add_category(&self.category, &self.roles).unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -101,11 +101,13 @@ impl UpdateCategory {
 
 impl Command for UpdateCategory {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.update_category(
-            &self.existing_category.id,
-            &self.awaiting_category,
-            &self.roles,
-        );
+        guild
+            .update_category(
+                &self.existing_category.id,
+                &self.awaiting_category,
+                &self.roles,
+            )
+            .unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -129,7 +131,7 @@ impl DeleteCategory {
 
 impl Command for DeleteCategory {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_category(&self.category.id);
+        guild.delete_category(&self.category.id).unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
