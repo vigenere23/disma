@@ -208,31 +208,29 @@ mod tests {
     }
 
     fn prepare_commander_for_roles(commander: &GuildCommanderMock) {
-        commander.when_add_role(any()).will_return_default();
-        commander
-            .when_update_role(any(), any())
-            .will_return_default();
-        commander.when_delete_role(any()).will_return_default();
+        commander.when_add_role(any()).will_return(Ok(()));
+        commander.when_update_role(any(), any()).will_return(Ok(()));
+        commander.when_delete_role(any()).will_return(Ok(()));
     }
 
     fn prepare_commander_for_categories(commander: &GuildCommanderMock) {
         commander
             .when_add_category(any(), any())
-            .will_return_default();
+            .will_return(Ok(()));
         commander
             .when_update_category(any(), any(), any())
-            .will_return_default();
-        commander.when_delete_category(any()).will_return_default();
+            .will_return(Ok(()));
+        commander.when_delete_category(any()).will_return(Ok(()));
     }
 
     fn prepare_commander_for_channels(commander: &GuildCommanderMock) {
         commander
             .when_add_channel(any(), any(), any())
-            .will_return_default();
+            .will_return(Ok(()));
         commander
             .when_update_channel(any(), any(), any(), any())
-            .will_return_default();
-        commander.when_delete_channel(any()).will_return_default();
+            .will_return(Ok(()));
+        commander.when_delete_channel(any()).will_return(Ok(()));
     }
 
     #[test]

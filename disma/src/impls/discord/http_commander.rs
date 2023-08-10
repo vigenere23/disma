@@ -27,29 +27,38 @@ impl HttpGuildCommander {
 }
 
 impl GuildCommander for HttpGuildCommander {
-    fn add_role(&self, role: &AwaitingRole) {
+    fn add_role(&self, role: &AwaitingRole) -> Result<(), String> {
         self.api
             .add_role(&self.guild_id, RoleRequest::from(role))
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
-    fn update_role(&self, id: &str, role: &AwaitingRole) {
+    fn update_role(&self, id: &str, role: &AwaitingRole) -> Result<(), String> {
         self.api
             .update_role(&self.guild_id, id, RoleRequest::from(role))
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
-    fn delete_role(&self, id: &str) {
-        self.api.delete_role(&self.guild_id, id).unwrap();
+    fn delete_role(&self, id: &str) -> Result<(), String> {
+        self.api
+            .delete_role(&self.guild_id, id)
+            .map_err(|error| error.to_string())
     }
 
-    fn add_category(&self, category: &AwaitingCategory, roles: &RolesList<ExistingRole>) {
+    fn add_category(
+        &self,
+        category: &AwaitingCategory,
+        roles: &RolesList<ExistingRole>,
+    ) -> Result<(), String> {
         self.api
             .add_channel(
                 &self.guild_id,
                 ChannelRequest::from_category(category, roles),
             )
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
     fn update_category(
@@ -57,14 +66,17 @@ impl GuildCommander for HttpGuildCommander {
         id: &str,
         category: &AwaitingCategory,
         roles: &RolesList<ExistingRole>,
-    ) {
+    ) -> Result<(), String> {
         self.api
             .update_channel(id, ChannelRequest::from_category(category, roles))
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
-    fn delete_category(&self, id: &str) {
-        self.api.delete_channel(id).unwrap();
+    fn delete_category(&self, id: &str) -> Result<(), String> {
+        self.api
+            .delete_channel(id)
+            .map_err(|error| error.to_string())
     }
 
     fn add_channel(
@@ -72,13 +84,14 @@ impl GuildCommander for HttpGuildCommander {
         channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
-    ) {
+    ) -> Result<(), String> {
         self.api
             .add_channel(
                 &self.guild_id,
                 ChannelRequest::from_channel(channel, roles, categories),
             )
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
     fn update_channel(
@@ -87,13 +100,17 @@ impl GuildCommander for HttpGuildCommander {
         channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
-    ) {
+    ) -> Result<(), String> {
         self.api
             .update_channel(id, ChannelRequest::from_channel(channel, roles, categories))
-            .unwrap();
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 
-    fn delete_channel(&self, id: &str) {
-        self.api.delete_channel(id).unwrap();
+    fn delete_channel(&self, id: &str) -> Result<(), String> {
+        self.api
+            .delete_channel(id)
+            .map(|_| ())
+            .map_err(|error| error.to_string())
     }
 }

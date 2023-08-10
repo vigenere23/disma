@@ -54,7 +54,7 @@ impl AddRole {
 
 impl Command for AddRole {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.add_role(&self.role);
+        guild.add_role(&self.role).unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -92,7 +92,9 @@ impl UpdateRole {
 
 impl Command for UpdateRole {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.update_role(&self.existing_role.id, &self.awaiting_role);
+        guild
+            .update_role(&self.existing_role.id, &self.awaiting_role)
+            .unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -116,7 +118,7 @@ impl DeleteRole {
 
 impl Command for DeleteRole {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_role(&self.role.id);
+        guild.delete_role(&self.role.id).unwrap();
     }
 
     fn describe(&self) -> CommandDescription {

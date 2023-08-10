@@ -324,13 +324,13 @@ mod tests {
         };
         guild_commander
             .when_add_role(eq(&created_role.into()))
-            .will_return_default();
+            .will_return(Ok(()));
         guild_commander
             .when_update_role(eq(&role_to_update.id), eq(&updated_role.into()))
-            .will_return_default();
+            .will_return(Ok(()));
         guild_commander
             .when_delete_role(eq(&role_to_delete.id))
-            .will_return_default();
+            .will_return(Ok(()));
 
         let service = ChangesService::new(
             guild_commander,

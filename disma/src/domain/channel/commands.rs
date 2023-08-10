@@ -89,7 +89,9 @@ impl AddChannel {
 
 impl Command for AddChannel {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.add_channel(&self.channel, &self.roles, &self.categories);
+        guild
+            .add_channel(&self.channel, &self.roles, &self.categories)
+            .unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -136,12 +138,14 @@ impl UpdateChannel {
 
 impl Command for UpdateChannel {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.update_channel(
-            &self.existing_channel.id,
-            &self.awaiting_channel,
-            &self.roles,
-            &self.categories,
-        );
+        guild
+            .update_channel(
+                &self.existing_channel.id,
+                &self.awaiting_channel,
+                &self.roles,
+                &self.categories,
+            )
+            .unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
@@ -165,7 +169,7 @@ impl DeleteChannel {
 
 impl Command for DeleteChannel {
     fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_category(&self.channel.id);
+        guild.delete_category(&self.channel.id).unwrap();
     }
 
     fn describe(&self) -> CommandDescription {
