@@ -1,4 +1,4 @@
-use crate::params::{
+use crate::api::params::{
     category::{CategoriesParamsList, CategoryParams},
     channel::{ChannelParams, ChannelsParamsList},
     guild::GuildParams,

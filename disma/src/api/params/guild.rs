@@ -78,7 +78,7 @@ mod tests {
         category::CategoriesList, channel::ChannelsList, guild::ExistingGuild, role::RolesList,
     };
 
-    use crate::params::{
+    use crate::api::params::{
         category::CategoriesParamsList, channel::ChannelsParamsList, role::RolesParamsList,
     };
 

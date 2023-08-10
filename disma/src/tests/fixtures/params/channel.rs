@@ -1,4 +1,4 @@
-use crate::params::channel::{
+use crate::api::params::channel::{
     ChannelParams, ChannelParamsChannelType, ChannelParamsPermissionsOverwritesStrategy,
 };
 

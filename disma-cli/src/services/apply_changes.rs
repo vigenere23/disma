@@ -8,22 +8,29 @@ use crate::{
         io::Deserializer,
     },
 };
-use disma::{changes::ChangesService, commands::CommandDescription, params::guild::GuildParams};
+use disma::{
+    api::params::guild::GuildParams,
+    api::{ApplyChangesUseCase, ListChangesUseCase},
+    commands::CommandDescription,
+};
 
 pub struct ApplyChanges {
-    diff_service: Arc<ChangesService>,
+    list_changes: Arc<ListChangesUseCase>,
+    apply_changes: Arc<ApplyChangesUseCase>,
     deserializer: Arc<Deserializer>,
     formatter: DiffFormaterRef,
 }
 
 impl ApplyChanges {
     pub fn new(
-        diff_service: Arc<ChangesService>,
+        list_changes: Arc<ListChangesUseCase>,
+        apply_changes: Arc<ApplyChangesUseCase>,
         deserializer: Arc<Deserializer>,
         formatter: DiffFormaterRef,
     ) -> Self {
         Self {
-            diff_service,
+            list_changes,
+            apply_changes,
             deserializer,
             formatter,
         }
@@ -40,19 +47,17 @@ impl ApplyChanges {
         let guild_params = self.deserializer.deserialize::<GuildParams>(file_path);
 
         println!("{}", "➜ 🔎 Looking for changes...".bold());
-        let diffs = self
-            .diff_service
-            .list_changes(guild_id, guild_params.clone());
+        let changes = self.list_changes.execute(guild_id, guild_params.clone());
 
-        if diffs.is_empty() {
+        if changes.is_empty() {
             println!("{}", "➜ ✨ No change to be applied.".bold());
             return;
         }
 
         println!("{}", "➜ 📜 Found the following changes :".bold());
 
-        for diff in diffs {
-            match diff {
+        for change in changes {
+            match change {
                 CommandDescription::Create(entity, name) => {
                     println!("\n● 🆕 Adding {:?} {}", entity, name.bold().on_black())
                 }
@@ -81,6 +86,6 @@ impl ApplyChanges {
         }
 
         println!("{}", "➜ 🚀 Applying changes...\n".bold());
-        self.diff_service.apply_changes(guild_id, guild_params);
+        self.apply_changes.execute(guild_id, guild_params);
     }
 }

@@ -1,6 +1,6 @@
 use crate::{
+    api::params::permission::PermissionsOverwriteParams,
     channel::{ChannelType, ChannelsList, ExistingChannel},
-    params::permission::PermissionsOverwriteParams,
 };
 
 use super::{
@@ -59,15 +59,15 @@ impl From<ChannelType> for ChannelParamsChannelType {
 #[cfg(test)]
 mod tests {
     use crate::{
-        category::ExistingCategory,
-        channel::{ChannelType, ChannelsList, ExistingChannel},
-        params::{
+        api::params::{
             channel::{
                 ChannelParams, ChannelParamsChannelType,
                 ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
+        category::ExistingCategory,
+        channel::{ChannelType, ChannelsList, ExistingChannel},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },

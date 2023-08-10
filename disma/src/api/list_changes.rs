@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
+    api::params::guild::GuildParams,
     channel::Channel,
     commands::{CommandDescription, CommandEntity},
     core::changes::{
@@ -9,7 +10,6 @@ use crate::{
         role::{RoleChange, RoleChangesService},
     },
     guild::{AwaitingGuild, ExistingGuild, GuildQuerier},
-    params::guild::GuildParams,
 };
 
 pub struct ListChangesUseCase {
@@ -20,6 +20,20 @@ pub struct ListChangesUseCase {
 }
 
 impl ListChangesUseCase {
+    pub fn new(
+        querier: Arc<dyn GuildQuerier>,
+        role_changes_service: Arc<RoleChangesService>,
+        category_changes_service: Arc<CategoryChangesService>,
+        channel_changes_service: Arc<ChannelChangesService>,
+    ) -> Self {
+        Self {
+            querier,
+            role_changes_service,
+            category_changes_service,
+            channel_changes_service,
+        }
+    }
+
     #[allow(dead_code)]
     pub fn execute(&self, guild_id: &str, params: GuildParams) -> Vec<CommandDescription> {
         let awaiting_guild: AwaitingGuild = params.into();
@@ -109,6 +123,7 @@ mod tests {
     use mock_it::eq;
 
     use crate::{
+        api::params::permission::PermissionsOverwriteParams,
         commands::{CommandDescription, CommandEntity},
         core::changes::{
             category::CategoryChangesService, channel::ChannelChangesService,
@@ -116,7 +131,6 @@ mod tests {
         },
         diff::Diff,
         guild::GuildQuerierMock,
-        params::permission::PermissionsOverwriteParams,
         tests::{
             fixtures::{
                 existing::{

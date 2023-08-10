@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
+    api::params::guild::GuildParams,
     category::{AddCategory, DeleteCategory, UpdateCategory},
     channel::{AddChannel, DeleteChannel, UpdateChannel},
     commands::CommandRef,
@@ -10,7 +11,6 @@ use crate::{
         role::{RoleChange, RoleChangesService},
     },
     guild::{AwaitingGuild, GuildCommander, GuildQuerier},
-    params::guild::GuildParams,
     role::{AddRole, DeleteRole, UpdateRole},
 };
 
@@ -23,6 +23,22 @@ pub struct ApplyChangesUseCase {
 }
 
 impl ApplyChangesUseCase {
+    pub fn new(
+        querier: Arc<dyn GuildQuerier>,
+        commander: Arc<dyn GuildCommander>,
+        role_changes_service: Arc<RoleChangesService>,
+        category_changes_service: Arc<CategoryChangesService>,
+        channel_changes_service: Arc<ChannelChangesService>,
+    ) -> Self {
+        Self {
+            querier,
+            commander,
+            role_changes_service,
+            category_changes_service,
+            channel_changes_service,
+        }
+    }
+
     #[allow(dead_code)]
     pub fn execute(&self, guild_id: &str, params: GuildParams) {
         let mut create_commands = Vec::<CommandRef>::new();
@@ -171,12 +187,12 @@ mod tests {
     use mock_it::{any, eq};
 
     use crate::{
+        api::params::permission::PermissionsOverwriteParams,
         core::changes::{
             category::CategoryChangesService, channel::ChannelChangesService,
             role::RoleChangesService,
         },
         guild::{AwaitingGuild, GuildCommanderMock, GuildQuerierMock},
-        params::permission::PermissionsOverwriteParams,
         tests::fixtures::{
             existing::{
                 ExistingCategoryFixture, ExistingChannelFixture, ExistingGuildFixture,
