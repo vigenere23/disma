@@ -4,19 +4,20 @@ use crate::{
     api::params::guild::GuildParams,
     category::{AddCategory, DeleteCategory, UpdateCategory},
     channel::{AddChannel, DeleteChannel, UpdateChannel},
-    commands::CommandRef,
+    commands::{CommandEventListenerRef, CommandEventType, CommandRef},
     core::changes::{
         category::{CategoryChange, CategoryChangesService},
         channel::{ChannelChange, ChannelChangesService},
         role::{RoleChange, RoleChangesService},
     },
-    guild::{AwaitingGuild, GuildCommander, GuildQuerier},
+    guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
     role::{AddRole, DeleteRole, UpdateRole},
 };
 
 pub struct ApplyChangesUseCase {
-    querier: Arc<dyn GuildQuerier>,
-    commander: Arc<dyn GuildCommander>,
+    querier: GuildQuerierRef,
+    commander: GuildCommanderRef,
+    event_listener: CommandEventListenerRef,
     role_changes_service: Arc<RoleChangesService>,
     category_changes_service: Arc<CategoryChangesService>,
     channel_changes_service: Arc<ChannelChangesService>,
@@ -24,8 +25,9 @@ pub struct ApplyChangesUseCase {
 
 impl ApplyChangesUseCase {
     pub fn new(
-        querier: Arc<dyn GuildQuerier>,
-        commander: Arc<dyn GuildCommander>,
+        querier: GuildQuerierRef,
+        commander: GuildCommanderRef,
+        event_listener: CommandEventListenerRef,
         role_changes_service: Arc<RoleChangesService>,
         category_changes_service: Arc<CategoryChangesService>,
         channel_changes_service: Arc<ChannelChangesService>,
@@ -33,6 +35,7 @@ impl ApplyChangesUseCase {
         Self {
             querier,
             commander,
+            event_listener,
             role_changes_service,
             category_changes_service,
             channel_changes_service,
@@ -65,9 +68,7 @@ impl ApplyChangesUseCase {
             }
         }
 
-        commands
-            .into_iter()
-            .for_each(|command| command.execute(&self.commander));
+        self.execute_commands(commands);
     }
 
     fn apply_category_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
@@ -99,9 +100,7 @@ impl ApplyChangesUseCase {
             }
         }
 
-        commands
-            .into_iter()
-            .for_each(|command| command.execute(&self.commander));
+        self.execute_commands(commands);
     }
 
     fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
@@ -135,9 +134,17 @@ impl ApplyChangesUseCase {
             }
         }
 
-        commands
-            .into_iter()
-            .for_each(|command| command.execute(&self.commander));
+        self.execute_commands(commands);
+    }
+
+    fn execute_commands(&self, commands: Vec<CommandRef>) {
+        commands.into_iter().for_each(|command| {
+            self.event_listener
+                .handle(CommandEventType::BeforeExecution, command.describe());
+            command.execute(&self.commander);
+            self.event_listener
+                .handle(CommandEventType::AfterExecution, command.describe());
+        });
     }
 }
 
@@ -149,6 +156,7 @@ mod tests {
 
     use crate::{
         api::params::permission::PermissionsOverwriteParams,
+        commands::CommandEventListenerMock,
         core::changes::{
             category::CategoryChangesService, channel::ChannelChangesService,
             role::RoleChangesService,
@@ -175,9 +183,15 @@ mod tests {
         querier: &GuildQuerierMock,
         commander: &GuildCommanderMock,
     ) -> ApplyChangesUseCase {
+        let event_listener = CommandEventListenerMock::new();
+        event_listener
+            .when_handle(any(), any())
+            .will_return_default();
+
         ApplyChangesUseCase {
             querier: Arc::from(querier.clone()),
             commander: Arc::from(commander.clone()),
+            event_listener: Arc::from(event_listener),
             role_changes_service: Arc::from(RoleChangesService {}),
             category_changes_service: Arc::from(CategoryChangesService {}),
             channel_changes_service: Arc::from(ChannelChangesService {}),
