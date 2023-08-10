@@ -39,7 +39,6 @@ impl ApplyChangesUseCase {
         }
     }
 
-    #[allow(dead_code)]
     pub fn execute(&self, guild_id: &str, params: GuildParams) {
         let mut create_commands = Vec::<CommandRef>::new();
         let mut update_commands = Vec::<CommandRef>::new();

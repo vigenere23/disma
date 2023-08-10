@@ -34,7 +34,6 @@ impl ListChangesUseCase {
         }
     }
 
-    #[allow(dead_code)]
     pub fn execute(&self, guild_id: &str, params: GuildParams) -> Vec<CommandDescription> {
         let awaiting_guild: AwaitingGuild = params.into();
         let existing_guild = self.querier.get_guild(guild_id);
