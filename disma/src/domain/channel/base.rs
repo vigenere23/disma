@@ -82,7 +82,7 @@ where
             .contains_key(&channel.unique_name().to_string())
         {
             // TODO replace with Result
-            panic!("All channels must have unique names.");
+            panic!("Channel '{}' already exists. All channels must have unique names and types within the same category.", channel.unique_name());
         }
 
         self.channels_by_name
