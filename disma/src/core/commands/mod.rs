@@ -1,5 +1,5 @@
 mod command;
 pub use command::*;
 
-mod role;
-pub use role::*;
+mod channel;
+pub use channel::*;
