@@ -2,70 +2,13 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
-    base::ListComparison,
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
-    commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
+    commands::{Command, CommandDescription, CommandEntity, CommandRef},
     diff::{Diff, Differ},
-    guild::{ExistingGuild, GuildCommanderRef},
+    guild::GuildCommanderRef,
     role::{ExistingRole, RolesList},
 };
-
-use super::AwaitingChannelsList;
-
-impl CommandFactory for AwaitingChannelsList {
-    fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
-        let mut commands: Vec<CommandRef> = Vec::new();
-
-        let ListComparison {
-            extra_self: extra_awaiting,
-            extra_other: extra_existing,
-            same,
-        } = self.items.compare_by_unique_name(&existing_guild.channels);
-
-        for awaiting_channel in extra_awaiting.into_iter() {
-            let command = AddChannel::new(
-                awaiting_channel.clone(),
-                existing_guild.roles.clone(),
-                existing_guild.categories.clone(),
-            );
-            commands.push(Arc::from(command));
-        }
-
-        for (awaiting_channel, existing_channel) in same.into_iter() {
-            if let Ok(command) = UpdateChannel::try_new(
-                existing_channel.clone(),
-                awaiting_channel.clone(),
-                existing_guild.roles.clone(),
-                existing_guild.categories.clone(),
-            ) {
-                commands.push(Arc::from(command));
-            }
-        }
-
-        for existing_channel in extra_existing.into_iter() {
-            let matching_awaiting_category = existing_channel
-                .category_name()
-                .map(|category_name| self.categories.find_by_name(category_name))
-                .unwrap_or_default();
-
-            let extra_items_strategy = match matching_awaiting_category {
-                Some(category) => &category.extra_channels_strategy,
-                None => &self.extra_items_strategy,
-            };
-
-            extra_items_strategy.handle_extra_channel(
-                existing_channel,
-                &mut commands,
-                matching_awaiting_category,
-                &existing_guild.roles,
-                &existing_guild.categories,
-            );
-        }
-
-        commands
-    }
-}
 
 pub struct AddChannel {
     channel: AwaitingChannel,

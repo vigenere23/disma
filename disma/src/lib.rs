@@ -2,12 +2,9 @@
 mod domain;
 pub use domain::*;
 
-pub mod impls;
-
 pub mod api;
-
-// TODO probably release
 pub mod core;
+pub mod impls;
 
 pub(crate) mod utils;
 
