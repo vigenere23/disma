@@ -1,8 +1,11 @@
 use std::sync::Arc;
 
 use disma::{
-    changes::ChangesService,
+    api::{ApplyChangesUseCase, ListChangesUseCase},
     commands::CommandEventListenerRef,
+    core::changes::{
+        category::CategoryChangesService, channel::ChannelChangesService, role::RoleChangesService,
+    },
     guild::{GuildCommander, GuildQuerier},
     impls::discord::{api::DiscordApi, HttpGuildCommander, HttpGuildQuerier},
 };
@@ -62,12 +65,6 @@ impl Get<CommandEventListenerRef> for Injector {
     }
 }
 
-impl Get<Arc<ChangesService>> for Injector {
-    fn get(&self) -> Arc<ChangesService> {
-        Arc::from(ChangesService::new(self.get(), self.get(), self.get()))
-    }
-}
-
 impl Get<Arc<Deserializer>> for Injector {
     fn get(&self) -> Arc<Deserializer> {
         Arc::from(Deserializer())
@@ -88,7 +85,12 @@ impl Get<DiffFormaterRef> for Injector {
 
 impl Get<Arc<ApplyChanges>> for Injector {
     fn get(&self) -> Arc<ApplyChanges> {
-        Arc::from(ApplyChanges::new(self.get(), self.get(), self.get()))
+        Arc::from(ApplyChanges::new(
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+        ))
     }
 }
 
@@ -109,5 +111,47 @@ impl Get<Arc<ListGuilds>> for Injector {
 impl Get<Arc<CompileConfig>> for Injector {
     fn get(&self) -> Arc<CompileConfig> {
         Arc::from(CompileConfig::new(self.get()))
+    }
+}
+
+impl Get<Arc<ListChangesUseCase>> for Injector {
+    fn get(&self) -> Arc<ListChangesUseCase> {
+        Arc::from(ListChangesUseCase::new(
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+        ))
+    }
+}
+
+impl Get<Arc<ApplyChangesUseCase>> for Injector {
+    fn get(&self) -> Arc<ApplyChangesUseCase> {
+        Arc::from(ApplyChangesUseCase::new(
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+            self.get(),
+        ))
+    }
+}
+
+impl Get<Arc<RoleChangesService>> for Injector {
+    fn get(&self) -> Arc<RoleChangesService> {
+        Arc::from(RoleChangesService {})
+    }
+}
+
+impl Get<Arc<CategoryChangesService>> for Injector {
+    fn get(&self) -> Arc<CategoryChangesService> {
+        Arc::from(CategoryChangesService {})
+    }
+}
+
+impl Get<Arc<ChannelChangesService>> for Injector {
+    fn get(&self) -> Arc<ChannelChangesService> {
+        Arc::from(ChannelChangesService {})
     }
 }

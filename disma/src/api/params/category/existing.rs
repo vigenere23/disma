@@ -1,6 +1,6 @@
 use crate::{
+    api::params::permission::PermissionsOverwriteParams,
     category::{CategoriesList, ExistingCategory},
-    params::permission::PermissionsOverwriteParams,
 };
 
 use super::{CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy};
@@ -36,11 +36,11 @@ impl From<&ExistingCategory> for CategoryParams {
 #[cfg(test)]
 mod tests {
     use crate::{
-        category::{CategoriesList, ExistingCategory},
-        params::{
+        api::params::{
             category::{CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy},
             permission::PermissionsOverwriteParams,
         },
+        category::{CategoriesList, ExistingCategory},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },

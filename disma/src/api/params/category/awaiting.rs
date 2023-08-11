@@ -73,15 +73,15 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
-        channel::RemoveExtraChannels,
-        params::{
+        api::params::{
             category::{
                 CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
                 CategoryParamsExtraItemsStrategy,
             },
             permission::PermissionsOverwriteParams,
         },
+        category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
+        channel::RemoveExtraChannels,
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },

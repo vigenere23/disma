@@ -28,7 +28,7 @@ impl From<&ExistingRole> for RoleParams {
 #[cfg(test)]
 mod tests {
     use crate::{
-        params::role::{RoleParams, RolesParamsList},
+        api::params::role::{RoleParams, RolesParamsList},
         permission::{Permission, PermissionsList},
         role::{ExistingRole, RolesList},
     };

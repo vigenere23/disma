@@ -5,7 +5,7 @@ use crate::utils::{
     input::{abort, ask_user_confirmation},
     io::Serializer,
 };
-use disma::{guild::GuildQuerier, params::guild::GuildParams};
+use disma::{api::params::guild::GuildParams, guild::GuildQuerier};
 
 pub struct SaveExistingGuild {
     guild_querier: Arc<dyn GuildQuerier>,

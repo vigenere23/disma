@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::params::permission::PermissionsOverwriteParams;
+use crate::api::params::permission::PermissionsOverwriteParams;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default, Clone)]
 pub struct CategoriesParamsList {
@@ -49,7 +49,7 @@ impl Default for CategoryParamsExtraChannelsStrategy {
 #[cfg(test)]
 mod tests {
     use crate::{
-        params::{
+        api::params::{
             category::{
                 CategoriesParamsList, CategoryParams, CategoryParamsExtraChannelsStrategy,
                 CategoryParamsExtraItemsStrategy,

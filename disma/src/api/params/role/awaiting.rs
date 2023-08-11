@@ -49,7 +49,7 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
+        api::params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
         permission::{Permission, PermissionsList},
         role::{AwaitingRole, AwaitingRolesList, KeepExtraRoles, RolesList},
     };

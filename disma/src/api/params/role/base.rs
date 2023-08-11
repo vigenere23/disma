@@ -37,7 +37,7 @@ impl Default for RoleParamsExtraItemsStrategy {
 #[cfg(test)]
 mod tests {
     use crate::{
-        params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
+        api::params::role::{RoleParams, RoleParamsExtraItemsStrategy, RolesParamsList},
         permission::Permission,
     };
 

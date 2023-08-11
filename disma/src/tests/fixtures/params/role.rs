@@ -1,4 +1,4 @@
-use crate::{params::role::RoleParams, permission::Permission};
+use crate::{api::params::role::RoleParams, permission::Permission};
 
 pub struct RoleParamsFixture {
     name: String,
