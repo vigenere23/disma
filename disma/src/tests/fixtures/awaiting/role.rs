@@ -19,11 +19,6 @@ impl AwaitingRoleFixture {
         }
     }
 
-    pub fn with_name(mut self, name: &str) -> Self {
-        self.name = name.to_string();
-        self
-    }
-
     pub fn build(self) -> AwaitingRole {
         AwaitingRole {
             name: self.name,

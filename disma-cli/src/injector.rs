@@ -144,7 +144,6 @@ impl Get<Arc<ApplyChangesUseCase>> for Injector {
             self.get(),
             self.get(),
             self.get(),
-            self.get(),
         ))
     }
 }
