@@ -9,8 +9,8 @@ use crate::{
             role::{RoleChange, RoleChangesService},
         },
         commands::{
-            AddCategory, AddChannel, AddRole, CommandRef, DeleteChannel, DeleteRole,
-            UpdateCategory, UpdateChannel, UpdateRole,
+            AddCategory, AddChannel, AddRole, CommandRef, DeleteChannel, UpdateCategory,
+            UpdateChannel, UpdateRole,
         },
         events::ChangeEventListenerRef,
     },
@@ -66,7 +66,10 @@ impl ApplyChangesUseCase {
                 RoleChange::Update(existing, awaiting, _) => {
                     commands.push(Arc::from(UpdateRole::new(existing, awaiting)))
                 }
-                RoleChange::Delete(existing) => commands.push(Arc::from(DeleteRole::new(existing))),
+                RoleChange::Delete(existing) => awaiting_guild
+                    .roles
+                    .extra_items_strategy
+                    .handle_extra_role(&existing, &mut commands),
             }
         }
 
