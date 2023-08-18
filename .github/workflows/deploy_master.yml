@@ -11,6 +11,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  disma_build:
+    name: disma:build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma
+
+  disma-cli_build:
+    name: disma-cli:build
+    needs: disma_build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma-cli
+
   build-website:
     runs-on: ubuntu-latest
 
