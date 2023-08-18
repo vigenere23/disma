@@ -161,7 +161,7 @@ dependencies = [
 
 [[package]]
 name = "disma"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "mock-it",
  "reqwest",
@@ -174,7 +174,7 @@ dependencies = [
 
 [[package]]
 name = "disma-cli"
-version = "0.8.7"
+version = "0.8.8"
 dependencies = [
  "clap",
  "colored",
