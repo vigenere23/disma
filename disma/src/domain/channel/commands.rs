@@ -10,41 +10,7 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-pub struct AddChannel {
-    channel: AwaitingChannel,
-    roles: RolesList<ExistingRole>,
-    categories: CategoriesList<ExistingCategory>,
-}
-
-impl AddChannel {
-    pub fn new(
-        channel: AwaitingChannel,
-        roles: RolesList<ExistingRole>,
-        categories: CategoriesList<ExistingCategory>,
-    ) -> Self {
-        Self {
-            channel,
-            roles,
-            categories,
-        }
-    }
-}
-
-impl Command for AddChannel {
-    fn execute(&self, guild: &GuildCommanderRef) {
-        guild
-            .add_channel(&self.channel, &self.roles, &self.categories)
-            .unwrap();
-    }
-
-    fn describe(&self) -> CommandDescription {
-        CommandDescription::Create(
-            CommandEntity::Channel,
-            self.channel.unique_name().to_string(),
-        )
-    }
-}
-
+#[deprecated = "Use core::commands::UpdateChannel command instead"]
 pub struct UpdateChannel {
     existing_channel: ExistingChannel,
     awaiting_channel: AwaitingChannel,
@@ -100,6 +66,7 @@ impl Command for UpdateChannel {
     }
 }
 
+#[deprecated = "Use core::commands::DeleteChannel command instead"]
 pub struct DeleteChannel {
     channel: ExistingChannel,
 }
