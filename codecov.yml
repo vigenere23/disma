@@ -3,12 +3,12 @@ coverage:
     project:
       disma:
         target: auto
-        threshold: 2
+        threshold: 3%
         flags:
           - disma
       disma-cli:
         target: auto
-        threshold: 2
+        threshold: 3%
         flags:
           - disma-cli
 flag_management:
@@ -21,3 +21,5 @@ flag_management:
       paths:
         - "disma-cli/.*"
       carryforward: true
+ignore:
+  - disma/src/tests

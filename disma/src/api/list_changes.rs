@@ -152,12 +152,12 @@ mod tests {
     static A_CATEGORY_NAME: &str = "a_category";
 
     fn create_usecase(querier: GuildQuerierMock) -> ListChangesUseCase {
-        ListChangesUseCase {
-            querier: Arc::from(querier),
-            role_changes_service: Arc::from(RoleChangesService {}),
-            category_changes_service: Arc::from(CategoryChangesService {}),
-            channel_changes_service: Arc::from(ChannelChangesService {}),
-        }
+        ListChangesUseCase::new(
+            Arc::from(querier),
+            Arc::from(RoleChangesService {}),
+            Arc::from(CategoryChangesService {}),
+            Arc::from(ChannelChangesService {}),
+        )
     }
 
     #[test]
