@@ -9,7 +9,8 @@ use crate::{
             role::{RoleChange, RoleChangesService},
         },
         commands::{
-            self, AddCategory, AddRole, DeleteCategory, DeleteRole, UpdateCategory, UpdateRole,
+            AddCategory, AddChannel, AddRole, CommandRef, DeleteChannel, DeleteRole,
+            UpdateCategory, UpdateChannel, UpdateRole,
         },
         events::ChangeEventListenerRef,
     },
@@ -53,7 +54,7 @@ impl ApplyChangesUseCase {
     }
 
     fn apply_role_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
-        let mut commands = Vec::<commands::CommandRef>::new();
+        let mut commands = Vec::<CommandRef>::new();
 
         let role_changes = self
             .role_changes_service
@@ -73,7 +74,7 @@ impl ApplyChangesUseCase {
     }
 
     fn apply_category_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
-        let mut commands = Vec::<commands::CommandRef>::new();
+        let mut commands = Vec::<CommandRef>::new();
 
         let existing_guild = self.querier.get_guild(guild_id);
         let category_changes = self
@@ -93,9 +94,10 @@ impl ApplyChangesUseCase {
                         existing_guild.roles.clone(),
                     )))
                 }
-                CategoryChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteCategory::new(existing)))
-                }
+                CategoryChange::Delete(existing) => awaiting_guild
+                    .categories
+                    .extra_items_strategy
+                    .handle_extra_category(&existing, &mut commands),
             }
         }
 
@@ -103,7 +105,7 @@ impl ApplyChangesUseCase {
     }
 
     fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
-        let mut commands = Vec::<commands::CommandRef>::new();
+        let mut commands = Vec::<CommandRef>::new();
 
         let existing_guild = self.querier.get_guild(guild_id);
         let channel_changes = self
@@ -112,15 +114,13 @@ impl ApplyChangesUseCase {
 
         for channel_change in channel_changes {
             match channel_change {
-                ChannelChange::Create(awaiting) => {
-                    commands.push(Arc::from(commands::AddChannel::new(
-                        awaiting,
-                        existing_guild.roles.clone(),
-                        existing_guild.categories.clone(),
-                    )))
-                }
+                ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
+                    awaiting,
+                    existing_guild.roles.clone(),
+                    existing_guild.categories.clone(),
+                ))),
                 ChannelChange::Update(existing, awaiting, _) => {
-                    commands.push(Arc::from(commands::UpdateChannel::new(
+                    commands.push(Arc::from(UpdateChannel::new(
                         existing.clone(),
                         awaiting.clone(),
                         existing_guild.roles.clone(),
@@ -128,7 +128,7 @@ impl ApplyChangesUseCase {
                     )))
                 }
                 ChannelChange::Delete(existing) => {
-                    commands.push(Arc::from(commands::DeleteChannel::new(existing)))
+                    commands.push(Arc::from(DeleteChannel::new(existing)))
                 }
             }
         }
@@ -136,7 +136,7 @@ impl ApplyChangesUseCase {
         self.execute_commands(commands);
     }
 
-    fn execute_commands(&self, commands: Vec<commands::CommandRef>) {
+    fn execute_commands(&self, commands: Vec<CommandRef>) {
         commands.into_iter().for_each(|command| {
             command.execute(self.commander.as_ref(), self.change_event_listener.as_ref());
         });

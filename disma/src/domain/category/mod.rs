@@ -1,14 +1,14 @@
 mod awaiting;
 pub use awaiting::*;
 
-pub use base::*;
 mod base;
+pub use base::*;
 
-pub use diff::*;
 mod diff;
+pub use diff::*;
 
-pub use existing::*;
 mod existing;
+pub use existing::*;
 
-pub use commands::*;
-mod commands;
+mod extra;
+pub use extra::*;

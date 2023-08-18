@@ -3,30 +3,8 @@ use std::sync::Arc;
 
 use crate::{
     category::ExistingCategory,
-    commands::{Command, CommandDescription, CommandEntity, CommandRef},
-    guild::GuildCommanderRef,
+    core::commands::{CommandRef, DeleteCategory},
 };
-
-#[deprecated = "Use core::commands::DeleteCategory command instead"]
-pub struct DeleteCategory {
-    category: ExistingCategory,
-}
-
-impl DeleteCategory {
-    pub fn new(category: ExistingCategory) -> Self {
-        Self { category }
-    }
-}
-
-impl Command for DeleteCategory {
-    fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_category(&self.category.id).unwrap();
-    }
-
-    fn describe(&self) -> CommandDescription {
-        CommandDescription::Delete(CommandEntity::Category, self.category.name.clone())
-    }
-}
 
 pub trait ExtraCategoriesStrategy {
     fn _type(&self) -> ExtraCategoriesStrategyType;
