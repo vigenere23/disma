@@ -1,12 +1,4 @@
-use std::sync::Arc;
-
-use crate::{domain::diff::Diff, guild::GuildCommanderRef};
-
-pub trait Command {
-    fn execute(&self, guild_commander: &GuildCommanderRef);
-    fn describe(&self) -> CommandDescription;
-}
-pub type CommandRef = Arc<dyn Command>;
+use crate::domain::diff::Diff;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum CommandDescription {
