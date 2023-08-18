@@ -23,21 +23,3 @@ pub enum CommandEntity {
     Category,
     Channel,
 }
-
-#[derive(Debug, PartialEq)]
-pub enum CommandEventType {
-    BeforeExecution,
-    AfterExecution,
-}
-
-#[cfg_attr(test, mock_it::mock_it)]
-pub trait CommandEventListener {
-    fn handle(&self, event_type: CommandEventType, description: CommandDescription);
-}
-pub type CommandEventListenerRef = Arc<dyn CommandEventListener>;
-
-pub struct NullCommandEventListener {}
-
-impl CommandEventListener for NullCommandEventListener {
-    fn handle(&self, _event_type: CommandEventType, _description: CommandDescription) {}
-}
