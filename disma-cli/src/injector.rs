@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use disma::{
     api::{ApplyChangesUseCase, ListChangesUseCase},
-    commands::CommandEventListenerRef,
     core::{
         changes::{
             category::CategoryChangesService, channel::ChannelChangesService,
@@ -16,7 +15,7 @@ use disma::{
 
 use crate::{
     infra::diff::{
-        event::{CliChangeEventListener, CliCommandEventListener},
+        event::CliChangeEventListener,
         formatter::{DiffFormater, DiffFormaterRef},
     },
     services::{
@@ -60,12 +59,6 @@ impl Get<Arc<dyn GuildCommander>> for Injector {
     fn get(&self) -> Arc<dyn GuildCommander> {
         let guild_id = self.guild_id.clone().expect("Missing guild id.");
         Arc::from(HttpGuildCommander::new(self.get(), &guild_id))
-    }
-}
-
-impl Get<CommandEventListenerRef> for Injector {
-    fn get(&self) -> CommandEventListenerRef {
-        Arc::from(CliCommandEventListener {})
     }
 }
 
@@ -138,7 +131,6 @@ impl Get<Arc<ListChangesUseCase>> for Injector {
 impl Get<Arc<ApplyChangesUseCase>> for Injector {
     fn get(&self) -> Arc<ApplyChangesUseCase> {
         Arc::from(ApplyChangesUseCase::new(
-            self.get(),
             self.get(),
             self.get(),
             self.get(),
