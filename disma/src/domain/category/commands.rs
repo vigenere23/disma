@@ -2,50 +2,12 @@ use core::fmt::Debug;
 use std::sync::Arc;
 
 use crate::{
-    base::ListComparison,
     category::{AwaitingCategory, ExistingCategory},
-    commands::{Command, CommandDescription, CommandEntity, CommandFactory, CommandRef},
+    commands::{Command, CommandDescription, CommandEntity, CommandRef},
     diff::{Diff, Differ},
-    guild::{ExistingGuild, GuildCommanderRef},
+    guild::GuildCommanderRef,
     role::{ExistingRole, RolesList},
 };
-
-use super::AwaitingCategoriesList;
-
-impl CommandFactory for AwaitingCategoriesList {
-    fn commands_for(&self, existing_guild: &ExistingGuild) -> Vec<CommandRef> {
-        let mut commands: Vec<CommandRef> = Vec::new();
-
-        let ListComparison {
-            extra_other: extra_existing,
-            extra_self: extra_awaiting,
-            same,
-        } = self.items.compare_by_name(&existing_guild.categories);
-
-        for awaiting_category in extra_awaiting.into_iter() {
-            let command = AddCategory::new(awaiting_category.clone(), existing_guild.roles.clone());
-            commands.push(Arc::from(command));
-        }
-
-        for (awaiting_category, existing_category) in same.into_iter() {
-            // TODO replace with try_new
-            if let Ok(command) = UpdateCategory::try_new(
-                existing_category.clone(),
-                awaiting_category.clone(),
-                existing_guild.roles.clone(),
-            ) {
-                commands.push(Arc::from(command));
-            }
-        }
-
-        for existing_category in extra_existing.into_iter() {
-            self.extra_items_strategy
-                .handle_extra_category(existing_category, &mut commands);
-        }
-
-        commands
-    }
-}
 
 pub struct AddCategory {
     category: AwaitingCategory,

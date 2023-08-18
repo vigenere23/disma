@@ -3,12 +3,15 @@ use std::sync::Arc;
 use crate::{
     api::params::guild::GuildParams,
     category::{AddCategory, DeleteCategory, UpdateCategory},
-    channel::{AddChannel, DeleteChannel, UpdateChannel},
     commands::{CommandEventListenerRef, CommandEventType, CommandRef},
-    core::changes::{
-        category::{CategoryChange, CategoryChangesService},
-        channel::{ChannelChange, ChannelChangesService},
-        role::{RoleChange, RoleChangesService},
+    core::{
+        changes::{
+            category::{CategoryChange, CategoryChangesService},
+            channel::{ChannelChange, ChannelChangesService},
+            role::{RoleChange, RoleChangesService},
+        },
+        commands,
+        events::ChangeEventListenerRef,
     },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
     role::{AddRole, DeleteRole, UpdateRole},
@@ -18,6 +21,7 @@ pub struct ApplyChangesUseCase {
     querier: GuildQuerierRef,
     commander: GuildCommanderRef,
     event_listener: CommandEventListenerRef,
+    change_event_listener: ChangeEventListenerRef,
     role_changes_service: Arc<RoleChangesService>,
     category_changes_service: Arc<CategoryChangesService>,
     channel_changes_service: Arc<ChannelChangesService>,
@@ -28,6 +32,7 @@ impl ApplyChangesUseCase {
         querier: GuildQuerierRef,
         commander: GuildCommanderRef,
         event_listener: CommandEventListenerRef,
+        change_event_listener: ChangeEventListenerRef,
         role_changes_service: Arc<RoleChangesService>,
         category_changes_service: Arc<CategoryChangesService>,
         channel_changes_service: Arc<ChannelChangesService>,
@@ -36,6 +41,7 @@ impl ApplyChangesUseCase {
             querier,
             commander,
             event_listener,
+            change_event_listener,
             role_changes_service,
             category_changes_service,
             channel_changes_service,
@@ -104,7 +110,7 @@ impl ApplyChangesUseCase {
     }
 
     fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
-        let mut commands = Vec::<CommandRef>::new();
+        let mut commands = Vec::<commands::CommandRef>::new();
 
         let existing_guild = self.querier.get_guild(guild_id);
         let channel_changes = self
@@ -113,28 +119,28 @@ impl ApplyChangesUseCase {
 
         for channel_change in channel_changes {
             match channel_change {
-                ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
-                    awaiting,
-                    existing_guild.roles.clone(),
-                    existing_guild.categories.clone(),
-                ))),
-                ChannelChange::Update(existing, awaiting, _) => commands.push(Arc::from(
-                    // No longer need to try depending on diff
-                    UpdateChannel::try_new(
+                ChannelChange::Create(awaiting) => {
+                    commands.push(Arc::from(commands::AddChannel::new(
+                        awaiting,
+                        existing_guild.roles.clone(),
+                        existing_guild.categories.clone(),
+                    )))
+                }
+                ChannelChange::Update(existing, awaiting, _) => {
+                    commands.push(Arc::from(commands::UpdateChannel::new(
                         existing.clone(),
                         awaiting.clone(),
                         existing_guild.roles.clone(),
                         existing_guild.categories.clone(),
-                    )
-                    .unwrap(),
-                )),
+                    )))
+                }
                 ChannelChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteChannel::new(existing)))
+                    commands.push(Arc::from(commands::DeleteChannel::new(existing)))
                 }
             }
         }
 
-        self.execute_commands(commands);
+        self.execute_new_commands(commands);
     }
 
     fn execute_commands(&self, commands: Vec<CommandRef>) {
@@ -144,6 +150,12 @@ impl ApplyChangesUseCase {
             command.execute(&self.commander);
             self.event_listener
                 .handle(CommandEventType::AfterExecution, command.describe());
+        });
+    }
+
+    fn execute_new_commands(&self, commands: Vec<commands::CommandRef>) {
+        commands.into_iter().for_each(|command| {
+            command.execute(self.commander.as_ref(), self.change_event_listener.as_ref());
         });
     }
 }
@@ -157,9 +169,12 @@ mod tests {
     use crate::{
         api::params::permission::PermissionsOverwriteParams,
         commands::CommandEventListenerMock,
-        core::changes::{
-            category::CategoryChangesService, channel::ChannelChangesService,
-            role::RoleChangesService,
+        core::{
+            changes::{
+                category::CategoryChangesService, channel::ChannelChangesService,
+                role::RoleChangesService,
+            },
+            events::ChangeEventListenerMock,
         },
         guild::{AwaitingGuild, GuildCommanderMock, GuildQuerierMock},
         tests::fixtures::{
@@ -188,10 +203,16 @@ mod tests {
             .when_handle(any(), any())
             .will_return_default();
 
+        let change_event_listener = ChangeEventListenerMock::new();
+        change_event_listener
+            .when_handle(any())
+            .will_return_default();
+
         ApplyChangesUseCase {
             querier: Arc::from(querier.clone()),
             commander: Arc::from(commander.clone()),
             event_listener: Arc::from(event_listener),
+            change_event_listener: Arc::from(change_event_listener),
             role_changes_service: Arc::from(RoleChangesService {}),
             category_changes_service: Arc::from(CategoryChangesService {}),
             channel_changes_service: Arc::from(ChannelChangesService {}),
