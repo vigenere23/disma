@@ -9,8 +9,7 @@ use crate::{
             role::{RoleChange, RoleChangesService},
         },
         commands::{
-            AddCategory, AddChannel, AddRole, CommandRef, DeleteChannel, UpdateCategory,
-            UpdateChannel, UpdateRole,
+            AddCategory, AddChannel, AddRole, CommandRef, UpdateCategory, UpdateChannel, UpdateRole,
         },
         events::ChangeEventListenerRef,
     },
@@ -130,9 +129,16 @@ impl ApplyChangesUseCase {
                         existing_guild.categories.clone(),
                     )))
                 }
-                ChannelChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteChannel::new(existing)))
-                }
+                ChannelChange::Delete(existing) => awaiting_guild
+                    .channels
+                    .extra_items_strategy
+                    .handle_extra_channel(
+                        &existing,
+                        &mut commands,
+                        awaiting_guild.categories.items.find_by_name(&existing.name),
+                        &existing_guild.roles,
+                        &existing_guild.categories,
+                    ),
             }
         }
 
