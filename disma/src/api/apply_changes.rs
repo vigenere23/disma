@@ -206,15 +206,15 @@ mod tests {
             .when_handle(any())
             .will_return_default();
 
-        ApplyChangesUseCase {
-            querier: Arc::from(querier.clone()),
-            commander: Arc::from(commander.clone()),
-            event_listener: Arc::from(event_listener),
-            change_event_listener: Arc::from(change_event_listener),
-            role_changes_service: Arc::from(RoleChangesService {}),
-            category_changes_service: Arc::from(CategoryChangesService {}),
-            channel_changes_service: Arc::from(ChannelChangesService {}),
-        }
+        ApplyChangesUseCase::new(
+            Arc::from(querier.clone()),
+            Arc::from(commander.clone()),
+            Arc::from(event_listener),
+            Arc::from(change_event_listener),
+            Arc::from(RoleChangesService {}),
+            Arc::from(CategoryChangesService {}),
+            Arc::from(ChannelChangesService {}),
+        )
     }
 
     fn prepare_commander_for_roles(commander: &GuildCommanderMock) {
