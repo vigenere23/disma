@@ -6,6 +6,7 @@ use crate::guild::GuildSummary;
 pub struct GuildResponse {
     pub name: String,
     pub id: String,
+    pub approximate_member_count: u128,
 }
 
 impl Into<GuildSummary> for GuildResponse {
@@ -13,6 +14,7 @@ impl Into<GuildSummary> for GuildResponse {
         GuildSummary {
             name: self.name,
             id: self.id,
+            nb_members: self.approximate_member_count,
         }
     }
 }

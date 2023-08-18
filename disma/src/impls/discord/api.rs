@@ -91,8 +91,12 @@ impl DiscordApi {
     }
 
     pub fn list_guilds(&self) -> Result<Vec<GuildResponse>, DiscordError> {
-        let response =
-            self.handle_http_error(self.client.clone().get("/users/@me/guilds").send())?;
+        let response = self.handle_http_error(
+            self.client
+                .clone()
+                .get("/users/@me/guilds?with_counts=true")
+                .send(),
+        )?;
 
         self.handle_response(response)
             .map(|response| response.parsed_body().unwrap())

@@ -65,4 +65,5 @@ pub struct AwaitingGuild {
 pub struct GuildSummary {
     pub name: String,
     pub id: String,
+    pub nb_members: u128,
 }
