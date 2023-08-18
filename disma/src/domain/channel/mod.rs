@@ -10,5 +10,5 @@ pub use diff::*;
 mod existing;
 pub use existing::*;
 
-mod commands;
-pub use commands::*;
+mod extra;
+pub use extra::*;

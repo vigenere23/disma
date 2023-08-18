@@ -1,35 +1,11 @@
 use core::fmt::Debug;
 use std::sync::Arc;
 
-use crate::{
-    commands::{Command, CommandDescription, CommandEntity, CommandRef},
-    guild::GuildCommanderRef,
-};
+use crate::core::commands::{CommandRef, DeleteRole};
 
 use super::ExistingRole;
 
 pub trait ExtraRolesStrategyTrait {}
-
-#[deprecated = "Use core::commands::DeleteRole command instead"]
-pub struct DeleteRole {
-    role: ExistingRole,
-}
-
-impl DeleteRole {
-    pub fn new(role: ExistingRole) -> Self {
-        Self { role }
-    }
-}
-
-impl Command for DeleteRole {
-    fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_role(&self.role.id).unwrap();
-    }
-
-    fn describe(&self) -> CommandDescription {
-        CommandDescription::Delete(CommandEntity::Role, self.role.name.clone())
-    }
-}
 
 pub trait ExtraRolesStrategy {
     fn _type(&self) -> ExtraRolesStrategyType;

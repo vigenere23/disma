@@ -4,91 +4,9 @@ use std::sync::Arc;
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
-    commands::{Command, CommandDescription, CommandEntity, CommandRef},
-    diff::{Diff, Differ},
-    guild::GuildCommanderRef,
+    core::commands::{CommandRef, DeleteChannel, UpdateChannel},
     role::{ExistingRole, RolesList},
 };
-
-#[deprecated = "Use core::commands::UpdateChannel command instead"]
-pub struct UpdateChannel {
-    existing_channel: ExistingChannel,
-    awaiting_channel: AwaitingChannel,
-    roles: RolesList<ExistingRole>,
-    categories: CategoriesList<ExistingCategory>,
-    diffs: Vec<Diff>,
-}
-
-impl UpdateChannel {
-    pub fn try_new(
-        existing_channel: ExistingChannel,
-        awaiting_channel: AwaitingChannel,
-        roles: RolesList<ExistingRole>,
-        categories: CategoriesList<ExistingCategory>,
-    ) -> Result<Self, String> {
-        let diffs = existing_channel.diffs_with(&awaiting_channel);
-
-        if diffs.is_empty() {
-            return Err(format!(
-                "No diffs between channels {} and {}",
-                existing_channel.name, awaiting_channel.name
-            ));
-        };
-
-        Ok(Self {
-            existing_channel,
-            awaiting_channel,
-            roles,
-            categories,
-            diffs,
-        })
-    }
-}
-
-impl Command for UpdateChannel {
-    fn execute(&self, guild: &GuildCommanderRef) {
-        guild
-            .update_channel(
-                &self.existing_channel.id,
-                &self.awaiting_channel,
-                &self.roles,
-                &self.categories,
-            )
-            .unwrap();
-    }
-
-    fn describe(&self) -> CommandDescription {
-        CommandDescription::Update(
-            CommandEntity::Channel,
-            self.existing_channel.unique_name().to_string(),
-            self.diffs.clone(),
-        )
-    }
-}
-
-#[deprecated = "Use core::commands::DeleteChannel command instead"]
-pub struct DeleteChannel {
-    channel: ExistingChannel,
-}
-
-impl DeleteChannel {
-    pub fn new(channel: ExistingChannel) -> Self {
-        Self { channel }
-    }
-}
-
-impl Command for DeleteChannel {
-    fn execute(&self, guild: &GuildCommanderRef) {
-        guild.delete_category(&self.channel.id).unwrap();
-    }
-
-    fn describe(&self) -> CommandDescription {
-        CommandDescription::Delete(
-            CommandEntity::Channel,
-            self.channel.unique_name().to_string(),
-        )
-    }
-}
 
 pub trait ExtraChannelsStrategy {
     fn _type(&self) -> ExtraChannelsStrategyType;
@@ -177,14 +95,13 @@ impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
                 overwrites: category.overwrites.clone(),
             };
 
-            if let Ok(command) = UpdateChannel::try_new(
+            let command = UpdateChannel::new(
                 extra_channel.clone(),
                 awaiting_channel,
                 roles.clone(),
                 categories.clone(),
-            ) {
-                commands.push(Arc::from(command));
-            }
+            );
+            commands.push(Arc::from(command));
         } else {
             panic!("Category cannot be empty for overriding permissions overwrites of extra channel {}", extra_channel.name());
         }
