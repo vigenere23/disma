@@ -10,11 +10,10 @@ use crate::{
             channel::{ChannelChange, ChannelChangesService},
             role::{RoleChange, RoleChangesService},
         },
-        commands,
+        commands::{self, AddRole, DeleteRole, UpdateRole},
         events::ChangeEventListenerRef,
     },
     guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
-    role::{AddRole, DeleteRole, UpdateRole},
 };
 
 pub struct ApplyChangesUseCase {
@@ -57,7 +56,7 @@ impl ApplyChangesUseCase {
     }
 
     fn apply_role_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
-        let mut commands = Vec::<CommandRef>::new();
+        let mut commands = Vec::<commands::CommandRef>::new();
 
         let role_changes = self
             .role_changes_service
@@ -66,10 +65,9 @@ impl ApplyChangesUseCase {
         for role_change in role_changes {
             match role_change {
                 RoleChange::Create(awaiting) => commands.push(Arc::from(AddRole::new(awaiting))),
-                RoleChange::Update(existing, awaiting, _) => commands.push(Arc::from(
-                    // No longer need to try depending on diff
-                    UpdateRole::try_new(&existing, &awaiting).unwrap(),
-                )),
+                RoleChange::Update(existing, awaiting, _) => {
+                    commands.push(Arc::from(UpdateRole::new(existing, awaiting)))
+                }
                 RoleChange::Delete(existing) => commands.push(Arc::from(DeleteRole::new(existing))),
             }
         }
@@ -106,7 +104,7 @@ impl ApplyChangesUseCase {
             }
         }
 
-        self.execute_commands(commands);
+        self.execute_old_commands(commands);
     }
 
     fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
@@ -140,10 +138,10 @@ impl ApplyChangesUseCase {
             }
         }
 
-        self.execute_new_commands(commands);
+        self.execute_commands(commands);
     }
 
-    fn execute_commands(&self, commands: Vec<CommandRef>) {
+    fn execute_old_commands(&self, commands: Vec<CommandRef>) {
         commands.into_iter().for_each(|command| {
             self.event_listener
                 .handle(CommandEventType::BeforeExecution, command.describe());
@@ -153,7 +151,7 @@ impl ApplyChangesUseCase {
         });
     }
 
-    fn execute_new_commands(&self, commands: Vec<commands::CommandRef>) {
+    fn execute_commands(&self, commands: Vec<commands::CommandRef>) {
         commands.into_iter().for_each(|command| {
             command.execute(self.commander.as_ref(), self.change_event_listener.as_ref());
         });

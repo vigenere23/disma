@@ -127,7 +127,7 @@ impl Command for DeleteChannel {
 }
 
 #[cfg(test)]
-pub mod tests {
+mod tests {
     use mock_it::{any, eq};
 
     use crate::{
