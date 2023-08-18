@@ -11,8 +11,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  disma_build:
+    name: disma:build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma
+
+  disma-cli_build:
+    name: disma-cli:build
+    needs: disma_build
+    uses: ./.github/workflows/build.template.yml
+    with:
+      package: disma-cli
+
   disma_publish-crate:
     name: disma:publish-crate
+    needs: disma_build
     uses: ./.github/workflows/publish.template.yml
     with:
       package: disma
@@ -20,7 +34,7 @@ jobs:
 
   disma-cli_publish-crate:
     name: disma-cli:publish-crate
-    needs: disma_publish-crate
+    needs: [disma-cli_build, disma_publish-crate]
     uses: ./.github/workflows/publish.template.yml
     with:
       package: disma-cli
