@@ -128,9 +128,15 @@ impl Command for DeleteChannel {
 
 #[cfg(test)]
 pub mod tests {
+    use mock_it::{any, eq};
+
     use crate::{
         category::CategoriesList,
-        core::{commands::Command, events::ChangeEventListenerMock},
+        channel::Channel,
+        core::{
+            commands::Command,
+            events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
+        },
         guild::GuildCommanderMock,
         role::RolesList,
         tests::fixtures::awaiting::AwaitingChannelFixture,
@@ -138,22 +144,73 @@ pub mod tests {
 
     use super::AddChannel;
 
+    fn given_add_channel_command() -> AddChannel {
+        AddChannel::new(
+            AwaitingChannelFixture::new().build(),
+            RolesList::new(),
+            CategoriesList::new(),
+        )
+    }
+
     #[test]
     fn when_adding_channel_should_add_channel_with_commander() {
         let commander = GuildCommanderMock::new();
         let event_listener = ChangeEventListenerMock::new();
-        let add_command = AddChannel::new(
-            AwaitingChannelFixture::new().build(),
-            RolesList::new(),
-            CategoriesList::new(),
-        );
+        let add_command = given_add_channel_command();
+
+        commander
+            .when_add_channel(any(), any(), any())
+            .will_return(Ok(()));
+        event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
+
+        commander.expect_add_channel(
+            eq(&add_command.channel),
+            eq(&add_command.roles),
+            eq(&add_command.categories),
+        );
     }
 
     #[test]
-    fn given_failing_commander_when_adding_channel_should_notify_of_error() {}
+    fn given_failing_commander_when_adding_channel_should_notify_of_error() {
+        let commander = GuildCommanderMock::new();
+        let event_listener = ChangeEventListenerMock::new();
+        let add_command = given_add_channel_command();
+        let error_message = String::from("Unexpected error");
+
+        commander
+            .when_add_channel(any(), any(), any())
+            .will_return(Err(error_message.clone()));
+        event_listener.when_handle(any()).will_return_default();
+
+        add_command.execute(&commander, &event_listener);
+
+        event_listener.expect_handle(eq(ChangeEvent::Error(
+            Change::Create(
+                ChangeEntity::Channel,
+                add_command.channel.unique_name().to_string(),
+            ),
+            error_message,
+        )));
+    }
 
     #[test]
-    fn given_succeeding_commander_when_adding_channel_should_notify_of_success() {}
+    fn given_succeeding_commander_when_adding_channel_should_notify_of_success() {
+        let commander = GuildCommanderMock::new();
+        let event_listener = ChangeEventListenerMock::new();
+        let add_command = given_add_channel_command();
+
+        commander
+            .when_add_channel(any(), any(), any())
+            .will_return(Ok(()));
+        event_listener.when_handle(any()).will_return_default();
+
+        add_command.execute(&commander, &event_listener);
+
+        event_listener.expect_handle(eq(ChangeEvent::Success(Change::Create(
+            ChangeEntity::Channel,
+            add_command.channel.unique_name().to_string(),
+        ))));
+    }
 }
