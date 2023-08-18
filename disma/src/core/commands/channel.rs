@@ -1,8 +1,8 @@
 use crate::{
     category::{CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
-    core::events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerRef},
-    guild::GuildCommanderRef,
+    core::events::{Change, ChangeEntity, ChangeEvent, ChangeEventListener},
+    guild::GuildCommander,
     role::{ExistingRole, RolesList},
 };
 
@@ -36,7 +36,7 @@ impl AddChannel {
 }
 
 impl Command for AddChannel {
-    fn execute(&self, commander: &GuildCommanderRef, event_listener: &ChangeEventListenerRef) {
+    fn execute(&self, commander: &dyn GuildCommander, event_listener: &dyn ChangeEventListener) {
         let result = commander.add_channel(&self.channel, &self.roles, &self.categories);
 
         let event = match result {
@@ -79,7 +79,7 @@ impl UpdateChannel {
 }
 
 impl Command for UpdateChannel {
-    fn execute(&self, commander: &GuildCommanderRef, event_listener: &ChangeEventListenerRef) {
+    fn execute(&self, commander: &dyn GuildCommander, event_listener: &dyn ChangeEventListener) {
         let result = commander.update_channel(
             &self.existing_channel.id,
             &self.awaiting_channel,
@@ -114,7 +114,7 @@ impl DeleteChannel {
 }
 
 impl Command for DeleteChannel {
-    fn execute(&self, commander: &GuildCommanderRef, event_listener: &ChangeEventListenerRef) {
+    fn execute(&self, commander: &dyn GuildCommander, event_listener: &dyn ChangeEventListener) {
         let result = commander.delete_category(&self.channel.id);
 
         let event = match result {
@@ -124,4 +124,36 @@ impl Command for DeleteChannel {
 
         event_listener.handle(event);
     }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use crate::{
+        category::CategoriesList,
+        core::{commands::Command, events::ChangeEventListenerMock},
+        guild::GuildCommanderMock,
+        role::RolesList,
+        tests::fixtures::awaiting::AwaitingChannelFixture,
+    };
+
+    use super::AddChannel;
+
+    #[test]
+    fn when_adding_channel_should_add_channel_with_commander() {
+        let commander = GuildCommanderMock::new();
+        let event_listener = ChangeEventListenerMock::new();
+        let add_command = AddChannel::new(
+            AwaitingChannelFixture::new().build(),
+            RolesList::new(),
+            CategoriesList::new(),
+        );
+
+        add_command.execute(&commander, &event_listener);
+    }
+
+    #[test]
+    fn given_failing_commander_when_adding_channel_should_notify_of_error() {}
+
+    #[test]
+    fn given_succeeding_commander_when_adding_channel_should_notify_of_success() {}
 }

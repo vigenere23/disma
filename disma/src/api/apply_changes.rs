@@ -155,7 +155,7 @@ impl ApplyChangesUseCase {
 
     fn execute_new_commands(&self, commands: Vec<commands::CommandRef>) {
         commands.into_iter().for_each(|command| {
-            command.execute(&self.commander, &self.change_event_listener);
+            command.execute(self.commander.as_ref(), self.change_event_listener.as_ref());
         });
     }
 }
