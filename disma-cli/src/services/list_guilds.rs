@@ -17,8 +17,11 @@ impl ListGuilds {
 
         let guilds = self.guild_querier.list_guilds();
 
-        for guild in guilds.iter() {
-            println!(" - [{}] {}", &guild.id, &guild.name)
+        for guild in guilds.into_iter() {
+            println!(
+                " - [{}] {} ({} members)",
+                guild.id, guild.name, guild.nb_members
+            )
         }
     }
 }
