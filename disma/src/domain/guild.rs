@@ -3,6 +3,7 @@ use std::sync::Arc;
 use crate::{
     category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
+    permission::PermissionsList,
     role::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList},
 };
 
@@ -66,4 +67,5 @@ pub struct GuildSummary {
     pub name: String,
     pub id: String,
     pub nb_members: u128,
+    pub permissions: PermissionsList,
 }

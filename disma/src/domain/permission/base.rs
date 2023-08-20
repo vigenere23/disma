@@ -129,6 +129,10 @@ impl PermissionsList {
     pub fn to_list(&self) -> Vec<Permission> {
         self.permissions.iter().cloned().collect()
     }
+
+    pub fn contains(&self, permission: Permission) -> bool {
+        self.permissions.contains(&permission)
+    }
 }
 
 impl From<&str> for PermissionsList {
