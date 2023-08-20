@@ -1,5 +1,5 @@
 use colored::Colorize;
-use disma::guild::GuildQuerier;
+use disma::{guild::GuildQuerier, permission::Permission};
 use std::sync::Arc;
 
 pub struct ListGuilds {
@@ -21,7 +21,24 @@ impl ListGuilds {
             println!(
                 " - [{}] {} ({} members)",
                 guild.id, guild.name, guild.nb_members
-            )
+            );
+
+            if !guild.permissions.contains(Permission::MANAGE_ROLES) {
+                println!(
+                    "{}",
+                    &"   ↳ ⚠️ Warning: missing permission MANAGE_ROLES."
+                        .bold()
+                        .yellow(),
+                );
+            }
+            if !guild.permissions.contains(Permission::MANAGE_CHANNELS) {
+                println!(
+                    "{}",
+                    &"   ↳ ⚠️ Warning: missing permission MANAGE_CHANNELS."
+                        .bold()
+                        .yellow()
+                );
+            }
         }
     }
 }
