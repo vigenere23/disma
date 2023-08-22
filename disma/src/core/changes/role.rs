@@ -1,6 +1,8 @@
 use crate::{
-    base::ListComparison,
-    diff::{Diff, Differ},
+    core::{
+        diffs::{Diff, Differ},
+        ListComparison,
+    },
     guild::{AwaitingGuild, ExistingGuild},
     role::{AwaitingRole, ExistingRole},
 };

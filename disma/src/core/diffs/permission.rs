@@ -1,10 +1,9 @@
 use crate::{
-    diff::{Diff, Differ},
+    core::diffs::{Diff, Differ},
+    permission::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList},
     role::{AwaitingRole, ExistingRole},
     utils::misc::IfThen,
 };
-
-use super::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList};
 
 impl Differ<PermissionsList> for PermissionsList {
     fn diffs_with(&self, target: &Self) -> Vec<Diff> {
@@ -62,7 +61,7 @@ impl Differ<PermissionsOverwritesList<AwaitingRole>> for PermissionsOverwritesLi
 #[cfg(test)]
 mod tests {
     use crate::{
-        diff::{Diff, Differ},
+        core::diffs::{Diff, Differ},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },

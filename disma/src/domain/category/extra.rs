@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use crate::{
     category::ExistingCategory,
-    core::commands::{CommandRef, DeleteCategory},
+    core::commands::{category::DeleteCategory, CommandRef},
 };
 
 pub trait ExtraCategoriesStrategy {

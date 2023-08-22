@@ -1,9 +1,8 @@
 use crate::{
-    diff::{Diff, Differ},
+    channel::{AwaitingChannel, ExistingChannel},
+    core::diffs::{Diff, Differ},
     utils::misc::IfThen,
 };
-
-use super::{AwaitingChannel, ExistingChannel};
 
 impl Differ<AwaitingChannel> for ExistingChannel {
     fn diffs_with(&self, awaiting: &AwaitingChannel) -> Vec<Diff> {
@@ -44,7 +43,7 @@ mod tests {
     use crate::{
         category::{AwaitingCategory, ExistingCategory},
         channel::{AwaitingChannel, ChannelType, ExistingChannel, KeepExtraChannels},
-        diff::{Diff, Differ},
+        core::diffs::{Diff, Differ},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },

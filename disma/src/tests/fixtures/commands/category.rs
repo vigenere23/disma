@@ -1,5 +1,5 @@
 use crate::{
-    core::commands::{AddCategory, DeleteCategory, UpdateCategory},
+    core::commands::category::{AddCategory, DeleteCategory, UpdateCategory},
     role::RolesList,
     tests::fixtures::{awaiting::AwaitingCategoryFixture, existing::ExistingCategoryFixture},
 };

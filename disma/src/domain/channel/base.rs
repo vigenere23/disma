@@ -1,8 +1,8 @@
 use std::{collections::HashMap, fmt::Display};
 
-use crate::{
-    base::ListComparison,
-    diff::{Diff, Differ},
+use crate::core::{
+    diffs::{Diff, Differ},
+    ListComparison,
 };
 
 use strum::{Display, EnumString};

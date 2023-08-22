@@ -7,8 +7,5 @@ pub use base::*;
 mod existing;
 pub use existing::*;
 
-mod diff;
-pub use diff::*;
-
 mod extra;
 pub use extra::*;

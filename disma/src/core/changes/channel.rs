@@ -1,7 +1,9 @@
 use crate::{
-    base::ListComparison,
     channel::{AwaitingChannel, ExistingChannel},
-    diff::{Diff, Differ},
+    core::{
+        diffs::{Diff, Differ},
+        ListComparison,
+    },
     guild::{AwaitingGuild, ExistingGuild},
 };
 

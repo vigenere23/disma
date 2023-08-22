@@ -1,5 +1,5 @@
 use crate::{
-    core::commands::{AddRole, DeleteRole, UpdateRole},
+    core::commands::role::{AddRole, DeleteRole, UpdateRole},
     tests::fixtures::{awaiting::AwaitingRoleFixture, existing::ExistingRoleFixture},
 };
 

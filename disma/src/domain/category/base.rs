@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::base::ListComparison;
+use crate::core::ListComparison;
 
 pub trait Category: Clone {
     fn name(&self) -> &str;

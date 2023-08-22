@@ -82,7 +82,7 @@ where
 #[cfg(test)]
 mod tests {
     mod vec_diffs {
-        use crate::diff::{Diff, Differ};
+        use crate::core::diffs::{Diff, Differ};
 
         #[test]
         fn it_calculates_additions() {
@@ -134,7 +134,7 @@ mod tests {
     }
 
     mod str_diffs {
-        use crate::diff::{Diff, Differ};
+        use crate::core::diffs::{Diff, Differ};
 
         #[test]
         fn given_same_str_returns_no_diff() {
@@ -156,6 +156,10 @@ mod tests {
             let expected_diffs = vec![Diff::Remove("hello".into()), Diff::Add("world!".into())];
             assert_eq!(diffs, expected_diffs);
         }
+    }
+
+    mod bool_diffs {
+        use crate::core::diffs::{Diff, Differ};
 
         #[test]
         fn can_differ_bools() {
