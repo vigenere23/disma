@@ -9,7 +9,10 @@ use crate::{
             role::{RoleChange, RoleChangesService},
         },
         commands::{
-            AddCategory, AddChannel, AddRole, CommandRef, UpdateCategory, UpdateChannel, UpdateRole,
+            category::{AddCategory, UpdateCategory},
+            channel::{AddChannel, UpdateChannel},
+            role::{AddRole, UpdateRole},
+            CommandRef,
         },
         events::ChangeEventListenerRef,
     },

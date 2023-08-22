@@ -1,6 +1,6 @@
 use crate::{
     category::CategoriesList,
-    core::commands::{AddChannel, DeleteChannel, UpdateChannel},
+    core::commands::channel::{AddChannel, DeleteChannel, UpdateChannel},
     role::RolesList,
     tests::fixtures::{awaiting::AwaitingChannelFixture, existing::ExistingChannelFixture},
 };

@@ -1,4 +1,8 @@
 use colored::Colorize;
+use disma::{
+    api::{params::guild::GuildParams, ApplyChangesUseCase, ListChangesUseCase},
+    core::changes::Change,
+};
 use std::{path::Path, sync::Arc};
 
 use crate::{
@@ -7,11 +11,6 @@ use crate::{
         input::{abort, ask_user_confirmation},
         io::Deserializer,
     },
-};
-use disma::{
-    api::params::guild::GuildParams,
-    api::{ApplyChangesUseCase, ListChangesUseCase},
-    commands::CommandDescription,
 };
 
 pub struct ApplyChanges {
@@ -58,13 +57,13 @@ impl ApplyChanges {
 
         for change in changes {
             match change {
-                CommandDescription::Create(entity, name) => {
+                Change::Create(entity, name) => {
                     println!("\n● 🆕 Adding {:?} {}", entity, name.bold().on_black())
                 }
-                CommandDescription::Delete(entity, name) => {
+                Change::Delete(entity, name) => {
                     println!("\n● 🗑️  Removing {:?} {}", entity, name.bold().on_black())
                 }
-                CommandDescription::Update(entity, name, diffs) => {
+                Change::Update(entity, name, diffs) => {
                     println!(
                         "\n● 🔄 Updating {:?} {} with diffs:",
                         entity,

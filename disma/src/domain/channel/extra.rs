@@ -4,7 +4,10 @@ use std::sync::Arc;
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
-    core::commands::{CommandRef, DeleteChannel, UpdateChannel},
+    core::commands::{
+        channel::{DeleteChannel, UpdateChannel},
+        CommandRef,
+    },
     role::{ExistingRole, RolesList},
 };
 

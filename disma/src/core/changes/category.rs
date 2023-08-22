@@ -1,7 +1,9 @@
 use crate::{
-    base::ListComparison,
     category::{AwaitingCategory, ExistingCategory},
-    diff::{Diff, Differ},
+    core::{
+        diffs::{Diff, Differ},
+        ListComparison,
+    },
     guild::{AwaitingGuild, ExistingGuild},
 };
 

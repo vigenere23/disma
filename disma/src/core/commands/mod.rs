@@ -1,11 +1,6 @@
-mod command;
-pub use command::*;
+mod base;
+pub use base::*;
 
-mod channel;
-pub use channel::*;
-
-mod category;
-pub use category::*;
-
-mod role;
-pub use role::*;
+pub mod category;
+pub mod channel;
+pub mod role;

@@ -3,11 +3,11 @@ use std::sync::Arc;
 use crate::{
     api::params::guild::GuildParams,
     channel::Channel,
-    commands::{CommandDescription, CommandEntity},
     core::changes::{
         category::{CategoryChange, CategoryChangesService},
         channel::{ChannelChange, ChannelChangesService},
         role::{RoleChange, RoleChangesService},
+        Change, ChangeEntity,
     },
     guild::{AwaitingGuild, ExistingGuild, GuildQuerier},
 };
@@ -34,7 +34,7 @@ impl ListChangesUseCase {
         }
     }
 
-    pub fn execute(&self, guild_id: &str, params: GuildParams) -> Vec<CommandDescription> {
+    pub fn execute(&self, guild_id: &str, params: GuildParams) -> Vec<Change> {
         let awaiting_guild: AwaitingGuild = params.into();
         let existing_guild = self.querier.get_guild(guild_id);
 
@@ -48,21 +48,17 @@ impl ListChangesUseCase {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> impl Iterator<Item = CommandDescription> {
+    ) -> impl Iterator<Item = Change> {
         let role_changes = self
             .role_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
         role_changes.into_iter().map(|change| match change {
-            RoleChange::Create(awaiting) => {
-                CommandDescription::Create(CommandEntity::Role, awaiting.name)
-            }
+            RoleChange::Create(awaiting) => Change::Create(ChangeEntity::Role, awaiting.name),
             RoleChange::Update(existing, _, diffs) => {
-                CommandDescription::Update(CommandEntity::Role, existing.name.clone(), diffs)
+                Change::Update(ChangeEntity::Role, existing.name.clone(), diffs)
             }
-            RoleChange::Delete(existing) => {
-                CommandDescription::Delete(CommandEntity::Role, existing.name)
-            }
+            RoleChange::Delete(existing) => Change::Delete(ChangeEntity::Role, existing.name),
         })
     }
 
@@ -70,20 +66,20 @@ impl ListChangesUseCase {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> impl Iterator<Item = CommandDescription> {
+    ) -> impl Iterator<Item = Change> {
         let category_changes = self
             .category_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
         category_changes.into_iter().map(|change| match change {
             CategoryChange::Create(awaiting) => {
-                CommandDescription::Create(CommandEntity::Category, awaiting.name)
+                Change::Create(ChangeEntity::Category, awaiting.name)
             }
             CategoryChange::Update(existing, _, diffs) => {
-                CommandDescription::Update(CommandEntity::Category, existing.name.clone(), diffs)
+                Change::Update(ChangeEntity::Category, existing.name.clone(), diffs)
             }
             CategoryChange::Delete(existing) => {
-                CommandDescription::Delete(CommandEntity::Category, existing.name)
+                Change::Delete(ChangeEntity::Category, existing.name)
             }
         })
     }
@@ -92,25 +88,23 @@ impl ListChangesUseCase {
         &self,
         existing_guild: &ExistingGuild,
         awaiting_guild: &AwaitingGuild,
-    ) -> impl Iterator<Item = CommandDescription> {
+    ) -> impl Iterator<Item = Change> {
         let channel_changes = self
             .channel_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
         channel_changes.into_iter().map(|change| match change {
-            ChannelChange::Create(awaiting) => CommandDescription::Create(
-                CommandEntity::Channel,
-                awaiting.unique_name().to_string(),
-            ),
-            ChannelChange::Update(existing, _, diffs) => CommandDescription::Update(
-                CommandEntity::Channel,
+            ChannelChange::Create(awaiting) => {
+                Change::Create(ChangeEntity::Channel, awaiting.unique_name().to_string())
+            }
+            ChannelChange::Update(existing, _, diffs) => Change::Update(
+                ChangeEntity::Channel,
                 existing.unique_name().to_string(),
                 diffs,
             ),
-            ChannelChange::Delete(existing) => CommandDescription::Delete(
-                CommandEntity::Channel,
-                existing.unique_name().to_string(),
-            ),
+            ChannelChange::Delete(existing) => {
+                Change::Delete(ChangeEntity::Channel, existing.unique_name().to_string())
+            }
         })
     }
 }
@@ -123,12 +117,13 @@ mod tests {
 
     use crate::{
         api::params::permission::PermissionsOverwriteParams,
-        commands::{CommandDescription, CommandEntity},
-        core::changes::{
-            category::CategoryChangesService, channel::ChannelChangesService,
-            role::RoleChangesService,
+        core::{
+            changes::{
+                category::CategoryChangesService, channel::ChannelChangesService,
+                role::RoleChangesService, Change, ChangeEntity,
+            },
+            diffs::Diff,
         },
-        diff::Diff,
         guild::GuildQuerierMock,
         tests::{
             fixtures::{
@@ -215,16 +210,16 @@ mod tests {
         assert_eq!(
             changes,
             vec![
-                CommandDescription::Create(CommandEntity::Role, role_to_add_params.name),
-                CommandDescription::Update(
-                    CommandEntity::Role,
+                Change::Create(ChangeEntity::Role, role_to_add_params.name),
+                Change::Update(
+                    ChangeEntity::Role,
                     role_to_update.name,
                     vec![Diff::Update(
                         "color".to_string(),
                         vec![Diff::Add("124f5d".to_string())]
                     )]
                 ),
-                CommandDescription::Delete(CommandEntity::Role, role_to_remove.name)
+                Change::Delete(ChangeEntity::Role, role_to_remove.name)
             ]
         );
     }
@@ -280,16 +275,16 @@ mod tests {
         assert_eq!(
             changes,
             vec![
-                CommandDescription::Create(CommandEntity::Category, category_to_add_params.name),
-                CommandDescription::Update(
-                    CommandEntity::Category,
+                Change::Create(ChangeEntity::Category, category_to_add_params.name),
+                Change::Update(
+                    ChangeEntity::Category,
                     category_to_update.name,
                     vec![Diff::Update(
                         "overwrites".to_string(),
                         vec![Diff::Add(A_ROLE_NAME.to_string())]
                     )]
                 ),
-                CommandDescription::Delete(CommandEntity::Category, category_to_remove.name)
+                Change::Delete(ChangeEntity::Category, category_to_remove.name)
             ]
         );
     }
@@ -355,24 +350,21 @@ mod tests {
         assert_contains_exactly_in_any_order(
             &changes,
             &vec![
-                CommandDescription::Create(CommandEntity::Channel, ":to_add (TEXT)".to_string()),
-                CommandDescription::Create(
-                    CommandEntity::Channel,
+                Change::Create(ChangeEntity::Channel, ":to_add (TEXT)".to_string()),
+                Change::Create(
+                    ChangeEntity::Channel,
                     "a_category:category_change (TEXT)".to_string(),
                 ),
-                CommandDescription::Update(
-                    CommandEntity::Channel,
+                Change::Update(
+                    ChangeEntity::Channel,
                     ":to_update (TEXT)".to_string(),
                     vec![Diff::Update(
                         "topic".to_string(),
                         vec![Diff::Add("new_topic".to_string())],
                     )],
                 ),
-                CommandDescription::Delete(
-                    CommandEntity::Channel,
-                    ":category_change (TEXT)".to_string(),
-                ),
-                CommandDescription::Delete(CommandEntity::Channel, ":to_remove (TEXT)".to_string()),
+                Change::Delete(ChangeEntity::Channel, ":category_change (TEXT)".to_string()),
+                Change::Delete(ChangeEntity::Channel, ":to_remove (TEXT)".to_string()),
             ],
         );
     }

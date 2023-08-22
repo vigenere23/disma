@@ -1,7 +1,6 @@
-use super::{AwaitingRole, ExistingRole};
-
 use crate::{
-    diff::{Diff, Differ},
+    core::diffs::{Diff, Differ},
+    role::{AwaitingRole, ExistingRole},
     utils::misc::IfThen,
 };
 
@@ -40,7 +39,7 @@ impl Differ<AwaitingRole> for ExistingRole {
 #[cfg(test)]
 mod tests {
     use crate::{
-        diff::{Diff, Differ},
+        core::diffs::{Diff, Differ},
         permission::{Permission, PermissionsList},
         role::{AwaitingRole, ExistingRole},
     };

@@ -1,18 +1,10 @@
 use std::sync::Arc;
 
 use crate::{
-    category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::{AwaitingChannel, AwaitingChannelsList, ChannelsList, ExistingChannel},
-    permission::PermissionsList,
-    role::{AwaitingRole, AwaitingRolesList, ExistingRole, RolesList},
+    category::{AwaitingCategory, CategoriesList, ExistingCategory},
+    channel::AwaitingChannel,
+    role::{AwaitingRole, ExistingRole, RolesList},
 };
-
-#[cfg_attr(test, mock_it::mock_it)]
-pub trait GuildQuerier {
-    fn get_guild(&self, guild_id: &str) -> ExistingGuild;
-    fn list_guilds(&self) -> Vec<GuildSummary>;
-}
-pub type GuildQuerierRef = Arc<dyn GuildQuerier>;
 
 #[cfg_attr(test, mock_it::mock_it)]
 pub trait GuildCommander {
@@ -47,25 +39,3 @@ pub trait GuildCommander {
     fn delete_channel(&self, id: &str) -> Result<(), String>;
 }
 pub type GuildCommanderRef = Arc<dyn GuildCommander>;
-
-#[derive(Debug, Clone)]
-pub struct ExistingGuild {
-    pub roles: RolesList<ExistingRole>,
-    pub categories: CategoriesList<ExistingCategory>,
-    pub channels: ChannelsList<ExistingChannel>,
-}
-
-#[derive(Debug)]
-pub struct AwaitingGuild {
-    pub roles: AwaitingRolesList,
-    pub categories: AwaitingCategoriesList,
-    pub channels: AwaitingChannelsList,
-}
-
-#[derive(Debug, Clone)]
-pub struct GuildSummary {
-    pub name: String,
-    pub id: String,
-    pub nb_members: u128,
-    pub permissions: PermissionsList,
-}

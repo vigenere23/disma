@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 use std::sync::Arc;
 
-use crate::core::commands::{CommandRef, DeleteRole};
+use crate::core::commands::{role::DeleteRole, CommandRef};
 
 use super::ExistingRole;
 
