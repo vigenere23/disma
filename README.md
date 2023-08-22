@@ -35,4 +35,4 @@ Your will need to setup a [Discord bot](./docs/bot.md) in order to use the CLI t
 ## Documentation
 
 - [Configuration file format](./docs/config.md)
-- [Roadmap](./docs/roadmap.md)
+- [Roadmap](https://github.com/vigenere23/disma/milestones)
