@@ -160,7 +160,7 @@ impl From<u64> for PermissionsList {
 impl From<Vec<Permission>> for PermissionsList {
     fn from(permissions: Vec<Permission>) -> Self {
         Self {
-            permissions: HashSet::from_iter(permissions.into_iter()),
+            permissions: HashSet::from_iter(permissions),
         }
     }
 }

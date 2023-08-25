@@ -1,0 +1,3434 @@
+roles:
+  items:
+  - name: GLO4003
+    permissions:
+    - CONNECT
+    - SEND_MESSAGES_IN_THREADS
+    - SPEAK
+    - USE_EXTERNAL_EMOJIS
+    - READ_MESSAGE_HISTORY
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_VAD
+    - REQUEST_TO_SPEAK
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES
+    - STREAM
+    color: 5475eb
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: 03-
+    permissions:
+    - REQUEST_TO_SPEAK
+    - USE_VAD
+    - READ_MESSAGE_HISTORY
+    - VIEW_CHANNEL
+    - CONNECT
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES_IN_THREADS
+    - EMBED_LINKS
+    - STREAM
+    - ADD_REACTIONS
+    - SEND_MESSAGES
+    - SPEAK
+    - ATTACH_FILES
+    - USE_EXTERNAL_EMOJIS
+    - USE_EXTERNAL_STICKERS
+    color: 607d8b
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 04-
+    permissions:
+    - ATTACH_FILES
+    - CHANGE_NICKNAME
+    - STREAM
+    - ADD_REACTIONS
+    - USE_EXTERNAL_STICKERS
+    - EMBED_LINKS
+    - USE_EXTERNAL_EMOJIS
+    - CONNECT
+    - READ_MESSAGE_HISTORY
+    - USE_VAD
+    - VIEW_CHANNEL
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - SPEAK
+    - SEND_MESSAGES
+    color: 9b59b6
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 06-
+    permissions:
+    - USE_VAD
+    - SEND_MESSAGES
+    - READ_MESSAGE_HISTORY
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - STREAM
+    - ATTACH_FILES
+    - CHANGE_NICKNAME
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - USE_EXTERNAL_EMOJIS
+    - SPEAK
+    color: '991818'
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A03
+    permissions:
+    - SEND_MESSAGES
+    - USE_EXTERNAL_EMOJIS
+    - USE_EMBEDDED_ACTIVITIES
+    - CONNECT
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - SPEAK
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - REQUEST_TO_SPEAK
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - STREAM
+    - EMBED_LINKS
+    color: c48888
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 2021-GLO4002
+    permissions:
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - STREAM
+    - ATTACH_FILES
+    - SPEAK
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - VIEW_CHANNEL
+    - ADD_REACTIONS
+    - SEND_MESSAGES
+    - USE_EXTERNAL_EMOJIS
+    - EMBED_LINKS
+    - USE_VAD
+    - CONNECT
+    - READ_MESSAGE_HISTORY
+    color: f1c40f
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: 15-
+    permissions:
+    - SEND_MESSAGES
+    - USE_VAD
+    - STREAM
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - REQUEST_TO_SPEAK
+    - SPEAK
+    - USE_EXTERNAL_STICKERS
+    - EMBED_LINKS
+    - CONNECT
+    - ATTACH_FILES
+    - ADD_REACTIONS
+    - CHANGE_NICKNAME
+    color: ca91c7
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: '"pas" staff'
+    permissions:
+    - CONNECT
+    - EMBED_LINKS
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - USE_EMBEDDED_ACTIVITIES
+    - SPEAK
+    - STREAM
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES
+    - REQUEST_TO_SPEAK
+    - USE_EXTERNAL_EMOJIS
+    - USE_VAD
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    color: ff0000
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: 17-
+    permissions:
+    - ADD_REACTIONS
+    - ATTACH_FILES
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES
+    - CONNECT
+    - STREAM
+    - REQUEST_TO_SPEAK
+    - READ_MESSAGE_HISTORY
+    - SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - CHANGE_NICKNAME
+    - USE_VAD
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    color: 368f57
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 11-
+    permissions:
+    - CONNECT
+    - SEND_MESSAGES_IN_THREADS
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - STREAM
+    - EMBED_LINKS
+    - REQUEST_TO_SPEAK
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES
+    - ATTACH_FILES
+    - SPEAK
+    - USE_EXTERNAL_STICKERS
+    color: 641f5f
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 05-
+    permissions:
+    - READ_MESSAGE_HISTORY
+    - CONNECT
+    - USE_VAD
+    - SEND_MESSAGES_IN_THREADS
+    - ADD_REACTIONS
+    - SPEAK
+    - EMBED_LINKS
+    - REQUEST_TO_SPEAK
+    - ATTACH_FILES
+    - USE_EXTERNAL_STICKERS
+    - STREAM
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES
+    color: e91e63
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 01-
+    permissions:
+    - USE_VAD
+    - ATTACH_FILES
+    - VIEW_CHANNEL
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    - CHANGE_NICKNAME
+    - SPEAK
+    - SEND_MESSAGES
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - ADD_REACTIONS
+    - STREAM
+    - REQUEST_TO_SPEAK
+    - CONNECT
+    color: 2ecc71
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 13-
+    permissions:
+    - SEND_MESSAGES
+    - STREAM
+    - ATTACH_FILES
+    - EMBED_LINKS
+    - USE_EXTERNAL_EMOJIS
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - READ_MESSAGE_HISTORY
+    - SEND_MESSAGES_IN_THREADS
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - ADD_REACTIONS
+    color: 79784c
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: cool
+    permissions:
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    - CHANGE_NICKNAME
+    - REQUEST_TO_SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    - ADD_REACTIONS
+    - STREAM
+    - SPEAK
+    - USE_VAD
+    - SEND_MESSAGES
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - CONNECT
+    color: 41587c
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: A02
+    permissions:
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_VAD
+    - REQUEST_TO_SPEAK
+    - EMBED_LINKS
+    - ADD_REACTIONS
+    - CONNECT
+    - STREAM
+    - USE_EXTERNAL_EMOJIS
+    - READ_MESSAGE_HISTORY
+    - SEND_MESSAGES
+    - SPEAK
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    color: '202733'
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: staff-glo4003
+    permissions:
+    - SPEAK
+    - VIEW_CHANNEL
+    - MANAGE_ROLES
+    - STREAM
+    - REQUEST_TO_SPEAK
+    - EMBED_LINKS
+    - CONNECT
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES
+    - MANAGE_CHANNELS
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - USE_VAD
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EXTERNAL_EMOJIS
+    color: 9d98ff
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: A07
+    permissions:
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES
+    - USE_VAD
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - CHANGE_NICKNAME
+    - STREAM
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    color: 6d8bb1
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 16-
+    permissions:
+    - CHANGE_NICKNAME
+    - CONNECT
+    - USE_VAD
+    - SEND_MESSAGES
+    - STREAM
+    - USE_EXTERNAL_STICKERS
+    - ATTACH_FILES
+    - ADD_REACTIONS
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES_IN_THREADS
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    - READ_MESSAGE_HISTORY
+    - EMBED_LINKS
+    color: 2777ff
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: carl-bot
+    permissions:
+    - BAN_MEMBERS
+    - USE_EXTERNAL_EMOJIS
+    - MANAGE_CHANNELS
+    - MANAGE_NICKNAMES
+    - ADD_REACTIONS
+    - KICK_MEMBERS
+    - MANAGE_EMOJIS_AND_STICKERS
+    - MANAGE_GUILD
+    - READ_MESSAGE_HISTORY
+    - ATTACH_FILES
+    - MANAGE_WEBHOOKS
+    - MENTION_EVERYONE
+    - VIEW_CHANNEL
+    - MANAGE_MESSAGES
+    - MUTE_MEMBERS
+    - CHANGE_NICKNAME
+    - EMBED_LINKS
+    - CONNECT
+    - VIEW_AUDIT_LOG
+    - MANAGE_ROLES
+    - SEND_MESSAGES
+    - SPEAK
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A09
+    permissions:
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES_IN_THREADS
+    - USE_VAD
+    - CONNECT
+    - REQUEST_TO_SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    - SEND_MESSAGES
+    - STREAM
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    - SPEAK
+    color: c003cf
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: disma
+    permissions:
+    - MANAGE_CHANNELS
+    - MANAGE_ROLES
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: 07-
+    permissions:
+    - CHANGE_NICKNAME
+    - ATTACH_FILES
+    - SEND_MESSAGES
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - EMBED_LINKS
+    - SPEAK
+    - STREAM
+    - ADD_REACTIONS
+    - USE_VAD
+    - REQUEST_TO_SPEAK
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - CONNECT
+    color: 6d97d4
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: admin
+    permissions:
+    - CHANGE_NICKNAME
+    - MANAGE_ROLES
+    - STREAM
+    - VIEW_AUDIT_LOG
+    - MANAGE_MESSAGES
+    - CREATE_PUBLIC_THREADS
+    - MANAGE_CHANNELS
+    - USE_EXTERNAL_STICKERS
+    - MUTE_MEMBERS
+    - MANAGE_NICKNAMES
+    - MANAGE_GUILD
+    - REQUEST_TO_SPEAK
+    - KICK_MEMBERS
+    - BAN_MEMBERS
+    - ADMINISTRATOR
+    - USE_EXTERNAL_EMOJIS
+    - EMBED_LINKS
+    - ADD_REACTIONS
+    - MANAGE_EMOJIS_AND_STICKERS
+    - VIEW_CHANNEL
+    - SPEAK
+    - CREATE_INSTANT_INVITE
+    - PRIORITY_SPEAKER
+    - SEND_MESSAGES
+    - READ_MESSAGE_HISTORY
+    - MENTION_EVERYONE
+    - USE_VAD
+    - CREATE_PRIVATE_THREADS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_APPLICATION_COMMANDS
+    - DEAFEN_MEMBERS
+    - VIEW_GUILD_INSIGHTS
+    - ATTACH_FILES
+    - SEND_TTS_MESSAGES
+    - MANAGE_WEBHOOKS
+    - CONNECT
+    - MOVE_MEMBERS
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: 02-
+    permissions:
+    - REQUEST_TO_SPEAK
+    - CHANGE_NICKNAME
+    - ADD_REACTIONS
+    - SEND_MESSAGES
+    - ATTACH_FILES
+    - CONNECT
+    - SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - STREAM
+    - VIEW_CHANNEL
+    - EMBED_LINKS
+    - USE_EXTERNAL_EMOJIS
+    - USE_VAD
+    - USE_EXTERNAL_STICKERS
+    - READ_MESSAGE_HISTORY
+    color: ad1457
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: Server Booster
+    permissions:
+    - ADD_REACTIONS
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - EMBED_LINKS
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - STREAM
+    - CREATE_PRIVATE_THREADS
+    - CREATE_INSTANT_INVITE
+    - ATTACH_FILES
+    - CREATE_PUBLIC_THREADS
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES_IN_THREADS
+    - USE_APPLICATION_COMMANDS
+    - SPEAK
+    color: f47fff
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: 14-
+    permissions:
+    - STREAM
+    - SEND_MESSAGES
+    - CONNECT
+    - USE_EXTERNAL_EMOJIS
+    - SPEAK
+    - EMBED_LINKS
+    - CHANGE_NICKNAME
+    - READ_MESSAGE_HISTORY
+    - REQUEST_TO_SPEAK
+    - ADD_REACTIONS
+    - ATTACH_FILES
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_VAD
+    color: 607d8b
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A10
+    permissions:
+    - ADD_REACTIONS
+    - SEND_MESSAGES
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    - USE_EXTERNAL_STICKERS
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_VAD
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - CONNECT
+    - CHANGE_NICKNAME
+    - EMBED_LINKS
+    - STREAM
+    color: 3b0000
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 08-
+    permissions:
+    - STREAM
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - USE_EXTERNAL_EMOJIS
+    - USE_VAD
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - ATTACH_FILES
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - CONNECT
+    color: b9009c
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: '@everyone'
+    permissions:
+    - SEND_VOICE_MESSAGES
+    - USE_EXTERNAL_EMOJIS
+    - EMBED_LINKS
+    - REQUEST_TO_SPEAK
+    - CHANGE_NICKNAME
+    - SPEAK
+    - SEND_MESSAGES
+    - CONNECT
+    - STREAM
+    - USE_VAD
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EXTERNAL_SOUNDS
+    - USE_EMBEDDED_ACTIVITIES
+    - ADD_REACTIONS
+    - USE_SOUNDBOARD
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: A08
+    permissions:
+    - ADD_REACTIONS
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_VAD
+    - REQUEST_TO_SPEAK
+    - READ_MESSAGE_HISTORY
+    - SEND_MESSAGES
+    - STREAM
+    - USE_EXTERNAL_EMOJIS
+    - SPEAK
+    - CONNECT
+    - EMBED_LINKS
+    color: d5daa4
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: PartyBeast
+    permissions:
+    - MANAGE_CHANNELS
+    - VIEW_CHANNEL
+    - MANAGE_MESSAGES
+    - MANAGE_ROLES
+    - MOVE_MEMBERS
+    - MANAGE_GUILD
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: glo4002-staff
+    permissions:
+    - SEND_MESSAGES
+    - USE_VAD
+    - MANAGE_MESSAGES
+    - MANAGE_EMOJIS_AND_STICKERS
+    - VIEW_GUILD_INSIGHTS
+    - MUTE_MEMBERS
+    - USE_EXTERNAL_EMOJIS
+    - CREATE_INSTANT_INVITE
+    - MENTION_EVERYONE
+    - CONNECT
+    - EMBED_LINKS
+    - SPEAK
+    - STREAM
+    - REQUEST_TO_SPEAK
+    - ATTACH_FILES
+    - BAN_MEMBERS
+    - SEND_TTS_MESSAGES
+    - SEND_MESSAGES_IN_THREADS
+    - MANAGE_GUILD
+    - MOVE_MEMBERS
+    - MANAGE_NICKNAMES
+    - ADD_REACTIONS
+    - MANAGE_EVENTS
+    - MANAGE_ROLES
+    - VIEW_CHANNEL
+    - MANAGE_THREADS
+    - USE_EXTERNAL_STICKERS
+    - MANAGE_CHANNELS
+    - VIEW_AUDIT_LOG
+    - USE_APPLICATION_COMMANDS
+    - DEAFEN_MEMBERS
+    - KICK_MEMBERS
+    - READ_MESSAGE_HISTORY
+    - MANAGE_WEBHOOKS
+    - CHANGE_NICKNAME
+    color: ff0000
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: propre
+    permissions:
+    - SPEAK
+    - USE_EXTERNAL_EMOJIS
+    - ADD_REACTIONS
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES
+    - STREAM
+    - CONNECT
+    - READ_MESSAGE_HISTORY
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EMBEDDED_ACTIVITIES
+    color: '206694'
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: GLO4002
+    permissions:
+    - ADD_REACTIONS
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES
+    - CHANGE_NICKNAME
+    - SPEAK
+    - USE_VAD
+    - USE_EMBEDDED_ACTIVITIES
+    - REQUEST_TO_SPEAK
+    - USE_EXTERNAL_EMOJIS
+    - STREAM
+    - EMBED_LINKS
+    - READ_MESSAGE_HISTORY
+    - SEND_MESSAGES_IN_THREADS
+    - CONNECT
+    color: 36d323
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: noos-admin
+    permissions:
+    - SPEAK
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EMBEDDED_ACTIVITIES
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES
+    - STREAM
+    - USE_VAD
+    - EMBED_LINKS
+    - USE_EXTERNAL_EMOJIS
+    - ADD_REACTIONS
+    - CONNECT
+    - READ_MESSAGE_HISTORY
+    - CHANGE_NICKNAME
+    color: 3498db
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: A04
+    permissions:
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EMBEDDED_ACTIVITIES
+    - REQUEST_TO_SPEAK
+    - ADD_REACTIONS
+    - READ_MESSAGE_HISTORY
+    - SPEAK
+    - SEND_MESSAGES
+    - EMBED_LINKS
+    - USE_VAD
+    - STREAM
+    - CHANGE_NICKNAME
+    - CONNECT
+    - USE_EXTERNAL_EMOJIS
+    color: ad6060
+    show_in_sidebar: false
+    is_mentionable: false
+  - name: glo4002-aide-ext
+    permissions:
+    - CONNECT
+    - DEAFEN_MEMBERS
+    - MOVE_MEMBERS
+    - MUTE_MEMBERS
+    - READ_MESSAGE_HISTORY
+    - REQUEST_TO_SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    - EMBED_LINKS
+    - SEND_MESSAGES
+    - USE_VAD
+    - SPEAK
+    - STREAM
+    - MENTION_EVERYONE
+    - USE_EXTERNAL_EMOJIS
+    - CREATE_PUBLIC_THREADS
+    - ADD_REACTIONS
+    - PRIORITY_SPEAKER
+    - USE_EXTERNAL_STICKERS
+    - VIEW_CHANNEL
+    - CHANGE_NICKNAME
+    - CREATE_PRIVATE_THREADS
+    - USE_APPLICATION_COMMANDS
+    - ATTACH_FILES
+    - MANAGE_EVENTS
+    - SEND_MESSAGES_IN_THREADS
+    color: f1c40f
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: main
+    permissions:
+    - SEND_MESSAGES
+    - USE_EMBEDDED_ACTIVITIES
+    - STREAM
+    - USE_VAD
+    - EMBED_LINKS
+    - USE_EXTERNAL_STICKERS
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - CHANGE_NICKNAME
+    - SEND_MESSAGES_IN_THREADS
+    - CONNECT
+    - ADD_REACTIONS
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    color: 11806a
+    show_in_sidebar: true
+    is_mentionable: false
+  - name: A06
+    permissions:
+    - SEND_MESSAGES
+    - CHANGE_NICKNAME
+    - READ_MESSAGE_HISTORY
+    - USE_EXTERNAL_EMOJIS
+    - STREAM
+    - SPEAK
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - REQUEST_TO_SPEAK
+    - CONNECT
+    - USE_VAD
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EXTERNAL_STICKERS
+    - USE_EMBEDDED_ACTIVITIES
+    color: '526649'
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A11
+    permissions:
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    - USE_EMBEDDED_ACTIVITIES
+    - USE_EXTERNAL_EMOJIS
+    - READ_MESSAGE_HISTORY
+    - STREAM
+    - CONNECT
+    - EMBED_LINKS
+    - SPEAK
+    - USE_VAD
+    - CHANGE_NICKNAME
+    color: 6f6f6f
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A05
+    permissions:
+    - READ_MESSAGE_HISTORY
+    - USE_EMBEDDED_ACTIVITIES
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - EMBED_LINKS
+    - STREAM
+    - USE_EXTERNAL_EMOJIS
+    - REQUEST_TO_SPEAK
+    - SEND_MESSAGES_IN_THREADS
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - CONNECT
+    - SPEAK
+    - USE_VAD
+    color: 5a0047
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 09-
+    permissions:
+    - READ_MESSAGE_HISTORY
+    - SEND_MESSAGES
+    - EMBED_LINKS
+    - SPEAK
+    - CHANGE_NICKNAME
+    - USE_EXTERNAL_STICKERS
+    - CONNECT
+    - REQUEST_TO_SPEAK
+    - ADD_REACTIONS
+    - ATTACH_FILES
+    - STREAM
+    - USE_VAD
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES_IN_THREADS
+    color: 27ff1c
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: étudiants
+    permissions:
+    - EMBED_LINKS
+    - SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    - SEND_MESSAGES
+    - USE_VAD
+    - SEND_MESSAGES_IN_THREADS
+    - READ_MESSAGE_HISTORY
+    - ADD_REACTIONS
+    - REQUEST_TO_SPEAK
+    - ATTACH_FILES
+    - CHANGE_NICKNAME
+    - VIEW_CHANNEL
+    - STREAM
+    - CONNECT
+    - USE_EXTERNAL_EMOJIS
+    - SEND_TTS_MESSAGES
+    - USE_EXTERNAL_STICKERS
+    color: e2a6a6
+    show_in_sidebar: false
+    is_mentionable: true
+  - name: 10-
+    permissions:
+    - SEND_MESSAGES
+    - USE_VAD
+    - SPEAK
+    - CHANGE_NICKNAME
+    - CONNECT
+    - ATTACH_FILES
+    - REQUEST_TO_SPEAK
+    - STREAM
+    - USE_EXTERNAL_STICKERS
+    - ADD_REACTIONS
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES_IN_THREADS
+    - EMBED_LINKS
+    - READ_MESSAGE_HISTORY
+    color: 618d8c
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: 12-
+    permissions:
+    - STREAM
+    - EMBED_LINKS
+    - ATTACH_FILES
+    - ADD_REACTIONS
+    - USE_EXTERNAL_EMOJIS
+    - CHANGE_NICKNAME
+    - REQUEST_TO_SPEAK
+    - READ_MESSAGE_HISTORY
+    - USE_VAD
+    - SEND_MESSAGES
+    - SPEAK
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    color: 9c0055
+    show_in_sidebar: true
+    is_mentionable: true
+  - name: A01
+    permissions:
+    - USE_VAD
+    - CHANGE_NICKNAME
+    - STREAM
+    - USE_EXTERNAL_EMOJIS
+    - SEND_MESSAGES
+    - ADD_REACTIONS
+    - EMBED_LINKS
+    - READ_MESSAGE_HISTORY
+    - SPEAK
+    - REQUEST_TO_SPEAK
+    - USE_EMBEDDED_ACTIVITIES
+    - CONNECT
+    - USE_EXTERNAL_STICKERS
+    - SEND_MESSAGES_IN_THREADS
+    color: 9b59b6
+    show_in_sidebar: true
+    is_mentionable: true
+  extra_items:
+    strategy: REMOVE
+categories:
+  items:
+  - name: ARCHI09
+    permissions_overwrites:
+    - role: A09
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: PartyBeast
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE11
+    permissions_overwrites:
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: 11-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE17
+    permissions_overwrites:
+    - role: 17-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    extra_channels:
+      strategy: REMOVE
+  - name: equipe01
+    permissions_overwrites:
+    - role: 01-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI07
+    permissions_overwrites:
+    - role: A07
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: carl-bot
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: GLO4002 _ Staff
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-aide-ext
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: LOUNGE
+    permissions_overwrites:
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI10
+    permissions_overwrites:
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: A10
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE15
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: 15-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: Clinique du vendredi
+    permissions_overwrites:
+    - role: 2021-GLO4002
+      allow:
+      - CONNECT
+      deny:
+      - VIEW_CHANNEL
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: GLO4002
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: GLO4002-Salle comune
+    permissions_overwrites:
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: GLO4002
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+    - role: étudiants
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE12
+    permissions_overwrites:
+    - role: 12-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI08
+    permissions_overwrites:
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: A08
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: carl-bot
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: PartyBeast
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE06
+    permissions_overwrites:
+    - role: 06-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI01
+    permissions_overwrites:
+    - role: A01
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE08
+    permissions_overwrites:
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: 08-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE04
+    permissions_overwrites:
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: 04-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE07
+    permissions_overwrites:
+    - role: 07-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI04
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+    - role: PartyBeast
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: A04
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: Oraux-Archi
+    permissions_overwrites:
+    - role: GLO4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: carl-bot
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: equipe02
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: 02-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE05
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: 05-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: Information
+    permissions_overwrites:
+    - role: '@everyone'
+      allow:
+      - VIEW_CHANNEL
+      deny:
+      - SEND_MESSAGES
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE13
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: 13-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI05
+    permissions_overwrites:
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: A05
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: PartyBeast
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE16
+    permissions_overwrites:
+    - role: 16-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: RECHERCHE
+    permissions_overwrites:
+    - role: 2021-GLO4002
+      allow:
+      - ADD_REACTIONS
+      - SEND_MESSAGES
+      - USE_EXTERNAL_EMOJIS
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: equipe03
+    permissions_overwrites:
+    - role: 03-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI11
+    permissions_overwrites:
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: A11
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: carl-bot
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI02
+    permissions_overwrites:
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: A02
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: GLO4002-Support
+    permissions_overwrites:
+    - role: glo4002-staff
+      allow:
+      - SEND_MESSAGES
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    - role: glo4002-aide-ext
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      - SEND_MESSAGES
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE09
+    permissions_overwrites:
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: 09-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE14
+    permissions_overwrites:
+    - role: 14-
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: glo4002-staff
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+      - CONNECT
+    extra_channels:
+      strategy: REMOVE
+  - name: GLO-4003
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - VIEW_CHANNEL
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: STAFFGLO4003
+    permissions_overwrites:
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI06
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: A06
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: PartyBeast
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: carl-bot
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: ARCHI03
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: A03
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: PartyBeast
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: carl-bot
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      deny: []
+    - role: staff-glo4003
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  - name: EQUIPE10
+    permissions_overwrites:
+    - role: '@everyone'
+      allow: []
+      deny:
+      - CONNECT
+      - VIEW_CHANNEL
+    - role: glo4002-staff
+      allow:
+      - VIEW_CHANNEL
+      - CONNECT
+      deny: []
+    - role: 10-
+      allow:
+      - CONNECT
+      - VIEW_CHANNEL
+      - MANAGE_MESSAGES
+      deny: []
+    extra_channels:
+      strategy: REMOVE
+  extra_items:
+    strategy: REMOVE
+channels:
+  items:
+  - name: Paul
+    type: VOICE
+    category: STAFFGLO4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: Salle jaune
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: Salle verte
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 2021-GLO4002
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE11
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: 11-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: botspam
+    type: TEXT
+    category: GLO4002 _ Staff
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: 📝suggestions
+    type: TEXT
+    category: Information
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 2021-GLO4002
+        allow:
+        - SEND_MESSAGES
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - ADD_REACTIONS
+        - MANAGE_MESSAGES
+        - MANAGE_ROLES
+        - MENTION_EVERYONE
+        - MANAGE_CHANNELS
+        - MANAGE_WEBHOOKS
+        - SEND_MESSAGES
+        - USE_EXTERNAL_EMOJIS
+        deny: []
+      - role: '@everyone'
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+  - name: Achilles
+    type: VOICE
+    category: GLO4002 _ Staff
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-aide-ext
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Salle bleue
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: 2021-GLO4002
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+  - name: 🙋lève-la-main
+    type: TEXT
+    category: Information
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow:
+        - VIEW_CHANNEL
+        - SEND_MESSAGES
+        deny: []
+  - name: general
+    type: TEXT
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: 2021-GLO4002
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: étudiants
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: Jacques
+    type: VOICE
+    category: STAFFGLO4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: general
+    type: TEXT
+    category: Oraux-Archi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE13
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 13-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: ARCHI04
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: A04
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE06
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: 06-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Premier rang
+    type: VOICE
+    category: GLO4002-Salle comune
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: étudiants
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: GLO4002
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: Salle rouge
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: 2021-GLO4002
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: GLO4002
+        allow:
+        - SPEAK
+        - STREAM
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE05
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: 05-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: Salle arc-en-ciel
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: ARCHI01
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A01
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: equipe03
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 03-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: Fond de la classe
+    type: VOICE
+    category: GLO4002-Salle comune
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: étudiants
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Salle verte
+    type: VOICE
+    category: Oraux-Archi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: GLO4003
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: Attroupement
+    type: VOICE
+    category: GLO4002-Salle comune
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: étudiants
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: GLO4002
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: questions-admin
+    type: TEXT
+    category: Information
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow:
+        - SEND_MESSAGES
+        - VIEW_CHANNEL
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE17
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: 17-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Bureau du prof
+    type: VOICE
+    category: GLO4002-Salle comune
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: étudiants
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Jean
+    type: VOICE
+    category: STAFFGLO4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: equipe02
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 02-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: Salle d'attente
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow:
+        - VIEW_CHANNEL
+        deny:
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: GLO4002
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny:
+        - SPEAK
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE07
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: 07-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE09
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: 09-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE16
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: 16-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: questions-admin
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: glo4003
+    type: TEXT
+    category: RECHERCHE
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: ARCHI08
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A08
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: questions-labo
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: moderator-only
+    type: TEXT
+    category: GLO4002 _ Staff
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-aide-ext
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: random
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: ARCHI09
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A09
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: liste-dattente
+    type: TEXT
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 2021-GLO4002
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: ARCHI06
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A06
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE04
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: 04-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Salle orange
+    type: VOICE
+    category: Oraux-Archi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - ADD_REACTIONS
+        - USE_VAD
+        - USE_EMBEDDED_ACTIVITIES
+        - USE_EXTERNAL_EMOJIS
+        - USE_EXTERNAL_STICKERS
+        - USE_APPLICATION_COMMANDS
+        - SEND_MESSAGES
+        - SPEAK
+        - STREAM
+        - ATTACH_FILES
+        - EMBED_LINKS
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: annonces
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny:
+        - SEND_MESSAGES
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: ARCHI03
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A03
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: ift6002
+    type: TEXT
+    category: RECHERCHE
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: ARCHI07
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A07
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Salle orange
+    type: VOICE
+    category: Clinique du vendredi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 2021-GLO4002
+        allow:
+        - CONNECT
+        deny:
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: Join Here
+    type: VOICE
+    category: ARCHI11
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: A11
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Ulysse
+    type: VOICE
+    category: GLO4002 _ Staff
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-aide-ext
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE10
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: 10-
+        allow:
+        - MANAGE_MESSAGES
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: starboard
+    type: TEXT
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: 2021-GLO4002
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: étudiants
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow:
+        - READ_MESSAGE_HISTORY
+        deny:
+        - VIEW_CHANNEL
+        - SEND_MESSAGES
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE14
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 14-
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: help
+    type: TEXT
+    category: STAFFGLO4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: bienvenue
+    type: TEXT
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow:
+        - VIEW_CHANNEL
+        deny:
+        - SEND_MESSAGES
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE08
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: 08-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: ARCHI05
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: A05
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: support-noos
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: noos-admin
+        allow:
+        - CREATE_PUBLIC_THREADS
+        - CREATE_PRIVATE_THREADS
+        - MANAGE_MESSAGES
+        - EMBED_LINKS
+        - SEND_MESSAGES_IN_THREADS
+        - MANAGE_CHANNELS
+        - MANAGE_ROLES
+        - SEND_MESSAGES
+        - MENTION_EVERYONE
+        - ADD_REACTIONS
+        - USE_APPLICATION_COMMANDS
+        - USE_EXTERNAL_STICKERS
+        - USE_EXTERNAL_EMOJIS
+        - READ_MESSAGE_HISTORY
+        - ATTACH_FILES
+        - MANAGE_THREADS
+        - VIEW_CHANNEL
+        - SEND_TTS_MESSAGES
+        deny: []
+  - name: admin
+    type: TEXT
+    category: STAFFGLO4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: ARCHI02
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: A02
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Odysseus
+    type: VOICE
+    category: GLO4002 _ Staff
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: glo4002-aide-ext
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE12
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: 12-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+  - name: Join Here
+    type: VOICE
+    category: equipe01
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: 01-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: Join Here
+    type: VOICE
+    category: ARCHI10
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: A10
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - CONNECT
+        - VIEW_CHANNEL
+  - name: glo4002
+    type: TEXT
+    category: RECHERCHE
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4002
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  - name: Salle d'attente
+    type: VOICE
+    category: Oraux-Archi
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: staff-glo4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: PartyBeast
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+      - role: GLO4003
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: questions-discussion-solo
+    type: TEXT
+    category: GLO-4003
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: GLO4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+  - name: reglements
+    type: TEXT
+    topic: Règlements du Discord du cours GLO-4002
+    category: Information
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow:
+        - VIEW_CHANNEL
+        deny:
+        - SEND_MESSAGES
+  - name: Join Here
+    type: VOICE
+    category: EQUIPE15
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        - CONNECT
+        deny: []
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+        - CONNECT
+      - role: 15-
+        allow:
+        - CONNECT
+        - VIEW_CHANNEL
+        deny: []
+  - name: random
+    type: TEXT
+    permissions_overwrites:
+      strategy: MANUAL
+      items:
+      - role: '@everyone'
+        allow: []
+        deny:
+        - VIEW_CHANNEL
+      - role: 2021-GLO4002
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: staff-glo4003
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: étudiants
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: glo4002-staff
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+      - role: carl-bot
+        allow:
+        - VIEW_CHANNEL
+        deny: []
+  extra_items:
+    strategy: REMOVE
