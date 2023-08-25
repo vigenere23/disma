@@ -52,15 +52,18 @@ impl PermissionOverwritesRequest {
 }
 
 impl PermissionOverwritesResponse {
-    pub fn into(
+    pub fn try_into(
         &self,
         roles: &RolesList<ExistingRole>,
-    ) -> Option<PermissionsOverwrite<ExistingRole>> {
+    ) -> Result<PermissionsOverwrite<ExistingRole>, String> {
         if self._type != 0 {
-            return None;
+            return Err(format!(
+                "Unsupported permissions overwrite type {}",
+                self._type
+            ));
         };
 
-        Some(PermissionsOverwrite {
+        Ok(PermissionsOverwrite {
             role: roles.find_by_id(&self.role_or_member_id).clone(),
             allow: PermissionsList::from(self.allow.as_str()),
             deny: PermissionsList::from(self.deny.as_str()),
