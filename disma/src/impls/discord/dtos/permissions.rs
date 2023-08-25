@@ -14,7 +14,17 @@ pub enum PermissionOverwriteType {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PermissionOverwritesDto {
+pub struct PermissionOverwritesResponse {
+    #[serde(rename = "id")]
+    pub role_or_member_id: String,
+    #[serde(rename = "type")]
+    pub _type: u8,
+    pub allow: String,
+    pub deny: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PermissionOverwritesRequest {
     #[serde(rename = "id")]
     pub role_or_member_id: String,
     #[serde(rename = "type")]
@@ -23,7 +33,7 @@ pub struct PermissionOverwritesDto {
     pub deny: String,
 }
 
-impl PermissionOverwritesDto {
+impl PermissionOverwritesRequest {
     pub fn from(
         overwrites: &PermissionsOverwrite<AwaitingRole>,
         roles: &RolesList<ExistingRole>,
@@ -39,12 +49,21 @@ impl PermissionOverwritesDto {
             deny: overwrites.deny.code(),
         }
     }
+}
 
-    pub fn into(&self, roles: &RolesList<ExistingRole>) -> PermissionsOverwrite<ExistingRole> {
-        PermissionsOverwrite {
+impl PermissionOverwritesResponse {
+    pub fn into(
+        &self,
+        roles: &RolesList<ExistingRole>,
+    ) -> Option<PermissionsOverwrite<ExistingRole>> {
+        if self._type != 0 {
+            return None;
+        };
+
+        Some(PermissionsOverwrite {
             role: roles.find_by_id(&self.role_or_member_id).clone(),
             allow: PermissionsList::from(self.allow.as_str()),
             deny: PermissionsList::from(self.deny.as_str()),
-        }
+        })
     }
 }

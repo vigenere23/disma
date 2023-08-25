@@ -7,7 +7,7 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-use super::permissions::PermissionOverwritesDto;
+use super::permissions::{PermissionOverwritesRequest, PermissionOverwritesResponse};
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
@@ -33,7 +33,7 @@ pub struct ChannelRequest {
     #[serde(rename = "type")]
     pub _type: ChannelDtoType,
     pub parent_id: Option<String>,
-    pub permission_overwrites: Vec<PermissionOverwritesDto>,
+    pub permission_overwrites: Vec<PermissionOverwritesRequest>,
 }
 
 impl ChannelRequest {
@@ -42,7 +42,7 @@ impl ChannelRequest {
             .overwrites
             .to_list()
             .iter()
-            .map(|permission| PermissionOverwritesDto::from(permission, roles))
+            .map(|permission| PermissionOverwritesRequest::from(permission, roles))
             .collect();
 
         Self {
@@ -68,7 +68,7 @@ impl ChannelRequest {
             .overwrites
             .to_list()
             .iter()
-            .map(|permission| PermissionOverwritesDto::from(permission, roles))
+            .map(|permission| PermissionOverwritesRequest::from(permission, roles))
             .collect();
 
         Self {
@@ -89,5 +89,5 @@ pub struct ChannelResponse {
     #[serde(rename = "type")]
     pub _type: u8,
     pub parent_id: Option<String>,
-    pub permission_overwrites: Vec<PermissionOverwritesDto>,
+    pub permission_overwrites: Vec<PermissionOverwritesResponse>,
 }

@@ -44,7 +44,7 @@ impl GuildQuerier for HttpGuildQuerier {
                         response
                             .permission_overwrites
                             .iter()
-                            .map(|permissions| permissions.into(&roles_list))
+                            .filter_map(|permissions| permissions.into(&roles_list))
                             .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                     ),
                 }),
@@ -72,7 +72,7 @@ impl GuildQuerier for HttpGuildQuerier {
                     response
                         .permission_overwrites
                         .iter()
-                        .map(|permissions| permissions.into(&roles_list))
+                        .filter_map(|permissions| permissions.into(&roles_list))
                         .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                 );
 
