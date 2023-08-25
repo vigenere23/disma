@@ -44,7 +44,13 @@ impl GuildQuerier for HttpGuildQuerier {
                         response
                             .permission_overwrites
                             .iter()
-                            .map(|permissions| permissions.into(&roles_list))
+                            .filter_map(|permissions| {
+                                let result = permissions.try_into(&roles_list);
+                                match result {
+                                    Ok(overwrites) => Some(overwrites),
+                                    Err(message) => {eprintln!("Error while parsing permissions overwrites for category {}: {}", response.name.clone(), message); None}
+                                }
+                            })
                             .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                     ),
                 }),
@@ -72,7 +78,13 @@ impl GuildQuerier for HttpGuildQuerier {
                     response
                         .permission_overwrites
                         .iter()
-                        .map(|permissions| permissions.into(&roles_list))
+                        .filter_map(|permissions| {
+                            let result = permissions.try_into(&roles_list);
+                            match result {
+                                Ok(overwrites) => Some(overwrites),
+                                Err(message) => {eprintln!("Error while parsing permissions overwrites for channel {}: {}", response.name.clone(), message); None}
+                            }
+                        })
                         .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
                 );
 
