@@ -14,16 +14,6 @@ pub enum PermissionOverwriteType {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct PermissionOverwritesResponse {
-    #[serde(rename = "id")]
-    pub role_or_member_id: String,
-    #[serde(rename = "type")]
-    pub _type: u8,
-    pub allow: String,
-    pub deny: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 pub struct PermissionOverwritesRequest {
     #[serde(rename = "id")]
     pub role_or_member_id: String,
@@ -48,8 +38,18 @@ impl PermissionOverwritesRequest {
     }
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PermissionOverwritesResponse {
+    #[serde(rename = "id")]
+    pub role_or_member_id: String,
+    #[serde(rename = "type")]
+    pub _type: u8,
+    pub allow: String,
+    pub deny: String,
+}
+
 impl PermissionOverwritesResponse {
-    pub fn try_into(
+    pub fn _try_into(
         &self,
         roles: &RolesList<ExistingRole>,
     ) -> Result<PermissionsOverwrite, String> {

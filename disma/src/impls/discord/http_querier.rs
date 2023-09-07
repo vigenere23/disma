@@ -45,7 +45,7 @@ impl GuildQuerier for HttpGuildQuerier {
                             .permission_overwrites
                             .iter()
                             .filter_map(|permissions| {
-                                let result = permissions.try_into(&roles_list);
+                                let result = permissions._try_into(&roles_list);
                                 match result {
                                     Ok(overwrites) => Some(overwrites),
                                     Err(message) => {eprintln!("Error while parsing permissions overwrites for category {}: {}", response.name.clone(), message); None}
@@ -79,7 +79,7 @@ impl GuildQuerier for HttpGuildQuerier {
                         .permission_overwrites
                         .iter()
                         .filter_map(|permissions| {
-                            let result = permissions.try_into(&roles_list);
+                            let result = permissions._try_into(&roles_list);
                             match result {
                                 Ok(overwrites) => Some(overwrites),
                                 Err(message) => {eprintln!("Error while parsing permissions overwrites for channel {}: {}", response.name.clone(), message); None}

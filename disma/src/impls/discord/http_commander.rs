@@ -51,13 +51,13 @@ impl GuildCommander for HttpGuildCommander {
         &self,
         category: &AwaitingCategory,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<(), String> {
+    ) -> Result<ExistingCategory, String> {
         self.api
             .add_channel(
                 &self.guild_id,
                 ChannelRequest::from_category(category, roles),
             )
-            .map(|_| ())
+            .map(|response| response.into(roles))
             .map_err(|error| error.to_string())
     }
 
@@ -66,10 +66,10 @@ impl GuildCommander for HttpGuildCommander {
         id: &str,
         category: &AwaitingCategory,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<(), String> {
+    ) -> Result<ExistingCategory, String> {
         self.api
             .update_channel(id, ChannelRequest::from_category(category, roles))
-            .map(|_| ())
+            .map(|response| response.into(roles))
             .map_err(|error| error.to_string())
     }
 
