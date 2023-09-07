@@ -25,7 +25,7 @@ impl Command for AddRole {
         let result = commander.add_role(&self.role);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -56,7 +56,7 @@ impl Command for UpdateRole {
         let result = commander.update_role(&self.existing_role.id, &self.awaiting_role);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -101,7 +101,10 @@ mod tests {
             events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
         },
         guild::GuildCommanderMock,
-        tests::fixtures::commands::{AddRoleFixture, DeleteRoleFixture, UpdateRoleFixture},
+        tests::fixtures::{
+            commands::{AddRoleFixture, DeleteRoleFixture, UpdateRoleFixture},
+            existing::ExistingRoleFixture,
+        },
     };
 
     const AN_ERROR_MESSAGE: &str = "Unexpected error";
@@ -112,7 +115,9 @@ mod tests {
         let event_listener = ChangeEventListenerMock::new();
         let add_command = AddRoleFixture::new().build();
 
-        commander.when_add_role(any()).will_return(Ok(()));
+        commander
+            .when_add_role(any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -145,7 +150,9 @@ mod tests {
         let event_listener = ChangeEventListenerMock::new();
         let add_command = AddRoleFixture::new().build();
 
-        commander.when_add_role(any()).will_return(Ok(()));
+        commander
+            .when_add_role(any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -162,7 +169,9 @@ mod tests {
         let event_listener = ChangeEventListenerMock::new();
         let update_command = UpdateRoleFixture::new().build();
 
-        commander.when_update_role(any(), any()).will_return(Ok(()));
+        commander
+            .when_update_role(any(), any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);
@@ -201,7 +210,9 @@ mod tests {
         let event_listener = ChangeEventListenerMock::new();
         let update_command = UpdateRoleFixture::new().build();
 
-        commander.when_update_role(any(), any()).will_return(Ok(()));
+        commander
+            .when_update_role(any(), any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);

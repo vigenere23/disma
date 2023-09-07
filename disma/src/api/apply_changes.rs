@@ -208,8 +208,12 @@ mod tests {
     }
 
     fn prepare_commander_for_roles(commander: &GuildCommanderMock) {
-        commander.when_add_role(any()).will_return(Ok(()));
-        commander.when_update_role(any(), any()).will_return(Ok(()));
+        commander
+            .when_add_role(any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
+        commander
+            .when_update_role(any(), any())
+            .will_return(Ok(ExistingRoleFixture::new().build()));
         commander.when_delete_role(any()).will_return(Ok(()));
     }
 
