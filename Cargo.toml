@@ -3,3 +3,4 @@ members = [
     "disma",
     "disma-cli"
 ]
+resolver = "2"
