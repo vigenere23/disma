@@ -69,10 +69,10 @@ impl GuildQuerier for HttpGuildQuerier {
                     _ => return None,
                 };
 
-                let category = response
+                let category_name = response
                     .parent_id
                     .as_ref()
-                    .map(|category_id| categories_list.find_by_id(category_id).clone());
+                    .map(|category_id| categories_list.find_by_id(category_id).name.clone());
 
                 let overwrites = PermissionsOverwritesList::from(
                     response
@@ -92,7 +92,7 @@ impl GuildQuerier for HttpGuildQuerier {
                     id: response.id.clone(),
                     name: response.name.clone(),
                     channel_type,
-                    category,
+                    category_name,
                     topic: response.topic.clone(),
                     overwrites,
                 })
