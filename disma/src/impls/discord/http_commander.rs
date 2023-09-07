@@ -27,17 +27,17 @@ impl HttpGuildCommander {
 }
 
 impl GuildCommander for HttpGuildCommander {
-    fn add_role(&self, role: &AwaitingRole) -> Result<(), String> {
+    fn add_role(&self, role: &AwaitingRole) -> Result<ExistingRole, String> {
         self.api
             .add_role(&self.guild_id, RoleRequest::from(role))
-            .map(|_| ())
+            .map(|response| response.into())
             .map_err(|error| error.to_string())
     }
 
-    fn update_role(&self, id: &str, role: &AwaitingRole) -> Result<(), String> {
+    fn update_role(&self, id: &str, role: &AwaitingRole) -> Result<ExistingRole, String> {
         self.api
             .update_role(&self.guild_id, id, RoleRequest::from(role))
-            .map(|_| ())
+            .map(|response| response.into())
             .map_err(|error| error.to_string())
     }
 

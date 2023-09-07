@@ -8,8 +8,8 @@ use crate::{
 
 #[cfg_attr(test, mock_it::mock_it)]
 pub trait GuildCommander {
-    fn add_role(&self, role: &AwaitingRole) -> Result<(), String>;
-    fn update_role(&self, id: &str, role: &AwaitingRole) -> Result<(), String>;
+    fn add_role(&self, role: &AwaitingRole) -> Result<ExistingRole, String>;
+    fn update_role(&self, id: &str, role: &AwaitingRole) -> Result<ExistingRole, String>;
     fn delete_role(&self, id: &str) -> Result<(), String>;
     fn add_category(
         &self,
