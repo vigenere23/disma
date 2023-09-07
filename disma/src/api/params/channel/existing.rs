@@ -9,11 +9,6 @@ impl From<&ExistingChannel> for ChannelParams {
     fn from(channel: &ExistingChannel) -> Self {
         let _type = channel.channel_type.clone().into();
 
-        let category = channel
-            .category
-            .as_ref()
-            .map(|category| category.name.clone());
-
         let permissions_overwrites = channel
             .overwrites
             .to_list()
@@ -25,7 +20,7 @@ impl From<&ExistingChannel> for ChannelParams {
             name: channel.name.clone(),
             topic: channel.topic.clone(),
             _type,
-            category,
+            category: channel.category_name.clone(),
             permissions_overwrites: ChannelParamsPermissionsOverwritesStrategy::Manual {
                 items: permissions_overwrites,
             },
@@ -86,7 +81,7 @@ mod tests {
         let existing = ExistingChannel {
             id: "something".to_string(),
             name: name.to_string(),
-            category: Some(category.clone()),
+            category_name: Some(category.name.clone()),
             channel_type: ChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {

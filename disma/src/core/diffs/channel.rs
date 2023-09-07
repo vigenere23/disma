@@ -41,21 +41,13 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        category::{AwaitingCategory, ExistingCategory},
+        category::AwaitingCategory,
         channel::{AwaitingChannel, ChannelType, ExistingChannel, KeepExtraChannels},
         core::diffs::{Diff, Differ},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
     };
-
-    fn given_existing_category_with_name(name: String) -> ExistingCategory {
-        ExistingCategory {
-            id: "something".to_string(),
-            name,
-            overwrites: PermissionsOverwritesList::from(vec![]),
-        }
-    }
 
     fn given_awaiting_category_with_name(name: String) -> AwaitingCategory {
         AwaitingCategory {
@@ -75,7 +67,7 @@ mod tests {
             name: name.clone(),
             topic: Some("bang bang!".to_string()),
             channel_type: channel_type.clone(),
-            category: None,
+            category_name: None,
             overwrites: PermissionsOverwritesList::from(vec![]),
         };
 
@@ -109,7 +101,7 @@ mod tests {
             name: name.clone(),
             topic: topic.clone(),
             channel_type: ChannelType::TEXT,
-            category: None,
+            category_name: None,
             overwrites: PermissionsOverwritesList::from(vec![]),
         };
 
@@ -144,7 +136,7 @@ mod tests {
             name: name.clone(),
             topic: topic.clone(),
             channel_type: channel_type.clone(),
-            category: Some(given_existing_category_with_name("category_a".to_string())),
+            category_name: Some("category_a".to_string()),
             overwrites: PermissionsOverwritesList::from(vec![]),
         };
 
@@ -180,7 +172,7 @@ mod tests {
             name: name.clone(),
             topic: topic.clone(),
             channel_type: channel_type.clone(),
-            category: None,
+            category_name: None,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
                 name: role_name.clone(),
                 allow: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
