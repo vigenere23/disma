@@ -21,7 +21,12 @@ impl PermissionsOverwriteParams {
         PermissionsOverwrite {
             name: roles
                 .find_by_name(&self.role)
-                .unwrap_or_else(|| panic!("No role found with name {}", &self.role))
+                .unwrap_or_else(|| {
+                    panic!(
+                        "Cannot build permissions overwrite from non-existant role '{}'",
+                        &self.role
+                    )
+                })
                 .name()
                 .to_string(),
             allow: PermissionsList::from(self.allow),
