@@ -51,7 +51,7 @@ impl GuildQuerier for HttpGuildQuerier {
                                     Err(message) => {eprintln!("Error while parsing permissions overwrites for category {}: {}", response.name.clone(), message); None}
                                 }
                             })
-                            .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
+                            .collect::<Vec<PermissionsOverwrite>>(),
                     ),
                 }),
                 _ => None,
@@ -85,7 +85,7 @@ impl GuildQuerier for HttpGuildQuerier {
                                 Err(message) => {eprintln!("Error while parsing permissions overwrites for channel {}: {}", response.name.clone(), message); None}
                             }
                         })
-                        .collect::<Vec<PermissionsOverwrite<ExistingRole>>>(),
+                        .collect::<Vec<PermissionsOverwrite>>(),
                 );
 
                 Some(ExistingChannel {

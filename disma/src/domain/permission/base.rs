@@ -112,8 +112,10 @@ pub struct PermissionsList {
 }
 
 impl PermissionsList {
-    fn new(permissions: HashSet<Permission>) -> Self {
-        Self { permissions }
+    pub fn new() -> Self {
+        Self {
+            permissions: HashSet::new(),
+        }
     }
 
     pub fn code(&self) -> String {
@@ -135,6 +137,12 @@ impl PermissionsList {
     }
 }
 
+impl Default for PermissionsList {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl From<&str> for PermissionsList {
     fn from(code: &str) -> Self {
         let num_code: u64 = code.parse().unwrap();
@@ -153,7 +161,7 @@ impl From<u64> for PermissionsList {
             }
         }
 
-        Self::new(permissions)
+        Self { permissions }
     }
 }
 
@@ -162,6 +170,12 @@ impl From<Vec<Permission>> for PermissionsList {
         Self {
             permissions: HashSet::from_iter(permissions),
         }
+    }
+}
+
+impl From<HashSet<Permission>> for PermissionsList {
+    fn from(permissions: HashSet<Permission>) -> Self {
+        Self { permissions }
     }
 }
 

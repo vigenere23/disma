@@ -3,7 +3,6 @@ use std::sync::Arc;
 use crate::{
     category::{AwaitingCategory, CategoriesList, Category},
     permission::PermissionsOverwritesList,
-    role::AwaitingRole,
 };
 
 use super::{Channel, ChannelType, ChannelsList, ExtraChannelsStrategy, UniqueChannelName};
@@ -28,7 +27,7 @@ pub struct AwaitingChannel {
     pub topic: Option<String>,
     pub channel_type: ChannelType,
     pub category: Option<AwaitingCategory>,
-    pub overwrites: PermissionsOverwritesList<AwaitingRole>,
+    pub overwrites: PermissionsOverwritesList,
 }
 
 impl AwaitingChannel {

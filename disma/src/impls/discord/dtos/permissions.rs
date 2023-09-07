@@ -3,7 +3,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     permission::{PermissionsList, PermissionsOverwrite},
-    role::{AwaitingRole, ExistingRole, RolesList},
+    role::{ExistingRole, RolesList},
 };
 
 #[derive(Debug, Serialize_repr, Deserialize_repr)]
@@ -34,13 +34,10 @@ pub struct PermissionOverwritesRequest {
 }
 
 impl PermissionOverwritesRequest {
-    pub fn from(
-        overwrites: &PermissionsOverwrite<AwaitingRole>,
-        roles: &RolesList<ExistingRole>,
-    ) -> Self {
+    pub fn from(overwrites: &PermissionsOverwrite, roles: &RolesList<ExistingRole>) -> Self {
         let role = roles
-            .find_by_name(&overwrites.role.name)
-            .unwrap_or_else(|| panic!("No role found for name {}", &overwrites.role.name));
+            .find_by_name(&overwrites.name)
+            .unwrap_or_else(|| panic!("No role found for name {}", &overwrites.name));
 
         Self {
             _type: PermissionOverwriteType::Role,
@@ -55,7 +52,7 @@ impl PermissionOverwritesResponse {
     pub fn try_into(
         &self,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<PermissionsOverwrite<ExistingRole>, String> {
+    ) -> Result<PermissionsOverwrite, String> {
         if self._type != 0 {
             return Err(format!(
                 "Unsupported permissions overwrite type {}",
@@ -64,7 +61,7 @@ impl PermissionOverwritesResponse {
         };
 
         Ok(PermissionsOverwrite {
-            role: roles.find_by_id(&self.role_or_member_id).clone(),
+            name: roles.find_by_id(&self.role_or_member_id).name.clone(),
             allow: PermissionsList::from(self.allow.as_str()),
             deny: PermissionsList::from(self.deny.as_str()),
         })
