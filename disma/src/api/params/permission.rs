@@ -14,28 +14,26 @@ pub struct PermissionsOverwriteParams {
 }
 
 impl PermissionsOverwriteParams {
-    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrite<R>
+    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrite
     where
         R: Role,
     {
         PermissionsOverwrite {
-            role: roles
+            name: roles
                 .find_by_name(&self.role)
                 .unwrap_or_else(|| panic!("No role found with name {}", &self.role))
-                .clone(),
+                .name()
+                .to_string(),
             allow: PermissionsList::from(self.allow),
             deny: PermissionsList::from(self.deny),
         }
     }
 }
 
-impl<R> From<&PermissionsOverwrite<R>> for PermissionsOverwriteParams
-where
-    R: Role,
-{
-    fn from(permissions: &PermissionsOverwrite<R>) -> Self {
+impl From<&PermissionsOverwrite> for PermissionsOverwriteParams {
+    fn from(permissions: &PermissionsOverwrite) -> Self {
         Self {
-            role: permissions.role.name().to_string(),
+            role: permissions.name.clone(),
             allow: permissions.allow.to_list(),
             deny: permissions.deny.to_list(),
         }

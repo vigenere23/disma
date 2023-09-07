@@ -1,7 +1,6 @@
 use crate::{
     core::diffs::{Diff, Differ},
     permission::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList},
-    role::{AwaitingRole, ExistingRole},
     utils::misc::IfThen,
 };
 
@@ -11,8 +10,8 @@ impl Differ<PermissionsList> for PermissionsList {
     }
 }
 
-impl Differ<PermissionsOverwrite<AwaitingRole>> for PermissionsOverwrite<ExistingRole> {
-    fn diffs_with(&self, target: &PermissionsOverwrite<AwaitingRole>) -> Vec<Diff> {
+impl Differ<PermissionsOverwrite> for PermissionsOverwrite {
+    fn diffs_with(&self, target: &PermissionsOverwrite) -> Vec<Diff> {
         let mut all_diffs = vec![];
 
         self.allow.diffs_with(&target.allow).if_then(
@@ -29,28 +28,27 @@ impl Differ<PermissionsOverwrite<AwaitingRole>> for PermissionsOverwrite<Existin
     }
 }
 
-impl Differ<PermissionsOverwritesList<AwaitingRole>> for PermissionsOverwritesList<ExistingRole> {
-    fn diffs_with(&self, target: &PermissionsOverwritesList<AwaitingRole>) -> Vec<Diff> {
+impl Differ<PermissionsOverwritesList> for PermissionsOverwritesList {
+    fn diffs_with(&self, target: &PermissionsOverwritesList) -> Vec<Diff> {
         let mut all_diffs = vec![];
 
         for existing_overwrite in self.to_list().iter() {
-            match target.find_by_role_name(&existing_overwrite.role.name) {
+            match target.find_by_name(&existing_overwrite.name) {
                 Some(awaiting_overwrite) => {
                     existing_overwrite.diffs_with(awaiting_overwrite).if_then(
                         |diffs| !diffs.is_empty(),
                         |diffs| {
-                            all_diffs
-                                .push(Diff::Update(existing_overwrite.role.name.clone(), diffs))
+                            all_diffs.push(Diff::Update(existing_overwrite.name.clone(), diffs))
                         },
                     );
                 }
-                None => all_diffs.push(Diff::Remove(existing_overwrite.role.name.clone())),
+                None => all_diffs.push(Diff::Remove(existing_overwrite.name.clone())),
             }
         }
 
         for awaiting_role in target.to_list().iter() {
-            if self.find_by_role_name(&awaiting_role.role.name).is_none() {
-                all_diffs.push(Diff::Add(awaiting_role.role.name.clone()))
+            if self.find_by_name(&awaiting_role.name).is_none() {
+                all_diffs.push(Diff::Add(awaiting_role.name.clone()))
             }
         }
 
@@ -65,29 +63,7 @@ mod tests {
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
-        role::{AwaitingRole, ExistingRole},
     };
-
-    fn given_awaiting_role_with_name(name: String) -> AwaitingRole {
-        AwaitingRole {
-            name,
-            permissions: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
-            color: None,
-            is_mentionable: true,
-            show_in_sidebar: false,
-        }
-    }
-
-    fn given_existing_role_with_name(name: String) -> ExistingRole {
-        ExistingRole {
-            id: "something".to_string(),
-            name,
-            permissions: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
-            color: None,
-            is_mentionable: true,
-            show_in_sidebar: false,
-        }
-    }
 
     #[test]
     fn can_diff_permissions_list_update() {
@@ -108,12 +84,12 @@ mod tests {
         let role_name = "role_a".to_string();
 
         let origin = PermissionsOverwrite {
-            role: given_existing_role_with_name(role_name.clone()),
+            name: role_name.clone(),
             allow: PermissionsList::from(vec![Permission::USE_VAD]),
             deny: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
         };
         let target = PermissionsOverwrite {
-            role: given_awaiting_role_with_name(role_name),
+            name: role_name,
             allow: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
             deny: PermissionsList::from(vec![Permission::USE_VAD]),
         };
@@ -144,13 +120,13 @@ mod tests {
         let role_name = "role_a".to_string();
 
         let origin = PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-            role: given_existing_role_with_name(role_name.clone()),
+            name: role_name.clone(),
             allow: PermissionsList::from(vec![Permission::USE_VAD]),
             deny: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
         }]);
 
         let target = PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-            role: given_awaiting_role_with_name(role_name.clone()),
+            name: role_name.clone(),
             allow: PermissionsList::from(vec![Permission::CREATE_PUBLIC_THREADS]),
             deny: PermissionsList::from(vec![Permission::USE_VAD]),
         }]);
