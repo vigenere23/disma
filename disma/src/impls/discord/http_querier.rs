@@ -2,9 +2,8 @@ use std::sync::Arc;
 
 use crate::{
     category::{CategoriesList, ExistingCategory},
-    channel::{ChannelType, ChannelsList, ExistingChannel},
+    channel::{ChannelsList, ExistingChannel},
     guild::{ExistingGuild, GuildQuerier, GuildSummary},
-    permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{ExistingRole, RolesList},
 };
 
@@ -36,56 +35,15 @@ impl GuildQuerier for HttpGuildQuerier {
         let categories: Vec<ExistingCategory> = channel_responses
             .iter()
             .filter(|response| response._type == 4)
-            .map(|response| response.clone()._into(&roles_list))
+            .map(|response| response.clone().into_category(&roles_list))
             .collect();
         let categories_list = CategoriesList::from(categories);
 
         let channels: Vec<ExistingChannel> = channel_responses
             .iter()
-            .filter_map(|response| {
-                let channel_type = match response._type {
-                    0 => ChannelType::TEXT,
-                    2 => ChannelType::VOICE,
-                    _ => return None,
-                };
-
-                let category_name = response
-                    .parent_id
-                    .as_ref()
-                    .map(|category_id| categories_list.find_by_id(category_id)
-                    .unwrap_or_else(|| {
-                        panic!(
-                            "Could not create channel from non-existing category with id '{}'",
-                            &category_id
-                        )
-                    })
-                    .name.clone());
-
-                let overwrites = PermissionsOverwritesList::from(
-                    response
-                        .permission_overwrites
-                        .iter()
-                        .filter_map(|permissions| {
-                            let result = permissions._try_into(&roles_list);
-                            match result {
-                                Ok(overwrites) => Some(overwrites),
-                                Err(message) => {eprintln!("Error while parsing permissions overwrites for channel {}: {}", response.name.clone(), message); None}
-                            }
-                        })
-                        .collect::<Vec<PermissionsOverwrite>>(),
-                );
-
-                Some(ExistingChannel {
-                    id: response.id.clone(),
-                    name: response.name.clone(),
-                    channel_type,
-                    category_name,
-                    topic: response.topic.clone(),
-                    overwrites,
-                })
-            })
+            .filter(|response| [0, 2].contains(&response._type))
+            .map(|response| response.clone().into_channel(&roles_list, &categories_list))
             .collect();
-
         let channels_list = ChannelsList::from(channels);
 
         ExistingGuild {

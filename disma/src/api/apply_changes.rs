@@ -230,10 +230,10 @@ mod tests {
     fn prepare_commander_for_channels(commander: &GuildCommanderMock) {
         commander
             .when_add_channel(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         commander
             .when_update_channel(any(), any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         commander.when_delete_channel(any()).will_return(Ok(()));
     }
 

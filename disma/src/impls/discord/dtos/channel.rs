@@ -3,7 +3,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::{AwaitingChannel, ChannelType},
+    channel::{AwaitingChannel, ChannelType, ExistingChannel},
     permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{ExistingRole, RolesList},
 };
@@ -94,7 +94,7 @@ pub struct ChannelResponse {
 }
 
 impl ChannelResponse {
-    pub fn _into(self, roles: &RolesList<ExistingRole>) -> ExistingCategory {
+    pub fn into_category(self, roles: &RolesList<ExistingRole>) -> ExistingCategory {
         if self._type != 4 {
             panic!(
                 "Cannot convert a Discord type {} channel into a Disma category",
@@ -123,6 +123,56 @@ impl ChannelResponse {
         ExistingCategory {
             id: self.id,
             name: self.name,
+            overwrites: PermissionsOverwritesList::from(permission_overwrites),
+        }
+    }
+
+    pub fn into_channel(
+        self,
+        roles: &RolesList<ExistingRole>,
+        categories: &CategoriesList<ExistingCategory>,
+    ) -> ExistingChannel {
+        let channel_type = match self._type {
+            0 => ChannelType::TEXT,
+            2 => ChannelType::VOICE,
+            _ => panic!(
+                "Cannot convert a Discord type {} channel into a Disma channel",
+                &self._type
+            ),
+        };
+
+        let category = self.parent_id.map(|category_id| {
+            categories.find_by_id(&category_id).unwrap_or_else(|| {
+                panic!(
+                    "Could not create channel from non-existant category with id '{category_id}'"
+                )
+            })
+        });
+
+        let permission_overwrites = self
+            .permission_overwrites
+            .into_iter()
+            .filter_map(|permissions| {
+                let result = permissions._try_into(roles);
+                match result {
+                    Ok(overwrites) => Some(overwrites),
+                    Err(message) => {
+                        eprintln!(
+                            "Error while parsing permissions overwrites for channel {}: {}",
+                            &self.name, message
+                        );
+                        None
+                    }
+                }
+            })
+            .collect::<Vec<PermissionsOverwrite>>();
+
+        ExistingChannel {
+            id: self.id,
+            name: self.name,
+            channel_type,
+            topic: self.topic.clone(),
+            category_name: category.map(|c| c.name.clone()),
             overwrites: PermissionsOverwritesList::from(permission_overwrites),
         }
     }
@@ -276,13 +326,14 @@ mod tests {
 
     mod response {
         use crate::{
-            category::ExistingCategory,
+            category::{CategoriesList, ExistingCategory},
+            channel::{ChannelType, ExistingChannel},
             impls::discord::dtos::{
                 channel::ChannelResponse, permissions::PermissionOverwritesResponse,
             },
             permission::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList},
             role::RolesList,
-            tests::fixtures::existing::ExistingRoleFixture,
+            tests::fixtures::existing::{ExistingCategoryFixture, ExistingRoleFixture},
         };
 
         #[test]
@@ -313,7 +364,7 @@ mod tests {
                 }]),
             };
 
-            let category = response._into(&RolesList::from(vec![existing_role]));
+            let category = response.into_category(&RolesList::from(vec![existing_role]));
 
             assert_eq!(category, expected_category);
         }
@@ -335,7 +386,7 @@ mod tests {
                 }],
             };
 
-            response._into(&RolesList::new());
+            response.into_category(&RolesList::new());
         }
 
         #[test]
@@ -350,7 +401,97 @@ mod tests {
                 permission_overwrites: vec![],
             };
 
-            channel_response._into(&RolesList::new());
+            channel_response.into_category(&RolesList::new());
+        }
+
+        #[test]
+        fn can_be_converted_into_existing_channel() {
+            let existing_role = ExistingRoleFixture::new().build();
+            let existing_category = ExistingCategoryFixture::new().build();
+
+            let response = ChannelResponse {
+                id: "a_category_id".to_string(),
+                name: "a category".to_string(),
+                topic: Some("some topic".to_string()),
+                _type: 0,
+                parent_id: Some(existing_category.id.clone()),
+                permission_overwrites: vec![PermissionOverwritesResponse {
+                    role_or_member_id: existing_role.id.clone(),
+                    _type: 0,
+                    allow: "2113536".to_string(),
+                    deny: "2113536".to_string(),
+                }],
+            };
+
+            let expected_channel = ExistingChannel {
+                id: "a_category_id".to_string(),
+                name: "a category".to_string(),
+                topic: Some("some topic".to_string()),
+                channel_type: ChannelType::TEXT,
+                overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
+                    name: existing_role.name.clone(),
+                    allow: PermissionsList::from("2113536"),
+                    deny: PermissionsList::from("2113536"),
+                }]),
+                category_name: Some(existing_category.name.clone()),
+            };
+
+            let channel = response.into_channel(
+                &RolesList::from(vec![existing_role]),
+                &CategoriesList::from(vec![existing_category]),
+            );
+
+            assert_eq!(channel, expected_channel);
+        }
+
+        #[test]
+        #[should_panic]
+        fn given_non_existant_role_when_converting_into_existing_channel_should_panic() {
+            let response = ChannelResponse {
+                id: "a_channel_id".to_string(),
+                name: "a channel".to_string(),
+                topic: Some("some topic".to_string()),
+                _type: 0,
+                parent_id: None,
+                permission_overwrites: vec![PermissionOverwritesResponse {
+                    role_or_member_id: "non-existant role id".to_string(),
+                    _type: 0,
+                    allow: "2113536".to_string(),
+                    deny: "2113536".to_string(),
+                }],
+            };
+
+            response.into_channel(&RolesList::new(), &CategoriesList::new());
+        }
+
+        #[test]
+        #[should_panic]
+        fn given_non_existant_category_when_converting_into_existing_channel_should_panic() {
+            let response = ChannelResponse {
+                id: "a_channel_id".to_string(),
+                name: "a channel".to_string(),
+                topic: Some("some topic".to_string()),
+                _type: 0,
+                parent_id: Some("non-existant-caegory-id".to_string()),
+                permission_overwrites: vec![],
+            };
+
+            response.into_channel(&RolesList::new(), &CategoriesList::new());
+        }
+
+        #[test]
+        #[should_panic]
+        fn given_non_channel_response_when_converting_into_existing_channel_should_panic() {
+            let channel_response = ChannelResponse {
+                id: "a_category_id".to_string(),
+                name: "a category".to_string(),
+                topic: Some("some topic".to_string()),
+                _type: 4,
+                parent_id: None,
+                permission_overwrites: vec![],
+            };
+
+            channel_response.into_channel(&RolesList::new(), &CategoriesList::new());
         }
     }
 }
