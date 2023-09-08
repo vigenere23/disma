@@ -72,7 +72,14 @@ impl GuildQuerier for HttpGuildQuerier {
                 let category_name = response
                     .parent_id
                     .as_ref()
-                    .map(|category_id| categories_list.find_by_id(category_id).name.clone());
+                    .map(|category_id| categories_list.find_by_id(category_id)
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "Could not create channel from non-existing category with id '{}'",
+                            &category_id
+                        )
+                    })
+                    .name.clone());
 
                 let overwrites = PermissionsOverwritesList::from(
                     response
