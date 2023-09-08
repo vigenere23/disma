@@ -58,7 +58,7 @@ mod tests {
         ExistingCategory {
             id: "some_id".to_string(),
             name: name.to_string(),
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: PermissionsOverwritesList::new(),
         }
     }
 

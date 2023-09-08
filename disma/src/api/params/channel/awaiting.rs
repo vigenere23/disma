@@ -116,7 +116,7 @@ mod tests {
     fn given_awaiting_category(name: &str) -> AwaitingCategory {
         AwaitingCategory {
             name: name.to_string(),
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: PermissionsOverwritesList::new(),
             extra_channels_strategy: ChannelParamsExtraItemsStrategy::default().into(),
         }
     }

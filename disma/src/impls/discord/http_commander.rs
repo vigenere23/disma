@@ -57,7 +57,7 @@ impl GuildCommander for HttpGuildCommander {
                 &self.guild_id,
                 ChannelRequest::from_category(category, roles),
             )
-            .map(|response| response.into(roles))
+            .map(|response| response._into(roles))
             .map_err(|error| error.to_string())
     }
 
@@ -69,7 +69,7 @@ impl GuildCommander for HttpGuildCommander {
     ) -> Result<ExistingCategory, String> {
         self.api
             .update_channel(id, ChannelRequest::from_category(category, roles))
-            .map(|response| response.into(roles))
+            .map(|response| response._into(roles))
             .map_err(|error| error.to_string())
     }
 

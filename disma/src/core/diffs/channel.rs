@@ -52,7 +52,7 @@ mod tests {
     fn given_awaiting_category_with_name(name: String) -> AwaitingCategory {
         AwaitingCategory {
             name,
-            overwrites: PermissionsOverwritesList::from(vec![]),
+            overwrites: PermissionsOverwritesList::new(),
             extra_channels_strategy: Arc::from(KeepExtraChannels {}),
         }
     }

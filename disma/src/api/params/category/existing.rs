@@ -94,7 +94,7 @@ mod tests {
         ExistingRole {
             id: id.to_string(),
             name: name.to_string(),
-            permissions: PermissionsList::from(vec![]),
+            permissions: PermissionsList::new(),
             color: None,
             is_mentionable: true,
             show_in_sidebar: false,

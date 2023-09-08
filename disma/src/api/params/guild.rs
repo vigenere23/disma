@@ -87,9 +87,9 @@ mod tests {
     #[test]
     pub fn when_parsing_empty_existing_guild_it_fills_params_with_defaults() {
         let entity = ExistingGuild {
-            roles: RolesList::from(vec![]),
-            categories: CategoriesList::from(vec![]),
-            channels: ChannelsList::from(vec![]),
+            roles: RolesList::new(),
+            categories: CategoriesList::new(),
+            channels: ChannelsList::new(),
         };
 
         let params = GuildParams::from(&entity);
