@@ -1,4 +1,7 @@
-use crate::permission::PermissionsOverwritesList;
+use crate::{
+    category::{Category, ExistingCategory},
+    permission::PermissionsOverwritesList,
+};
 
 use super::{Channel, ChannelType, UniqueChannelName};
 
@@ -8,13 +11,13 @@ pub struct ExistingChannel {
     pub name: String,
     pub topic: Option<String>,
     pub channel_type: ChannelType,
-    pub category_name: Option<String>,
+    pub category: Option<ExistingCategory>,
     pub overwrites: PermissionsOverwritesList,
 }
 
 impl ExistingChannel {
     pub fn category_name(&self) -> Option<&str> {
-        self.category_name.as_deref()
+        self.category.as_ref().map(|category| category.name())
     }
 }
 

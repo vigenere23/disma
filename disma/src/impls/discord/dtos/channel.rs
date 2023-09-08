@@ -172,7 +172,7 @@ impl ChannelResponse {
             name: self.name,
             channel_type,
             topic: self.topic.clone(),
-            category_name: category.map(|c| c.name.clone()),
+            category: category.cloned(),
             overwrites: PermissionsOverwritesList::from(permission_overwrites),
         }
     }
