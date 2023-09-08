@@ -13,22 +13,9 @@ roles:
     strategy: REMOVE
 
 categories:
-  items:
-    - name: Category
-      permissions_overwrites:
-        - role: "@everyone"
-          allow:
-            - MANAGE_CHANNELS
-      extra_channels:
-        strategy: SYNC_PERMISSIONS
   extra_items:
     strategy: REMOVE
 
 channels:
-  items:
-    - category: Category
-      name: text
-      permissions_overwrites:
-        strategy: FROM_CATEGORY
   extra_items:
     strategy: REMOVE
