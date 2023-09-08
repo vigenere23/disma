@@ -27,7 +27,7 @@ impl Command for AddCategory {
         let result = commander.add_category(&self.category, &self.roles);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -71,7 +71,7 @@ impl Command for UpdateCategory {
         );
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -116,8 +116,9 @@ mod tests {
             events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
         },
         guild::GuildCommanderMock,
-        tests::fixtures::commands::{
-            AddCategoryFixture, DeleteCategoryFixture, UpdateCategoryFixture,
+        tests::fixtures::{
+            commands::{AddCategoryFixture, DeleteCategoryFixture, UpdateCategoryFixture},
+            existing::ExistingCategoryFixture,
         },
     };
 
@@ -131,7 +132,7 @@ mod tests {
 
         commander
             .when_add_category(any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -169,7 +170,7 @@ mod tests {
 
         commander
             .when_add_category(any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -188,7 +189,7 @@ mod tests {
 
         commander
             .when_update_category(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);
@@ -230,7 +231,7 @@ mod tests {
 
         commander
             .when_update_category(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);

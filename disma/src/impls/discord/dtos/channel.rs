@@ -4,6 +4,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, ChannelType},
+    permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{ExistingRole, RolesList},
 };
 
@@ -90,4 +91,24 @@ pub struct ChannelResponse {
     pub _type: u8,
     pub parent_id: Option<String>,
     pub permission_overwrites: Vec<PermissionOverwritesResponse>,
+}
+
+impl ChannelResponse {
+    pub fn into(self, roles: &RolesList<ExistingRole>) -> ExistingCategory {
+        ExistingCategory {
+            id: self.id,
+            name: self.name,
+            overwrites: PermissionsOverwritesList::from(
+                self.permission_overwrites
+                    .into_iter()
+                    .filter_map(|permissions_overwrite| {
+                        match permissions_overwrite._try_into(roles) {
+                            Err(_) => None,
+                            Ok(overwrite) => Some(overwrite),
+                        }
+                    })
+                    .collect::<Vec<PermissionsOverwrite>>(),
+            ),
+        }
+    }
 }

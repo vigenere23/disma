@@ -15,13 +15,13 @@ pub trait GuildCommander {
         &self,
         category: &AwaitingCategory,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<(), String>;
+    ) -> Result<ExistingCategory, String>;
     fn update_category(
         &self,
         id: &str,
         category: &AwaitingCategory,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<(), String>;
+    ) -> Result<ExistingCategory, String>;
     fn delete_category(&self, id: &str) -> Result<(), String>;
     fn add_channel(
         &self,

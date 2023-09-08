@@ -220,10 +220,10 @@ mod tests {
     fn prepare_commander_for_categories(commander: &GuildCommanderMock) {
         commander
             .when_add_category(any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         commander
             .when_update_category(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingCategoryFixture::new().build()));
         commander.when_delete_category(any()).will_return(Ok(()));
     }
 
