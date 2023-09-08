@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::AwaitingChannel,
+    channel::{AwaitingChannel, ExistingChannel},
     guild::GuildCommander,
     role::{AwaitingRole, ExistingRole, RolesList},
 };
@@ -57,7 +57,7 @@ impl GuildCommander for HttpGuildCommander {
                 &self.guild_id,
                 ChannelRequest::from_category(category, roles),
             )
-            .map(|response| response._into(roles))
+            .map(|response| response.into_category(roles))
             .map_err(|error| error.to_string())
     }
 
@@ -69,7 +69,7 @@ impl GuildCommander for HttpGuildCommander {
     ) -> Result<ExistingCategory, String> {
         self.api
             .update_channel(id, ChannelRequest::from_category(category, roles))
-            .map(|response| response._into(roles))
+            .map(|response| response.into_category(roles))
             .map_err(|error| error.to_string())
     }
 
@@ -84,13 +84,13 @@ impl GuildCommander for HttpGuildCommander {
         channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
-    ) -> Result<(), String> {
+    ) -> Result<ExistingChannel, String> {
         self.api
             .add_channel(
                 &self.guild_id,
                 ChannelRequest::from_channel(channel, roles, categories),
             )
-            .map(|_| ())
+            .map(|response| response.into_channel(roles, categories))
             .map_err(|error| error.to_string())
     }
 
@@ -100,10 +100,10 @@ impl GuildCommander for HttpGuildCommander {
         channel: &AwaitingChannel,
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
-    ) -> Result<(), String> {
+    ) -> Result<ExistingChannel, String> {
         self.api
             .update_channel(id, ChannelRequest::from_channel(channel, roles, categories))
-            .map(|_| ())
+            .map(|response| response.into_channel(roles, categories))
             .map_err(|error| error.to_string())
     }
 

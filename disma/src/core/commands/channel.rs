@@ -40,7 +40,7 @@ impl Command for AddChannel {
         let result = commander.add_channel(&self.channel, &self.roles, &self.categories);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -88,7 +88,7 @@ impl Command for UpdateChannel {
         );
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(_) => ChangeEvent::Success(self.describe()),
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -137,8 +137,9 @@ mod tests {
             events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
         },
         guild::GuildCommanderMock,
-        tests::fixtures::commands::{
-            AddChannelFixture, DeleteChannelFixture, UpdateChannelFixture,
+        tests::fixtures::{
+            commands::{AddChannelFixture, DeleteChannelFixture, UpdateChannelFixture},
+            existing::ExistingChannelFixture,
         },
     };
 
@@ -152,7 +153,7 @@ mod tests {
 
         commander
             .when_add_channel(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -194,7 +195,7 @@ mod tests {
 
         commander
             .when_add_channel(any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         add_command.execute(&commander, &event_listener);
@@ -213,7 +214,7 @@ mod tests {
 
         commander
             .when_update_channel(any(), any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);
@@ -256,7 +257,7 @@ mod tests {
 
         commander
             .when_update_channel(any(), any(), any(), any())
-            .will_return(Ok(()));
+            .will_return(Ok(ExistingChannelFixture::new().build()));
         event_listener.when_handle(any()).will_return_default();
 
         update_command.execute(&commander, &event_listener);

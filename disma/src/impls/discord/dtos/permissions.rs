@@ -25,9 +25,12 @@ pub struct PermissionOverwritesRequest {
 
 impl PermissionOverwritesRequest {
     pub fn from(overwrites: &PermissionsOverwrite, roles: &RolesList<ExistingRole>) -> Self {
-        let role = roles
-            .find_by_name(&overwrites.name)
-            .unwrap_or_else(|| panic!("No role found for name {}", &overwrites.name));
+        let role = roles.find_by_name(&overwrites.name).unwrap_or_else(|| {
+            panic!(
+                "Could not create permissions overwrite request from non-existant role '{}'",
+                &overwrites.name
+            )
+        });
 
         Self {
             _type: PermissionOverwriteType::Role,
@@ -66,7 +69,7 @@ impl PermissionOverwritesResponse {
                 // TODO should probably not panic, especially since it already returns a Result...
                 .unwrap_or_else(|| {
                     panic!(
-                        "Could not create permission overwrite from non-existing role with id '{}'",
+                        "Could not create permissions overwrite from non-existant role with id '{}'",
                         &self.role_or_member_id
                     )
                 })

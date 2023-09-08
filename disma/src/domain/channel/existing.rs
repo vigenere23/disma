@@ -2,7 +2,7 @@ use crate::permission::PermissionsOverwritesList;
 
 use super::{Channel, ChannelType, UniqueChannelName};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ExistingChannel {
     pub id: String,
     pub name: String,
