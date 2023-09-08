@@ -1,9 +1,11 @@
-use crate::{category::ExistingCategory, permission::PermissionsOverwritesList};
+use crate::{
+    category::ExistingCategory, permission::PermissionsOverwritesList, role::ExistingRole,
+};
 
 pub struct ExistingCategoryFixture {
     id: String,
     name: String,
-    overwrites: PermissionsOverwritesList,
+    overwrites: PermissionsOverwritesList<ExistingRole>,
 }
 
 impl ExistingCategoryFixture {

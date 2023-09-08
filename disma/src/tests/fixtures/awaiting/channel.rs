@@ -2,11 +2,12 @@ use crate::{
     category::AwaitingCategory,
     channel::{AwaitingChannel, ChannelType},
     permission::PermissionsOverwritesList,
+    role::AwaitingRole,
 };
 
 pub struct AwaitingChannelFixture {
     name: String,
-    overwrites: PermissionsOverwritesList,
+    overwrites: PermissionsOverwritesList<AwaitingRole>,
     topic: Option<String>,
     channel_type: ChannelType,
     category: Option<AwaitingCategory>,

@@ -3,7 +3,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     permission::{PermissionsList, PermissionsOverwrite},
-    role::{ExistingRole, RolesList},
+    role::{AwaitingRole, ExistingRole, RolesList},
 };
 
 #[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq, Clone)]
@@ -24,13 +24,18 @@ pub struct PermissionOverwritesRequest {
 }
 
 impl PermissionOverwritesRequest {
-    pub fn from(overwrites: &PermissionsOverwrite, roles: &RolesList<ExistingRole>) -> Self {
-        let role = roles.find_by_name(&overwrites.name).unwrap_or_else(|| {
-            panic!(
-                "Could not create permissions overwrite request from non-existant role '{}'",
-                &overwrites.name
-            )
-        });
+    pub fn from(
+        overwrites: &PermissionsOverwrite<AwaitingRole>,
+        roles: &RolesList<ExistingRole>,
+    ) -> Self {
+        let role = roles
+            .find_by_name(&overwrites.role.name)
+            .unwrap_or_else(|| {
+                panic!(
+                    "Could not create permissions overwrite request from non-existant role '{}'",
+                    &overwrites.role.name
+                )
+            });
 
         Self {
             _type: PermissionOverwriteType::Role,
@@ -55,7 +60,7 @@ impl PermissionOverwritesResponse {
     pub fn _try_into(
         &self,
         roles: &RolesList<ExistingRole>,
-    ) -> Result<PermissionsOverwrite, String> {
+    ) -> Result<PermissionsOverwrite<ExistingRole>, String> {
         if self._type != 0 {
             return Err(format!(
                 "Unsupported permissions overwrite type {}",
@@ -64,16 +69,14 @@ impl PermissionOverwritesResponse {
         };
 
         Ok(PermissionsOverwrite {
-            name: roles
+            role: roles
                 .find_by_id(&self.role_or_member_id)
-                // TODO should probably not panic, especially since it already returns a Result...
                 .unwrap_or_else(|| {
                     panic!(
-                        "Could not create permissions overwrite from non-existant role with id '{}'",
-                        &self.role_or_member_id
-                    )
+                    "Could not create permissions overwrite from non-existant role with id '{}'",
+                    &self.role_or_member_id
+                )
                 })
-                .name
                 .clone(),
             allow: PermissionsList::from(self.allow.as_str()),
             deny: PermissionsList::from(self.deny.as_str()),
@@ -90,15 +93,18 @@ mod tests {
             },
             permission::{Permission, PermissionsList, PermissionsOverwrite},
             role::RolesList,
-            tests::fixtures::existing::ExistingRoleFixture,
+            tests::fixtures::{awaiting::AwaitingRoleFixture, existing::ExistingRoleFixture},
         };
 
         #[test]
         fn can_be_created_from_domain_entity() {
             let existing_role = ExistingRoleFixture::new().build();
+            let matching_awaiting_role = AwaitingRoleFixture::new()
+                .with_name(&existing_role.name)
+                .build();
 
             let permissions_overwrite = PermissionsOverwrite {
-                name: existing_role.name.clone(),
+                role: matching_awaiting_role.clone(),
                 allow: PermissionsList::from(vec![
                     Permission::CREATE_INSTANT_INVITE,
                     Permission::VIEW_CHANNEL,
@@ -125,7 +131,7 @@ mod tests {
         #[should_panic]
         fn given_non_existant_role_when_creating_from_domain_entity_should_panic() {
             let permissions_overwrite = PermissionsOverwrite {
-                name: "non-existant".to_string(),
+                role: AwaitingRoleFixture::new().build(),
                 allow: PermissionsList::new(),
                 deny: PermissionsList::new(),
             };
@@ -154,7 +160,7 @@ mod tests {
             };
 
             let expected_entity = PermissionsOverwrite {
-                name: existing_role.name.clone(),
+                role: existing_role.clone(),
                 allow: PermissionsList::from(vec![
                     Permission::CREATE_INSTANT_INVITE,
                     Permission::VIEW_CHANNEL,

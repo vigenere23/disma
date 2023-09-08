@@ -2,12 +2,13 @@ use crate::{
     category::ExistingCategory,
     channel::{ChannelType, ExistingChannel},
     permission::PermissionsOverwritesList,
+    role::ExistingRole,
 };
 
 pub struct ExistingChannelFixture {
     id: String,
     name: String,
-    overwrites: PermissionsOverwritesList,
+    overwrites: PermissionsOverwritesList<ExistingRole>,
     topic: Option<String>,
     channel_type: ChannelType,
     category: Option<ExistingCategory>,

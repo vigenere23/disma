@@ -1,9 +1,23 @@
 use crate::{
     api::params::permission::PermissionsOverwriteParams,
-    channel::{ChannelType, ExistingChannel},
+    channel::{ChannelType, ChannelsList, ExistingChannel},
 };
 
-use super::{ChannelParams, ChannelParamsChannelType, ChannelParamsPermissionsOverwritesStrategy};
+use super::{
+    ChannelParams, ChannelParamsChannelType, ChannelParamsPermissionsOverwritesStrategy,
+    ChannelsParamsList,
+};
+
+impl From<&ChannelsList<ExistingChannel>> for ChannelsParamsList {
+    fn from(channels: &ChannelsList<ExistingChannel>) -> Self {
+        let items = channels.to_list().into_iter().map(Into::into).collect();
+
+        ChannelsParamsList {
+            items,
+            ..Default::default()
+        }
+    }
+}
 
 impl From<&ExistingChannel> for ChannelParams {
     fn from(channel: &ExistingChannel) -> Self {
@@ -47,12 +61,13 @@ mod tests {
     use crate::{
         api::params::{
             channel::{
-                ChannelParams, ChannelParamsChannelType, ChannelParamsPermissionsOverwritesStrategy,
+                ChannelParams, ChannelParamsChannelType,
+                ChannelParamsPermissionsOverwritesStrategy, ChannelsParamsList,
             },
             permission::PermissionsOverwriteParams,
         },
         category::ExistingCategory,
-        channel::{ChannelType, ExistingChannel},
+        channel::{ChannelType, ChannelsList, ExistingChannel},
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
@@ -90,7 +105,7 @@ mod tests {
             channel_type: ChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role.name.clone(),
+                role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
@@ -113,6 +128,23 @@ mod tests {
         (existing, params)
     }
 
+    fn given_matching_existing_list_and_params_list(
+        name: &str,
+        role: &ExistingRole,
+        category: &ExistingCategory,
+    ) -> (ChannelsList<ExistingChannel>, ChannelsParamsList) {
+        let (existing, params) = given_matching_existing_and_params(name, role, category);
+
+        let existing_list = ChannelsList::from(vec![existing]);
+
+        let params_list = ChannelsParamsList {
+            items: vec![params],
+            ..Default::default()
+        };
+
+        (existing_list, params_list)
+    }
+
     #[test]
     fn can_convert_existing_entity_to_params() {
         let name = "channel_1";
@@ -124,5 +156,18 @@ mod tests {
         let params = ChannelParams::from(&existing);
 
         assert_eq!(params, expected_params);
+    }
+
+    #[test]
+    fn can_convert_existing_entities_list_to_params_list() {
+        let name = "channel_1";
+        let role = given_existing_role("role_1");
+        let category = given_existing_category("category_1");
+        let (existing_list, expected_params_list) =
+            given_matching_existing_list_and_params_list(name, &role, &category);
+
+        let params = ChannelsParamsList::from(&existing_list);
+
+        assert_eq!(params, expected_params_list);
     }
 }

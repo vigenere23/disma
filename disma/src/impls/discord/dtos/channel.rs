@@ -118,7 +118,7 @@ impl ChannelResponse {
                     }
                 }
             })
-            .collect::<Vec<PermissionsOverwrite>>();
+            .collect::<Vec<PermissionsOverwrite<ExistingRole>>>();
 
         ExistingCategory {
             id: self.id,
@@ -165,7 +165,7 @@ impl ChannelResponse {
                     }
                 }
             })
-            .collect::<Vec<PermissionsOverwrite>>();
+            .collect::<Vec<PermissionsOverwrite<ExistingRole>>>();
 
         ExistingChannel {
             id: self.id,
@@ -191,7 +191,7 @@ mod tests {
             permission::{PermissionsList, PermissionsOverwrite, PermissionsOverwritesList},
             role::RolesList,
             tests::fixtures::{
-                awaiting::AwaitingCategoryFixture,
+                awaiting::{AwaitingCategoryFixture, AwaitingRoleFixture},
                 existing::{ExistingCategoryFixture, ExistingRoleFixture},
             },
         };
@@ -199,11 +199,14 @@ mod tests {
         #[test]
         fn can_be_created_from_awaiting_category() {
             let existing_role = ExistingRoleFixture::new().build();
+            let matching_awaiting_role = AwaitingRoleFixture::new()
+                .with_name(&existing_role.name)
+                .build();
 
             let category = AwaitingCategoryFixture::new()
                 .with_name("a category")
                 .with_permissions_overwrites(vec![PermissionsOverwrite {
-                    name: existing_role.name.clone(),
+                    role: matching_awaiting_role,
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }])
@@ -234,7 +237,7 @@ mod tests {
             let category = AwaitingCategoryFixture::new()
                 .with_name("a category")
                 .with_permissions_overwrites(vec![PermissionsOverwrite {
-                    name: "non-existant role".to_string(),
+                    role: AwaitingRoleFixture::new().build(),
                     allow: PermissionsList::new(),
                     deny: PermissionsList::new(),
                 }])
@@ -246,6 +249,10 @@ mod tests {
         #[test]
         fn can_be_created_from_awaiting_channel() {
             let existing_role = ExistingRoleFixture::new().build();
+            let matching_awaiting_role = AwaitingRoleFixture::new()
+                .with_name(&existing_role.name)
+                .build();
+
             let existing_category = ExistingCategoryFixture::new()
                 .with_name("a category")
                 .build();
@@ -259,7 +266,7 @@ mod tests {
                 channel_type: ChannelType::TEXT,
                 category: Some(awaiting_category),
                 overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                    name: existing_role.name.clone(),
+                    role: matching_awaiting_role,
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),
@@ -296,7 +303,7 @@ mod tests {
                 channel_type: ChannelType::TEXT,
                 category: None,
                 overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                    name: "non-existant role".to_string(),
+                    role: AwaitingRoleFixture::new().build(),
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),
@@ -358,7 +365,7 @@ mod tests {
                 id: "a_category_id".to_string(),
                 name: "a category".to_string(),
                 overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                    name: existing_role.name.clone(),
+                    role: existing_role.clone(),
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),
@@ -429,7 +436,7 @@ mod tests {
                 topic: Some("some topic".to_string()),
                 channel_type: ChannelType::TEXT,
                 overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                    name: existing_role.name.clone(),
+                    role: existing_role.clone(),
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),

@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
-use crate::{channel::ExtraChannelsStrategy, permission::PermissionsOverwritesList};
+use crate::{
+    channel::ExtraChannelsStrategy, permission::PermissionsOverwritesList, role::AwaitingRole,
+};
 
 use super::{CategoriesList, Category, ExtraCategoriesStrategy};
 
@@ -20,7 +22,7 @@ impl PartialEq for AwaitingCategoriesList {
 #[derive(Clone, Debug)]
 pub struct AwaitingCategory {
     pub name: String,
-    pub overwrites: PermissionsOverwritesList,
+    pub overwrites: PermissionsOverwritesList<AwaitingRole>,
     pub extra_channels_strategy: Arc<dyn ExtraChannelsStrategy>,
 }
 

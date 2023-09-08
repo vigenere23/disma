@@ -48,7 +48,7 @@ impl CategoryParams {
             .permissions_overwrites
             .into_iter()
             .map(|permission| permission.into(roles))
-            .collect::<Vec<PermissionsOverwrite>>();
+            .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>();
 
         AwaitingCategory {
             name: self.name,
@@ -107,7 +107,7 @@ mod tests {
         let awaiting_entity = AwaitingCategory {
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role.name.clone(),
+                role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),

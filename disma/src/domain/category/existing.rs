@@ -1,4 +1,4 @@
-use crate::permission::PermissionsOverwritesList;
+use crate::{permission::PermissionsOverwritesList, role::ExistingRole};
 
 use super::{CategoriesList, Category};
 
@@ -6,7 +6,7 @@ use super::{CategoriesList, Category};
 pub struct ExistingCategory {
     pub id: String,
     pub name: String,
-    pub overwrites: PermissionsOverwritesList,
+    pub overwrites: PermissionsOverwritesList<ExistingRole>,
 }
 
 impl ToString for ExistingCategory {

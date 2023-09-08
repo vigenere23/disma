@@ -52,7 +52,7 @@ impl From<&ExistingGuild> for GuildParams {
             .channels()
             .to_list()
             .into_iter()
-            .map(ChannelParams::from)
+            .map(|channel| channel.into())
             .collect();
 
         Self {

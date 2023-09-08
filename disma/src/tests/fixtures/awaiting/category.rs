@@ -4,11 +4,12 @@ use crate::{
     category::AwaitingCategory,
     channel::{ExtraChannelsStrategy, RemoveExtraChannels},
     permission::{PermissionsOverwrite, PermissionsOverwritesList},
+    role::AwaitingRole,
 };
 
 pub struct AwaitingCategoryFixture {
     name: String,
-    overwrites: PermissionsOverwritesList,
+    overwrites: PermissionsOverwritesList<AwaitingRole>,
     extra_channels_strategy: Arc<dyn ExtraChannelsStrategy>,
 }
 
@@ -26,7 +27,10 @@ impl AwaitingCategoryFixture {
         self
     }
 
-    pub fn with_permissions_overwrites(mut self, overwrites: Vec<PermissionsOverwrite>) -> Self {
+    pub fn with_permissions_overwrites(
+        mut self,
+        overwrites: Vec<PermissionsOverwrite<AwaitingRole>>,
+    ) -> Self {
         self.overwrites = PermissionsOverwritesList::from(overwrites);
         self
     }
