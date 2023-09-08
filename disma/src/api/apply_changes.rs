@@ -16,7 +16,7 @@ use crate::{
         },
         events::ChangeEventListenerRef,
     },
-    guild::{AwaitingGuild, GuildCommanderRef, GuildQuerierRef},
+    guild::{AwaitingGuild, ExistingGuild, GuildCommanderRef, GuildQuerierRef},
 };
 
 pub struct ApplyChangesUseCase {
@@ -49,18 +49,23 @@ impl ApplyChangesUseCase {
 
     pub fn execute(&self, guild_id: &str, params: GuildParams) {
         let awaiting_guild: AwaitingGuild = params.into();
+        let mut existing_guild = self.querier.get_guild(guild_id);
 
-        self.apply_role_commands(guild_id, &awaiting_guild);
-        self.apply_category_commands(guild_id, &awaiting_guild);
-        self.apply_channel_commands(guild_id, &awaiting_guild);
+        self.apply_role_commands(&awaiting_guild, &mut existing_guild);
+        self.apply_category_commands(&awaiting_guild, &mut existing_guild);
+        self.apply_channel_commands(&awaiting_guild, &mut existing_guild);
     }
 
-    fn apply_role_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+    fn apply_role_commands(
+        &self,
+        awaiting_guild: &AwaitingGuild,
+        existing_guild: &mut ExistingGuild,
+    ) {
         let mut commands = Vec::<CommandRef>::new();
 
         let role_changes = self
             .role_changes_service
-            .list_changes(&self.querier.get_guild(guild_id), awaiting_guild);
+            .list_changes(existing_guild, awaiting_guild);
 
         for role_change in role_changes {
             match role_change {
@@ -75,16 +80,19 @@ impl ApplyChangesUseCase {
             }
         }
 
-        self.execute_commands(commands);
+        self.execute_commands(commands, existing_guild);
     }
 
-    fn apply_category_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+    fn apply_category_commands(
+        &self,
+        awaiting_guild: &AwaitingGuild,
+        existing_guild: &mut ExistingGuild,
+    ) {
         let mut commands = Vec::<CommandRef>::new();
 
-        let existing_guild = self.querier.get_guild(guild_id);
         let category_changes = self
             .category_changes_service
-            .list_changes(&existing_guild, awaiting_guild);
+            .list_changes(existing_guild, awaiting_guild);
 
         for category_change in category_changes {
             match category_change {
@@ -106,16 +114,19 @@ impl ApplyChangesUseCase {
             }
         }
 
-        self.execute_commands(commands);
+        self.execute_commands(commands, existing_guild);
     }
 
-    fn apply_channel_commands(&self, guild_id: &str, awaiting_guild: &AwaitingGuild) {
+    fn apply_channel_commands(
+        &self,
+        awaiting_guild: &AwaitingGuild,
+        existing_guild: &mut ExistingGuild,
+    ) {
         let mut commands = Vec::<CommandRef>::new();
 
-        let existing_guild = self.querier.get_guild(guild_id);
         let channel_changes = self
             .channel_changes_service
-            .list_changes(&existing_guild, awaiting_guild);
+            .list_changes(existing_guild, awaiting_guild);
 
         for channel_change in channel_changes {
             match channel_change {
@@ -145,12 +156,16 @@ impl ApplyChangesUseCase {
             }
         }
 
-        self.execute_commands(commands);
+        self.execute_commands(commands, existing_guild);
     }
 
-    fn execute_commands(&self, commands: Vec<CommandRef>) {
+    fn execute_commands(&self, commands: Vec<CommandRef>, existing_guild: &mut ExistingGuild) {
         commands.into_iter().for_each(|command| {
-            command.execute(self.commander.as_ref(), self.change_event_listener.as_ref());
+            command.execute(
+                self.commander.as_ref(),
+                self.change_event_listener.as_ref(),
+                existing_guild,
+            );
         });
     }
 }

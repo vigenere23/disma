@@ -53,9 +53,6 @@ impl ExistingGuild {
     }
 
     pub fn add_or_replace_category(&mut self, category: ExistingCategory) {
-        // TODO check for existing roles??
-        // Or reput complex objects instead of references?
-
         self.categories.add_or_replace(category)
     }
 
