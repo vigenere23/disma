@@ -22,10 +22,9 @@ impl Category for ExistingCategory {
 }
 
 impl CategoriesList<ExistingCategory> {
-    pub fn find_by_id(&self, id: &str) -> &ExistingCategory {
+    pub fn find_by_id(&self, id: &str) -> Option<&ExistingCategory> {
         self.to_list()
-            .iter()
+            .into_iter()
             .find(|category| category.id == id)
-            .unwrap_or_else(|| panic!("Could not find category with id {}", &id))
     }
 }
