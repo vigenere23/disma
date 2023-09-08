@@ -172,7 +172,7 @@ impl ChannelResponse {
             name: self.name,
             channel_type,
             topic: self.topic.clone(),
-            category_name: category.map(|c| c.name.clone()),
+            category: category.cloned(),
             overwrites: PermissionsOverwritesList::from(permission_overwrites),
         }
     }
@@ -433,7 +433,7 @@ mod tests {
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),
-                category_name: Some(existing_category.name.clone()),
+                category: Some(existing_category.clone()),
             };
 
             let channel = response.into_channel(

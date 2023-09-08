@@ -1,4 +1,5 @@
 use crate::{
+    category::ExistingCategory,
     channel::{ChannelType, ExistingChannel},
     permission::PermissionsOverwritesList,
 };
@@ -9,7 +10,7 @@ pub struct ExistingChannelFixture {
     overwrites: PermissionsOverwritesList,
     topic: Option<String>,
     channel_type: ChannelType,
-    category_name: Option<String>,
+    category: Option<ExistingCategory>,
 }
 
 impl ExistingChannelFixture {
@@ -20,7 +21,7 @@ impl ExistingChannelFixture {
             overwrites: PermissionsOverwritesList::from(Vec::new()),
             topic: None,
             channel_type: ChannelType::TEXT,
-            category_name: None,
+            category: None,
         }
     }
 
@@ -41,7 +42,7 @@ impl ExistingChannelFixture {
             overwrites: self.overwrites,
             topic: self.topic,
             channel_type: self.channel_type,
-            category_name: self.category_name,
+            category: self.category,
         }
     }
 }
