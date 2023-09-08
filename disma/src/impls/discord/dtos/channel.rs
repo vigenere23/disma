@@ -433,7 +433,7 @@ mod tests {
                     allow: PermissionsList::from("2113536"),
                     deny: PermissionsList::from("2113536"),
                 }]),
-                category_name: Some(existing_category.name.clone()),
+                category: Some(existing_category.clone()),
             };
 
             let channel = response.into_channel(
