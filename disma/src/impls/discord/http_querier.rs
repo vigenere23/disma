@@ -29,35 +29,15 @@ impl GuildQuerier for HttpGuildQuerier {
             .into_iter()
             .map(|value| value.into())
             .collect();
-
         let roles_list = RolesList::from(roles);
 
         let channel_responses = self.api.list_channels(guild_id).unwrap();
 
         let categories: Vec<ExistingCategory> = channel_responses
             .iter()
-            .filter_map(|response| match response._type {
-                4 => Some(ExistingCategory {
-                    id: response.id.clone(),
-                    name: response.name.clone(),
-                    overwrites: PermissionsOverwritesList::from(
-                        response
-                            .permission_overwrites
-                            .iter()
-                            .filter_map(|permissions| {
-                                let result = permissions._try_into(&roles_list);
-                                match result {
-                                    Ok(overwrites) => Some(overwrites),
-                                    Err(message) => {eprintln!("Error while parsing permissions overwrites for category {}: {}", response.name.clone(), message); None}
-                                }
-                            })
-                            .collect::<Vec<PermissionsOverwrite>>(),
-                    ),
-                }),
-                _ => None,
-            })
+            .filter(|response| response._type == 4)
+            .map(|response| response.clone()._into(&roles_list))
             .collect();
-
         let categories_list = CategoriesList::from(categories);
 
         let channels: Vec<ExistingChannel> = channel_responses

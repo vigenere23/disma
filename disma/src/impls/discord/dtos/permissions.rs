@@ -6,14 +6,14 @@ use crate::{
     role::{ExistingRole, RolesList},
 };
 
-#[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq)]
+#[derive(Debug, Serialize_repr, Deserialize_repr, PartialEq, Clone)]
 #[repr(u8)]
 pub enum PermissionOverwriteType {
     Role = 0,
     // Member = 1,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct PermissionOverwritesRequest {
     #[serde(rename = "id")]
     pub role_or_member_id: String,
@@ -38,7 +38,7 @@ impl PermissionOverwritesRequest {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PermissionOverwritesResponse {
     #[serde(rename = "id")]
     pub role_or_member_id: String,
@@ -127,7 +127,7 @@ mod tests {
                 deny: PermissionsList::new(),
             };
 
-            PermissionOverwritesRequest::from(&permissions_overwrite, &RolesList::from(vec![]));
+            PermissionOverwritesRequest::from(&permissions_overwrite, &RolesList::new());
         }
     }
 
@@ -175,7 +175,7 @@ mod tests {
                 deny: "0".to_string(),
             };
 
-            response._try_into(&RolesList::from(vec![])).unwrap();
+            response._try_into(&RolesList::new()).unwrap();
         }
 
         #[test]

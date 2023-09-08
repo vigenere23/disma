@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{
     category::AwaitingCategory,
     channel::{ExtraChannelsStrategy, RemoveExtraChannels},
-    permission::PermissionsOverwritesList,
+    permission::{PermissionsOverwrite, PermissionsOverwritesList},
 };
 
 pub struct AwaitingCategoryFixture {
@@ -19,6 +19,16 @@ impl AwaitingCategoryFixture {
             overwrites: PermissionsOverwritesList::from(Vec::new()),
             extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
         }
+    }
+
+    pub fn with_name(mut self, name: &str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn with_permissions_overwrites(mut self, overwrites: Vec<PermissionsOverwrite>) -> Self {
+        self.overwrites = PermissionsOverwritesList::from(overwrites);
+        self
     }
 
     pub fn build(self) -> AwaitingCategory {

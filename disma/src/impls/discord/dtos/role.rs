@@ -61,8 +61,7 @@ impl Into<ExistingRole> for RoleResponse {
 mod tests {
     mod request {
         use crate::{
-            impls::discord::dtos::role::RoleRequest,
-            permission::{Permission, PermissionsList},
+            impls::discord::dtos::role::RoleRequest, permission::PermissionsList,
             role::AwaitingRole,
         };
 
@@ -70,11 +69,7 @@ mod tests {
         fn can_be_created_from_awaiting_role() {
             let role = AwaitingRole {
                 name: "role a".to_string(),
-                permissions: PermissionsList::from(vec![
-                    Permission::MANAGE_ROLES,
-                    Permission::CHANGE_NICKNAME,
-                    Permission::ATTACH_FILES,
-                ]),
+                permissions: PermissionsList::from("335577088"),
                 color: Some("fb364a".to_string()),
                 is_mentionable: false,
                 show_in_sidebar: true,
@@ -96,8 +91,7 @@ mod tests {
 
     mod response {
         use crate::{
-            impls::discord::dtos::role::RoleResponse,
-            permission::{Permission, PermissionsList},
+            impls::discord::dtos::role::RoleResponse, permission::PermissionsList,
             role::ExistingRole,
         };
 
@@ -115,11 +109,7 @@ mod tests {
             let expected_role = ExistingRole {
                 id: "abc-123".to_string(),
                 name: "role a".to_string(),
-                permissions: PermissionsList::from(vec![
-                    Permission::MANAGE_ROLES,
-                    Permission::CHANGE_NICKNAME,
-                    Permission::ATTACH_FILES,
-                ]),
+                permissions: PermissionsList::from("335577088"),
                 color: Some("fb364a".to_string()),
                 is_mentionable: false,
                 show_in_sidebar: true,
