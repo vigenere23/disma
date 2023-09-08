@@ -47,7 +47,29 @@ mod tests {
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
+        role::{AwaitingRole, ExistingRole},
     };
+
+    fn given_existing_role_with(name: String) -> ExistingRole {
+        ExistingRole {
+            id: "something".to_string(),
+            name,
+            permissions: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
+            color: Some("a3bb30".to_string()),
+            is_mentionable: true,
+            show_in_sidebar: true,
+        }
+    }
+
+    fn given_awaiting_role_with(name: String) -> AwaitingRole {
+        AwaitingRole {
+            name,
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+            color: None,
+            is_mentionable: false,
+            show_in_sidebar: false,
+        }
+    }
 
     fn given_existing_category_with_name(name: String) -> ExistingCategory {
         ExistingCategory {
@@ -182,7 +204,7 @@ mod tests {
             channel_type: channel_type.clone(),
             category: None,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role_name.clone(),
+                role: given_existing_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),
@@ -194,7 +216,7 @@ mod tests {
             channel_type,
             category: None,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role_name.clone(),
+                role: given_awaiting_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
                 deny: PermissionsList::from(vec![Permission::READ_MESSAGE_HISTORY]),
             }]),

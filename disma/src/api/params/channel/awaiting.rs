@@ -68,7 +68,7 @@ impl ChannelParams {
             ChannelParamsPermissionsOverwritesStrategy::Manual { items } => items
                 .into_iter()
                 .map(|permission| permission.into(roles))
-                .collect::<Vec<PermissionsOverwrite>>()
+                .collect::<Vec<PermissionsOverwrite<AwaitingRole>>>()
                 .into(),
         };
 
@@ -172,7 +172,7 @@ mod tests {
             category: Some(category.clone()),
             topic: Some("Nice sweater".to_string()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role.name.clone(),
+                role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),

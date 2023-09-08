@@ -1,6 +1,7 @@
 use crate::{
     category::{Category, ExistingCategory},
     permission::PermissionsOverwritesList,
+    role::ExistingRole,
 };
 
 use super::{Channel, ChannelType, UniqueChannelName};
@@ -12,7 +13,7 @@ pub struct ExistingChannel {
     pub topic: Option<String>,
     pub channel_type: ChannelType,
     pub category: Option<ExistingCategory>,
-    pub overwrites: PermissionsOverwritesList,
+    pub overwrites: PermissionsOverwritesList<ExistingRole>,
 }
 
 impl ExistingChannel {

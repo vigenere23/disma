@@ -55,7 +55,7 @@ mod tests {
             id: "some".to_string(),
             name: name.to_string(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role.name.clone(),
+                role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),

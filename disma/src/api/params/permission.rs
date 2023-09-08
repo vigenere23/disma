@@ -14,12 +14,12 @@ pub struct PermissionsOverwriteParams {
 }
 
 impl PermissionsOverwriteParams {
-    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrite
+    pub fn into<R>(self, roles: &RolesList<R>) -> PermissionsOverwrite<R>
     where
         R: Role,
     {
         PermissionsOverwrite {
-            name: roles
+            role: roles
                 .find_by_name(&self.role)
                 .unwrap_or_else(|| {
                     panic!(
@@ -27,18 +27,20 @@ impl PermissionsOverwriteParams {
                         &self.role
                     )
                 })
-                .name()
-                .to_string(),
+                .clone(),
             allow: PermissionsList::from(self.allow),
             deny: PermissionsList::from(self.deny),
         }
     }
 }
 
-impl From<&PermissionsOverwrite> for PermissionsOverwriteParams {
-    fn from(permissions: &PermissionsOverwrite) -> Self {
+impl<R> From<&PermissionsOverwrite<R>> for PermissionsOverwriteParams
+where
+    R: Role,
+{
+    fn from(permissions: &PermissionsOverwrite<R>) -> Self {
         Self {
-            role: permissions.name.clone(),
+            role: permissions.role.name().to_string(),
             allow: permissions.allow.to_list(),
             deny: permissions.deny.to_list(),
         }
@@ -50,7 +52,7 @@ mod tests {
     use crate::{
         permission::{PermissionsList, PermissionsOverwrite},
         role::{ExistingRole, RolesList},
-        tests::fixtures::existing::ExistingRoleFixture,
+        tests::fixtures::{awaiting::AwaitingRoleFixture, existing::ExistingRoleFixture},
     };
 
     use super::PermissionsOverwriteParams;
@@ -59,19 +61,20 @@ mod tests {
 
     #[test]
     fn can_convert_to_domain_entity() {
-        let existing_roles = vec![ExistingRoleFixture::new().with_name(A_ROLE_NAME).build()];
+        let existing_role = ExistingRoleFixture::new().with_name(A_ROLE_NAME).build();
+        let matching_awaiting_role = AwaitingRoleFixture::new().with_name(A_ROLE_NAME).build();
         let params = PermissionsOverwriteParams {
             role: A_ROLE_NAME.to_string(),
             allow: vec![],
             deny: vec![],
         };
 
-        let permissions_overwrite = params.into(&RolesList::<ExistingRole>::from(existing_roles));
+        let permissions_overwrite = params.into(&RolesList::from(vec![existing_role]));
 
         assert_eq!(
             permissions_overwrite,
             PermissionsOverwrite {
-                name: A_ROLE_NAME.to_string(),
+                role: matching_awaiting_role,
                 allow: PermissionsList::new(),
                 deny: PermissionsList::new()
             }
@@ -93,7 +96,7 @@ mod tests {
     #[test]
     fn can_create_from_domain_entity() {
         let permissions_overwrite = PermissionsOverwrite {
-            name: A_ROLE_NAME.to_string(),
+            role: AwaitingRoleFixture::new().with_name(A_ROLE_NAME).build(),
             allow: PermissionsList::new(),
             deny: PermissionsList::new(),
         };

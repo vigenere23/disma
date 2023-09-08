@@ -90,7 +90,7 @@ mod tests {
             channel_type: ChannelType::VOICE,
             topic: Some("A nice winter".to_string()),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role.name.clone(),
+                role: role.clone(),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
             }]),

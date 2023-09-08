@@ -28,7 +28,29 @@ mod tests {
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
+        role::{AwaitingRole, ExistingRole},
     };
+
+    fn given_existing_role_with(name: String) -> ExistingRole {
+        ExistingRole {
+            id: "something".to_string(),
+            name,
+            permissions: PermissionsList::from(vec![Permission::SEND_MESSAGES]),
+            color: Some("a3bb30".to_string()),
+            is_mentionable: true,
+            show_in_sidebar: true,
+        }
+    }
+
+    fn given_awaiting_role_with(name: String) -> AwaitingRole {
+        AwaitingRole {
+            name,
+            permissions: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
+            color: None,
+            is_mentionable: false,
+            show_in_sidebar: false,
+        }
+    }
 
     #[test]
     fn can_diff_overwrites_updates() {
@@ -40,7 +62,7 @@ mod tests {
             id: "something".to_string(),
             name: name.clone(),
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role_name.clone(),
+                role: given_existing_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
@@ -49,7 +71,7 @@ mod tests {
         let target = AwaitingCategory {
             name,
             overwrites: PermissionsOverwritesList::from(vec![PermissionsOverwrite {
-                name: role_name.clone(),
+                role: given_awaiting_role_with(role_name.clone()),
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADD_REACTIONS]),
             }]),
