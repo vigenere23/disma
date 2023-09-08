@@ -35,7 +35,7 @@ impl Into<AwaitingGuild> for GuildParams {
 impl From<&ExistingGuild> for GuildParams {
     fn from(guild: &ExistingGuild) -> Self {
         let roles: Vec<RoleParams> = guild
-            .roles
+            .roles()
             .to_list()
             .into_iter()
             .map(RoleParams::from)
@@ -86,11 +86,8 @@ mod tests {
 
     #[test]
     pub fn when_parsing_empty_existing_guild_it_fills_params_with_defaults() {
-        let entity = ExistingGuild {
-            roles: RolesList::new(),
-            categories: CategoriesList::new(),
-            channels: ChannelsList::new(),
-        };
+        let entity =
+            ExistingGuild::new(RolesList::new(), CategoriesList::new(), ChannelsList::new());
 
         let params = GuildParams::from(&entity);
 

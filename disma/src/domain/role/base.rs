@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use crate::core::ListComparison;
 
+use super::ExistingRole;
+
 pub trait Role: Clone {
     fn name(&self) -> &str;
 }
@@ -25,7 +27,7 @@ impl<R: Role> RolesList<R> {
         self.roles_by_name.get(name)
     }
 
-    pub fn push(&mut self, role: R) {
+    pub fn add(&mut self, role: R) {
         if self.roles_by_name.contains_key(role.name()) {
             // TODO replace with Result
             panic!("All roles must have unique names.");
@@ -78,9 +80,15 @@ impl<R: Role> From<Vec<R>> for RolesList<R> {
         let mut roles_list = RolesList::new();
 
         for role in roles.into_iter() {
-            roles_list.push(role);
+            roles_list.add(role);
         }
 
         roles_list
+    }
+}
+
+impl RolesList<ExistingRole> {
+    pub fn add_or_replace(&mut self, role: ExistingRole) {
+        self.roles_by_name.insert(role.name().to_string(), role);
     }
 }

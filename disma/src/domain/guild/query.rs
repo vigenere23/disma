@@ -18,9 +18,35 @@ pub type GuildQuerierRef = Arc<dyn GuildQuerier>;
 
 #[derive(Debug, Clone)]
 pub struct ExistingGuild {
-    pub roles: RolesList<ExistingRole>,
+    roles: RolesList<ExistingRole>,
     pub categories: CategoriesList<ExistingCategory>,
     pub channels: ChannelsList<ExistingChannel>,
+}
+
+impl ExistingGuild {
+    pub fn new(
+        roles: RolesList<ExistingRole>,
+        categories: CategoriesList<ExistingCategory>,
+        channels: ChannelsList<ExistingChannel>,
+    ) -> Self {
+        Self {
+            roles,
+            categories,
+            channels,
+        }
+    }
+
+    pub fn roles(&self) -> &RolesList<ExistingRole> {
+        &self.roles
+    }
+
+    pub fn add_or_replace_role(&mut self, role: ExistingRole) {
+        self.roles.add_or_replace(role)
+    }
+
+    pub fn remove_role(&mut self, _role: ExistingRole) {
+        todo!()
+    }
 }
 
 #[derive(Debug, Clone)]
