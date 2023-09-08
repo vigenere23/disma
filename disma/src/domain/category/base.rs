@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use crate::core::ListComparison;
 
+use super::ExistingCategory;
+
 pub trait Category: Clone {
     fn name(&self) -> &str;
 }
@@ -30,7 +32,7 @@ impl<C: Category> CategoriesList<C> {
             .unwrap_or_else(|| panic!("No category found with name {name}."))
     }
 
-    pub fn push(&mut self, category: C) {
+    pub fn add(&mut self, category: C) {
         if self.categories_by_name.contains_key(category.name()) {
             // TODO replace with Result
             panic!("All categories must have unique names.");
@@ -84,9 +86,16 @@ impl<C: Category> From<Vec<C>> for CategoriesList<C> {
         let mut categories_list = CategoriesList::new();
 
         for category in categories.into_iter() {
-            categories_list.push(category);
+            categories_list.add(category);
         }
 
         categories_list
+    }
+}
+
+impl CategoriesList<ExistingCategory> {
+    pub fn add_or_replace(&mut self, category: ExistingCategory) {
+        self.categories_by_name
+            .insert(category.name().to_string(), category);
     }
 }

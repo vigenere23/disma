@@ -26,12 +26,12 @@ impl ExistingGuildFixture {
     }
 
     pub fn with_category(mut self, category: ExistingCategory) -> Self {
-        self.categories.push(category);
+        self.categories.add(category);
         self
     }
 
     pub fn with_channel(mut self, channel: ExistingChannel) -> Self {
-        self.channels.push(channel);
+        self.channels.add(channel);
         self
     }
 

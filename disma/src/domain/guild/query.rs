@@ -19,8 +19,8 @@ pub type GuildQuerierRef = Arc<dyn GuildQuerier>;
 #[derive(Debug, Clone)]
 pub struct ExistingGuild {
     roles: RolesList<ExistingRole>,
-    pub categories: CategoriesList<ExistingCategory>,
-    pub channels: ChannelsList<ExistingChannel>,
+    categories: CategoriesList<ExistingCategory>,
+    channels: ChannelsList<ExistingChannel>,
 }
 
 impl ExistingGuild {
@@ -46,6 +46,25 @@ impl ExistingGuild {
 
     pub fn remove_role(&mut self, _role: ExistingRole) {
         todo!()
+    }
+
+    pub fn categories(&self) -> &CategoriesList<ExistingCategory> {
+        &self.categories
+    }
+
+    pub fn add_or_replace_category(&mut self, category: ExistingCategory) {
+        // TODO check for existing roles??
+        // Or reput complex objects instead of references?
+
+        self.categories.add_or_replace(category)
+    }
+
+    pub fn channels(&self) -> &ChannelsList<ExistingChannel> {
+        &self.channels
+    }
+
+    pub fn add_or_replace_channel(&mut self, channel: ExistingChannel) {
+        self.channels.add_or_replace(channel)
     }
 }
 
