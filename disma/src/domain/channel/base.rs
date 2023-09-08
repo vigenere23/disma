@@ -7,6 +7,8 @@ use crate::core::{
 
 use strum::{Display, EnumString};
 
+use super::ExistingChannel;
+
 #[derive(Debug, Display, EnumString, PartialEq, Clone)]
 pub enum ChannelType {
     TEXT,
@@ -76,7 +78,7 @@ where
         self.channels_by_name.get(&unique_name.to_string())
     }
 
-    pub fn push(&mut self, channel: C) {
+    pub fn add(&mut self, channel: C) {
         if self
             .channels_by_name
             .contains_key(&channel.unique_name().to_string())
@@ -139,10 +141,17 @@ where
         let mut channels_list = ChannelsList::new();
 
         for channel in items.into_iter() {
-            channels_list.push(channel);
+            channels_list.add(channel);
         }
 
         channels_list
+    }
+}
+
+impl ChannelsList<ExistingChannel> {
+    pub fn add_or_replace(&mut self, channel: ExistingChannel) {
+        self.channels_by_name
+            .insert(channel.unique_name().to_string(), channel);
     }
 }
 

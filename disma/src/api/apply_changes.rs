@@ -122,14 +122,14 @@ impl ApplyChangesUseCase {
                 ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
                     awaiting,
                     existing_guild.roles().clone(),
-                    existing_guild.categories.clone(),
+                    existing_guild.categories().clone(),
                 ))),
                 ChannelChange::Update(existing, awaiting, _) => {
                     commands.push(Arc::from(UpdateChannel::new(
                         existing.clone(),
                         awaiting.clone(),
                         existing_guild.roles().clone(),
-                        existing_guild.categories.clone(),
+                        existing_guild.categories().clone(),
                     )))
                 }
                 ChannelChange::Delete(existing) => awaiting_guild
@@ -140,7 +140,7 @@ impl ApplyChangesUseCase {
                         &mut commands,
                         awaiting_guild.categories.items.find_by_name(&existing.name),
                         existing_guild.roles(),
-                        &existing_guild.categories,
+                        existing_guild.categories(),
                     ),
             }
         }
@@ -417,7 +417,7 @@ mod tests {
                 &awaiting_guild.categories.items,
             )),
             eq(existing_guild.roles()),
-            eq(&existing_guild.categories),
+            eq(existing_guild.categories()),
         );
         commander.expect_update_channel(
             eq(&channel_to_update.id),
@@ -426,7 +426,7 @@ mod tests {
                 &awaiting_guild.categories.items,
             )),
             eq(existing_guild.roles()),
-            eq(&existing_guild.categories),
+            eq(existing_guild.categories()),
         );
         commander.expect_delete_channel(eq(&channel_to_remove.id));
         commander.expect_delete_channel(eq(&channel_to_change_category.id));

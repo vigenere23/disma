@@ -28,7 +28,7 @@ impl ChannelChangesService {
         } = awaiting_guild
             .channels
             .items
-            .compare_by_unique_name(&existing_guild.channels);
+            .compare_by_unique_name(existing_guild.channels());
 
         let to_create = extra_awaiting
             .into_iter()

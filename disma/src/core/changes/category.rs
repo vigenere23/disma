@@ -28,7 +28,7 @@ impl CategoryChangesService {
         } = awaiting_guild
             .categories
             .items
-            .compare_by_name(&existing_guild.categories);
+            .compare_by_name(existing_guild.categories());
 
         let to_create = extra_awaiting
             .into_iter()
