@@ -90,13 +90,13 @@ impl ApplyChangesUseCase {
             match category_change {
                 CategoryChange::Create(awaiting) => commands.push(Arc::from(AddCategory::new(
                     awaiting,
-                    existing_guild.roles.clone(),
+                    existing_guild.roles().clone(),
                 ))),
                 CategoryChange::Update(existing, awaiting, _) => {
                     commands.push(Arc::from(UpdateCategory::new(
                         existing.clone(),
                         awaiting.clone(),
-                        existing_guild.roles.clone(),
+                        existing_guild.roles().clone(),
                     )))
                 }
                 CategoryChange::Delete(existing) => awaiting_guild
@@ -121,14 +121,14 @@ impl ApplyChangesUseCase {
             match channel_change {
                 ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
                     awaiting,
-                    existing_guild.roles.clone(),
+                    existing_guild.roles().clone(),
                     existing_guild.categories.clone(),
                 ))),
                 ChannelChange::Update(existing, awaiting, _) => {
                     commands.push(Arc::from(UpdateChannel::new(
                         existing.clone(),
                         awaiting.clone(),
-                        existing_guild.roles.clone(),
+                        existing_guild.roles().clone(),
                         existing_guild.categories.clone(),
                     )))
                 }
@@ -139,7 +139,7 @@ impl ApplyChangesUseCase {
                         &existing,
                         &mut commands,
                         awaiting_guild.categories.items.find_by_name(&existing.name),
-                        &existing_guild.roles,
+                        existing_guild.roles(),
                         &existing_guild.categories,
                     ),
             }
@@ -334,12 +334,12 @@ mod tests {
         let roles_list = awaiting_guild.roles.items;
         commander.expect_add_category(
             eq(&category_to_add_params.into(&roles_list)),
-            eq(&existing_guild.roles),
+            eq(existing_guild.roles()),
         );
         commander.expect_update_category(
             eq(&category_to_update.id),
             eq(&category_to_update_params.into(&roles_list)),
-            eq(&existing_guild.roles),
+            eq(existing_guild.roles()),
         );
         commander.expect_delete_category(eq(&category_to_remove.id));
     }
@@ -416,7 +416,7 @@ mod tests {
                 &awaiting_guild.roles.items,
                 &awaiting_guild.categories.items,
             )),
-            eq(&existing_guild.roles),
+            eq(existing_guild.roles()),
             eq(&existing_guild.categories),
         );
         commander.expect_update_channel(
@@ -425,7 +425,7 @@ mod tests {
                 &awaiting_guild.roles.items,
                 &awaiting_guild.categories.items,
             )),
-            eq(&existing_guild.roles),
+            eq(existing_guild.roles()),
             eq(&existing_guild.categories),
         );
         commander.expect_delete_channel(eq(&channel_to_remove.id));

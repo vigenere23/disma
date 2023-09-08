@@ -28,7 +28,7 @@ impl RoleChangesService {
         } = awaiting_guild
             .roles
             .items
-            .compare_by_name(&existing_guild.roles);
+            .compare_by_name(existing_guild.roles());
 
         let to_create = extra_awaiting
             .into_iter()

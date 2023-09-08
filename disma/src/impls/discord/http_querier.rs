@@ -46,11 +46,7 @@ impl GuildQuerier for HttpGuildQuerier {
             .collect();
         let channels_list = ChannelsList::from(channels);
 
-        ExistingGuild {
-            roles: roles_list,
-            categories: categories_list,
-            channels: channels_list,
-        }
+        ExistingGuild::new(roles_list, categories_list, channels_list)
     }
 
     fn list_guilds(&self) -> Vec<GuildSummary> {

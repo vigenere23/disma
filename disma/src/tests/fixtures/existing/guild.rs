@@ -21,7 +21,7 @@ impl ExistingGuildFixture {
     }
 
     pub fn with_role(mut self, role: ExistingRole) -> Self {
-        self.roles.push(role);
+        self.roles.add(role);
         self
     }
 
@@ -36,10 +36,6 @@ impl ExistingGuildFixture {
     }
 
     pub fn build(self) -> ExistingGuild {
-        ExistingGuild {
-            roles: self.roles,
-            categories: self.categories,
-            channels: self.channels,
-        }
+        ExistingGuild::new(self.roles, self.categories, self.channels)
     }
 }
