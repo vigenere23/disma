@@ -153,6 +153,11 @@ impl ChannelsList<ExistingChannel> {
         self.channels_by_name
             .insert(channel.unique_name().to_string(), channel);
     }
+
+    pub fn remove(&mut self, channel: ExistingChannel) {
+        self.channels_by_name
+            .remove(&channel.unique_name().to_string());
+    }
 }
 
 #[cfg(test)]

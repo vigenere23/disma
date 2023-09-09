@@ -99,13 +99,15 @@ impl Command for DeleteRole {
         &self,
         commander: &dyn GuildCommander,
         event_listener: &dyn ChangeEventListener,
-        _existing_guild: &mut ExistingGuild,
+        existing_guild: &mut ExistingGuild,
     ) {
         let result = commander.delete_role(&self.role.id);
 
         let event = match result {
-            // TODO remove role (remove only with ID or full existing entity?)
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(()) => {
+                existing_guild.remove_role(self.role.clone());
+                ChangeEvent::Success(self.describe())
+            }
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 

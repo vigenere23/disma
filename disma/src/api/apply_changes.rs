@@ -96,17 +96,12 @@ impl ApplyChangesUseCase {
 
         for category_change in category_changes {
             match category_change {
-                CategoryChange::Create(awaiting) => commands.push(Arc::from(AddCategory::new(
-                    awaiting,
-                    existing_guild.roles().clone(),
-                ))),
-                CategoryChange::Update(existing, awaiting, _) => {
-                    commands.push(Arc::from(UpdateCategory::new(
-                        existing.clone(),
-                        awaiting.clone(),
-                        existing_guild.roles().clone(),
-                    )))
+                CategoryChange::Create(awaiting) => {
+                    commands.push(Arc::from(AddCategory::new(awaiting)))
                 }
+                CategoryChange::Update(existing, awaiting, _) => commands.push(Arc::from(
+                    UpdateCategory::new(existing.clone(), awaiting.clone()),
+                )),
                 CategoryChange::Delete(existing) => awaiting_guild
                     .categories
                     .extra_items_strategy
@@ -130,19 +125,12 @@ impl ApplyChangesUseCase {
 
         for channel_change in channel_changes {
             match channel_change {
-                ChannelChange::Create(awaiting) => commands.push(Arc::from(AddChannel::new(
-                    awaiting,
-                    existing_guild.roles().clone(),
-                    existing_guild.categories().clone(),
-                ))),
-                ChannelChange::Update(existing, awaiting, _) => {
-                    commands.push(Arc::from(UpdateChannel::new(
-                        existing.clone(),
-                        awaiting.clone(),
-                        existing_guild.roles().clone(),
-                        existing_guild.categories().clone(),
-                    )))
+                ChannelChange::Create(awaiting) => {
+                    commands.push(Arc::from(AddChannel::new(awaiting)))
                 }
+                ChannelChange::Update(existing, awaiting, _) => commands.push(Arc::from(
+                    UpdateChannel::new(existing.clone(), awaiting.clone()),
+                )),
                 ChannelChange::Delete(existing) => awaiting_guild
                     .channels
                     .extra_items_strategy
@@ -150,8 +138,6 @@ impl ApplyChangesUseCase {
                         &existing,
                         &mut commands,
                         awaiting_guild.categories.items.find_by_name(&existing.name),
-                        existing_guild.roles(),
-                        existing_guild.categories(),
                     ),
             }
         }

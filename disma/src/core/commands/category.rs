@@ -2,19 +2,17 @@ use crate::{
     category::{AwaitingCategory, ExistingCategory},
     core::events::{Change, ChangeEntity, ChangeEvent, ChangeEventListener},
     guild::{ExistingGuild, GuildCommander},
-    role::{ExistingRole, RolesList},
 };
 
 use super::Command;
 
 pub struct AddCategory {
     category: AwaitingCategory,
-    roles: RolesList<ExistingRole>,
 }
 
 impl AddCategory {
-    pub fn new(category: AwaitingCategory, roles: RolesList<ExistingRole>) -> Self {
-        Self { category, roles }
+    pub fn new(category: AwaitingCategory) -> Self {
+        Self { category }
     }
 
     fn describe(&self) -> Change {
@@ -29,7 +27,7 @@ impl Command for AddCategory {
         event_listener: &dyn ChangeEventListener,
         existing_guild: &mut ExistingGuild,
     ) {
-        let result = commander.add_category(&self.category, &self.roles);
+        let result = commander.add_category(&self.category, existing_guild.roles());
 
         let event = match result {
             Ok(category) => {
@@ -46,19 +44,13 @@ impl Command for AddCategory {
 pub struct UpdateCategory {
     existing_category: ExistingCategory,
     awaiting_category: AwaitingCategory,
-    roles: RolesList<ExistingRole>,
 }
 
 impl UpdateCategory {
-    pub fn new(
-        existing_category: ExistingCategory,
-        awaiting_category: AwaitingCategory,
-        roles: RolesList<ExistingRole>,
-    ) -> Self {
+    pub fn new(existing_category: ExistingCategory, awaiting_category: AwaitingCategory) -> Self {
         Self {
             existing_category,
             awaiting_category,
-            roles,
         }
     }
 
@@ -80,7 +72,7 @@ impl Command for UpdateCategory {
         let result = commander.update_category(
             &self.existing_category.id,
             &self.awaiting_category,
-            &self.roles,
+            existing_guild.roles(),
         );
 
         let event = match result {
@@ -114,12 +106,15 @@ impl Command for DeleteCategory {
         &self,
         commander: &dyn GuildCommander,
         event_listener: &dyn ChangeEventListener,
-        _existing_guild: &mut ExistingGuild,
+        existing_guild: &mut ExistingGuild,
     ) {
         let result = commander.delete_category(&self.category.id);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(()) => {
+                existing_guild.remove_category(self.category.clone());
+                ChangeEvent::Success(self.describe())
+            }
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -159,7 +154,7 @@ mod tests {
 
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
-        commander.expect_add_category(eq(&add_command.category), eq(&add_command.roles));
+        commander.expect_add_category(eq(&add_command.category), eq(existing_guild.roles()));
     }
 
     #[test]
@@ -222,7 +217,7 @@ mod tests {
         commander.expect_update_category(
             eq(&update_command.existing_category.id),
             eq(&update_command.awaiting_category),
-            eq(&update_command.roles),
+            eq(existing_guild.roles()),
         );
     }
 

@@ -41,11 +41,11 @@ impl ExistingGuild {
     }
 
     pub fn add_or_replace_role(&mut self, role: ExistingRole) {
-        self.roles.add_or_replace(role)
+        self.roles.add_or_replace(role);
     }
 
-    pub fn remove_role(&mut self, _role: ExistingRole) {
-        todo!()
+    pub fn remove_role(&mut self, role: ExistingRole) {
+        self.roles.remove(role);
     }
 
     pub fn categories(&self) -> &CategoriesList<ExistingCategory> {
@@ -53,7 +53,11 @@ impl ExistingGuild {
     }
 
     pub fn add_or_replace_category(&mut self, category: ExistingCategory) {
-        self.categories.add_or_replace(category)
+        self.categories.add_or_replace(category);
+    }
+
+    pub fn remove_category(&mut self, category: ExistingCategory) {
+        self.categories.remove(category);
     }
 
     pub fn channels(&self) -> &ChannelsList<ExistingChannel> {
@@ -61,7 +65,11 @@ impl ExistingGuild {
     }
 
     pub fn add_or_replace_channel(&mut self, channel: ExistingChannel) {
-        self.channels.add_or_replace(channel)
+        self.channels.add_or_replace(channel);
+    }
+
+    pub fn remove_channel(&mut self, channel: ExistingChannel) {
+        self.channels.remove(channel);
     }
 }
 

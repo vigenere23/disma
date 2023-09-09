@@ -1,30 +1,18 @@
 use crate::{
-    category::{CategoriesList, ExistingCategory},
     channel::{AwaitingChannel, Channel, ExistingChannel},
     core::events::{Change, ChangeEntity, ChangeEvent, ChangeEventListener},
     guild::{ExistingGuild, GuildCommander},
-    role::{ExistingRole, RolesList},
 };
 
 use super::Command;
 
 pub struct AddChannel {
     channel: AwaitingChannel,
-    roles: RolesList<ExistingRole>,
-    categories: CategoriesList<ExistingCategory>,
 }
 
 impl AddChannel {
-    pub fn new(
-        channel: AwaitingChannel,
-        roles: RolesList<ExistingRole>,
-        categories: CategoriesList<ExistingCategory>,
-    ) -> Self {
-        Self {
-            channel,
-            roles,
-            categories,
-        }
+    pub fn new(channel: AwaitingChannel) -> Self {
+        Self { channel }
     }
 
     fn describe(&self) -> Change {
@@ -42,7 +30,11 @@ impl Command for AddChannel {
         event_listener: &dyn ChangeEventListener,
         existing_guild: &mut ExistingGuild,
     ) {
-        let result = commander.add_channel(&self.channel, &self.roles, &self.categories);
+        let result = commander.add_channel(
+            &self.channel,
+            existing_guild.roles(),
+            existing_guild.categories(),
+        );
 
         let event = match result {
             Ok(channel) => {
@@ -59,22 +51,13 @@ impl Command for AddChannel {
 pub struct UpdateChannel {
     existing_channel: ExistingChannel,
     awaiting_channel: AwaitingChannel,
-    roles: RolesList<ExistingRole>,
-    categories: CategoriesList<ExistingCategory>,
 }
 
 impl UpdateChannel {
-    pub fn new(
-        existing_channel: ExistingChannel,
-        awaiting_channel: AwaitingChannel,
-        roles: RolesList<ExistingRole>,
-        categories: CategoriesList<ExistingCategory>,
-    ) -> Self {
+    pub fn new(existing_channel: ExistingChannel, awaiting_channel: AwaitingChannel) -> Self {
         Self {
             existing_channel,
             awaiting_channel,
-            roles,
-            categories,
         }
     }
 
@@ -96,8 +79,8 @@ impl Command for UpdateChannel {
         let result = commander.update_channel(
             &self.existing_channel.id,
             &self.awaiting_channel,
-            &self.roles,
-            &self.categories,
+            existing_guild.roles(),
+            existing_guild.categories(),
         );
 
         let event = match result {
@@ -134,12 +117,15 @@ impl Command for DeleteChannel {
         &self,
         commander: &dyn GuildCommander,
         event_listener: &dyn ChangeEventListener,
-        _existing_guild: &mut ExistingGuild,
+        existing_guild: &mut ExistingGuild,
     ) {
         let result = commander.delete_channel(&self.channel.id);
 
         let event = match result {
-            Ok(()) => ChangeEvent::Success(self.describe()),
+            Ok(()) => {
+                existing_guild.remove_channel(self.channel.clone());
+                ChangeEvent::Success(self.describe())
+            }
             Err(message) => ChangeEvent::Error(self.describe(), message),
         };
 
@@ -182,8 +168,8 @@ mod tests {
 
         commander.expect_add_channel(
             eq(&add_command.channel),
-            eq(&add_command.roles),
-            eq(&add_command.categories),
+            eq(existing_guild.roles()),
+            eq(existing_guild.categories()),
         );
     }
 
@@ -247,8 +233,8 @@ mod tests {
         commander.expect_update_channel(
             eq(&update_command.existing_channel.id),
             eq(&update_command.awaiting_channel),
-            eq(&update_command.roles),
-            eq(&update_command.categories),
+            eq(existing_guild.roles()),
+            eq(existing_guild.categories()),
         );
     }
 

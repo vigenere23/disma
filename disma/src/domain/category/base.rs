@@ -98,4 +98,8 @@ impl CategoriesList<ExistingCategory> {
         self.categories_by_name
             .insert(category.name().to_string(), category);
     }
+
+    pub fn remove(&mut self, category: ExistingCategory) {
+        self.categories_by_name.remove(category.name());
+    }
 }
