@@ -1,3 +1,5 @@
+use fake::Fake;
+
 use crate::{
     category::ExistingCategory,
     channel::{ChannelType, ExistingChannel},
@@ -17,8 +19,8 @@ pub struct ExistingChannelFixture {
 impl ExistingChannelFixture {
     pub fn new() -> Self {
         Self {
-            id: "123".to_string(),
-            name: "abc".to_string(),
+            id: fake::uuid::UUIDv4.fake(),
+            name: fake::faker::lorem::en::Word().fake(),
             overwrites: PermissionsOverwritesList::from(Vec::new()),
             topic: None,
             channel_type: ChannelType::TEXT,

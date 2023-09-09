@@ -27,11 +27,6 @@ impl<C: Category> CategoriesList<C> {
         self.categories_by_name.get(name)
     }
 
-    pub fn find_by_name_panic(&self, name: &str) -> &C {
-        self.find_by_name(name)
-            .unwrap_or_else(|| panic!("No category found with name {name}."))
-    }
-
     pub fn add(&mut self, category: C) {
         if self.categories_by_name.contains_key(category.name()) {
             // TODO replace with Result
@@ -94,6 +89,12 @@ impl<C: Category> From<Vec<C>> for CategoriesList<C> {
 }
 
 impl CategoriesList<ExistingCategory> {
+    pub fn find_by_id(&self, id: &str) -> Option<&ExistingCategory> {
+        self.to_list()
+            .into_iter()
+            .find(|category| category.id == id)
+    }
+
     pub fn add_or_replace(&mut self, category: ExistingCategory) {
         self.categories_by_name
             .insert(category.name().to_string(), category);
@@ -101,5 +102,146 @@ impl CategoriesList<ExistingCategory> {
 
     pub fn remove(&mut self, category: ExistingCategory) {
         self.categories_by_name.remove(category.name());
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        category::ExistingCategory, core::ListComparison,
+        tests::fixtures::existing::ExistingCategoryFixture,
+    };
+
+    use super::CategoriesList;
+
+    const SOME_NAME: &str = "non-existant";
+    const SOME_ID: &str = "non-existant";
+
+    #[test]
+    fn can_find_by_name() {
+        let category = ExistingCategoryFixture::new().build();
+        let list = CategoriesList::from(vec![category.clone()]);
+
+        let found = list.find_by_name(&category.name);
+
+        assert!(found.is_some());
+        assert_eq!(found.unwrap().to_owned(), category);
+    }
+
+    #[test]
+    fn given_category_not_in_list_when_finding_by_name_should_return_none() {
+        let list = CategoriesList::<ExistingCategory>::new();
+
+        let found = list.find_by_name(SOME_NAME);
+
+        assert!(found.is_none());
+    }
+
+    #[test]
+    fn can_find_by_id() {
+        let category = ExistingCategoryFixture::new().build();
+        let list = CategoriesList::from(vec![category.clone()]);
+
+        let found = list.find_by_id(&category.id);
+
+        assert!(found.is_some());
+        assert_eq!(found.unwrap().to_owned(), category);
+    }
+
+    #[test]
+    fn given_category_not_in_list_when_finding_by_id_should_return_none() {
+        let list = CategoriesList::<ExistingCategory>::new();
+
+        let found = list.find_by_id(SOME_ID);
+
+        assert!(found.is_none());
+    }
+
+    #[test]
+    fn can_add_category() {
+        let category = ExistingCategoryFixture::new().build();
+        let mut list = CategoriesList::<ExistingCategory>::new();
+
+        list.add(category.clone());
+
+        assert_eq!(list.to_list(), vec![&category]);
+    }
+
+    #[test]
+    #[should_panic]
+    fn given_category_with_same_name_already_in_list_when_adding_category_should_panics() {
+        let category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let category_copy = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let mut list = CategoriesList::from(vec![category]);
+
+        list.add(category_copy);
+    }
+
+    #[test]
+    fn given_category_not_in_list_when_adding_or_replacing_should_add() {
+        let category = ExistingCategoryFixture::new().build();
+        let mut list = CategoriesList::<ExistingCategory>::new();
+
+        list.add_or_replace(category.clone());
+
+        assert_eq!(list.to_list(), vec![&category]);
+    }
+
+    #[test]
+    fn given_category_already_in_list_when_adding_or_replacing_should_replace_according_to_name() {
+        // TODO should probably replace according to id?
+        // If the name changes (like for invalid characters), it might cause problems?
+        let category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let category_clone = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let mut list = CategoriesList::from(vec![category]);
+
+        list.add_or_replace(category_clone.clone());
+
+        assert_eq!(list.to_list(), vec![&category_clone]);
+    }
+
+    #[test]
+    fn can_remove_category() {
+        let category = ExistingCategoryFixture::new().build();
+        let mut list = CategoriesList::from(vec![category.clone()]);
+
+        list.remove(category);
+
+        assert_eq!(list.to_list(), Vec::<&ExistingCategory>::new());
+    }
+
+    #[test]
+    fn given_category_not_in_list_when_removing_category_should_do_nothing() {
+        let non_existant_category = ExistingCategoryFixture::new().build();
+        let mut list = CategoriesList::<ExistingCategory>::new();
+
+        list.remove(non_existant_category);
+    }
+
+    #[test]
+    fn can_compare_lists_by_category_names() {
+        let extra_self_category = ExistingCategoryFixture::new().build();
+        let extra_other_category = ExistingCategoryFixture::new().build();
+        let same_self_category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let same_other_category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+
+        let self_list = CategoriesList::from(vec![
+            same_self_category.clone(),
+            extra_self_category.clone(),
+        ]);
+        let other_list = CategoriesList::from(vec![
+            same_other_category.clone(),
+            extra_other_category.clone(),
+        ]);
+
+        let ListComparison {
+            extra_self,
+            extra_other,
+            same,
+        } = self_list.compare_by_name(&other_list);
+
+        assert_eq!(extra_self, vec![&extra_self_category]);
+        assert_eq!(extra_other, vec![&extra_other_category]);
+        assert_eq!(same, vec![(&same_self_category, &same_other_category)]);
     }
 }

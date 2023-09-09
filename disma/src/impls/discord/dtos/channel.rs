@@ -60,10 +60,14 @@ impl ChannelRequest {
         roles: &RolesList<ExistingRole>,
         categories: &CategoriesList<ExistingCategory>,
     ) -> Self {
-        let category = channel
-            .category
-            .as_ref()
-            .map(|category| categories.find_by_name_panic(&category.name));
+        let category = channel.category.as_ref().map(|category| {
+            categories.find_by_name(&category.name).unwrap_or_else(|| {
+                panic!(
+                    "Cannot create channel request with non-existant category {}.",
+                    &category.name
+                )
+            })
+        });
 
         let permission_overwrites = channel
             .overwrites

@@ -1,3 +1,5 @@
+use fake::Fake;
+
 use crate::{
     category::ExistingCategory, permission::PermissionsOverwritesList, role::ExistingRole,
 };
@@ -11,8 +13,8 @@ pub struct ExistingCategoryFixture {
 impl ExistingCategoryFixture {
     pub fn new() -> Self {
         Self {
-            id: "123".to_string(),
-            name: "abc".to_string(),
+            id: fake::uuid::UUIDv4.fake(),
+            name: fake::faker::lorem::en::Word().fake(),
             overwrites: PermissionsOverwritesList::from(Vec::new()),
         }
     }

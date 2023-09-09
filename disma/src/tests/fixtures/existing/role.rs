@@ -1,3 +1,5 @@
+use fake::Fake;
+
 use crate::{permission::PermissionsList, role::ExistingRole};
 
 pub struct ExistingRoleFixture {
@@ -12,8 +14,8 @@ pub struct ExistingRoleFixture {
 impl ExistingRoleFixture {
     pub fn new() -> Self {
         Self {
-            id: "123".to_string(),
-            name: "abc".to_string(),
+            id: fake::uuid::UUIDv4.fake(),
+            name: fake::faker::lorem::en::Word().fake(),
             permissions: PermissionsList::from(Vec::new()),
             color: None,
             is_mentionable: false,
