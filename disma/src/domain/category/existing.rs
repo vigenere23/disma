@@ -1,6 +1,6 @@
 use crate::{permission::PermissionsOverwritesList, role::ExistingRole};
 
-use super::{CategoriesList, Category};
+use super::Category;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExistingCategory {
@@ -18,13 +18,5 @@ impl ToString for ExistingCategory {
 impl Category for ExistingCategory {
     fn name(&self) -> &str {
         &self.name
-    }
-}
-
-impl CategoriesList<ExistingCategory> {
-    pub fn find_by_id(&self, id: &str) -> Option<&ExistingCategory> {
-        self.to_list()
-            .into_iter()
-            .find(|category| category.id == id)
     }
 }
