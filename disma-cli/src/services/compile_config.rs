@@ -22,6 +22,7 @@ impl CompileConfig {
 
     pub fn run(&self, template_file: &str, vars_file: &str, output_file: &str, force: bool) {
         let template = fs::read_to_string(template_file).unwrap();
+        // TODO context should probably be a Hash instead or a serde_yaml::Value
         let context: Value = self.deserializer.deserialize(Path::new(vars_file));
 
         println!();
