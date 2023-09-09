@@ -23,9 +23,12 @@ impl UpdateRoleFixture {
     }
 
     pub fn build(self) -> UpdateRole {
+        let awaiting_role = AwaitingRoleFixture::new().build();
         UpdateRole::new(
-            ExistingRoleFixture::new().build(),
-            AwaitingRoleFixture::new().build(),
+            ExistingRoleFixture::new()
+                .with_name(&awaiting_role.name)
+                .build(),
+            awaiting_role,
         )
     }
 }

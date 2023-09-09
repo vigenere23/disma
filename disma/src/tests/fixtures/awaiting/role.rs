@@ -1,3 +1,5 @@
+use fake::Fake;
+
 use crate::{permission::PermissionsList, role::AwaitingRole};
 
 pub struct AwaitingRoleFixture {
@@ -11,7 +13,7 @@ pub struct AwaitingRoleFixture {
 impl AwaitingRoleFixture {
     pub fn new() -> Self {
         Self {
-            name: "abc".to_string(),
+            name: fake::faker::lorem::en::Word().fake(),
             permissions: PermissionsList::from(Vec::new()),
             color: None,
             is_mentionable: false,

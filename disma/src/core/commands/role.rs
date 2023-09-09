@@ -124,7 +124,7 @@ mod tests {
             commands::Command,
             events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
         },
-        guild::GuildCommanderMock,
+        guild::{ExistingGuild, GuildCommanderMock},
         tests::fixtures::{
             commands::{AddRoleFixture, DeleteRoleFixture, UpdateRoleFixture},
             existing::{ExistingGuildFixture, ExistingRoleFixture},
@@ -132,19 +132,26 @@ mod tests {
     };
 
     const AN_ERROR_MESSAGE: &str = "Unexpected error";
+    const A_ROLE_NAME: &str = "abc";
+
+    fn setup() -> (GuildCommanderMock, ChangeEventListenerMock, ExistingGuild) {
+        let commander = GuildCommanderMock::new();
+        let event_listener = ChangeEventListenerMock::new();
+        let existing_guild = ExistingGuildFixture::new().build();
+
+        event_listener.when_handle(any()).will_return_default();
+
+        return (commander, event_listener, existing_guild);
+    }
 
     #[test]
     fn when_adding_role_should_add_role_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_add_role(any())
             .will_return(Ok(ExistingRoleFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let add_command = AddRoleFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_add_role(eq(&add_command.role));
@@ -152,16 +159,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_adding_role_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_add_role(any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let add_command = AddRoleFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -171,37 +174,32 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_adding_role_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddRoleFixture::new().build();
-
+    fn given_succeeding_commander_when_adding_role_should_notify_of_success_and_add_existing_role()
+    {
+        let (commander, event_listener, mut existing_guild) = setup();
+        let created_role = ExistingRoleFixture::new().build();
         commander
             .when_add_role(any())
-            .will_return(Ok(ExistingRoleFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
+            .will_return(Ok(created_role.clone()));
 
+        let add_command = AddRoleFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Success(Change::Create(
             ChangeEntity::Role,
             add_command.role.name.to_string(),
         ))));
+        assert_eq!(existing_guild.roles().to_list(), vec![&created_role]);
     }
 
     #[test]
     fn when_updating_role_should_update_role_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_update_role(any(), any())
             .will_return(Ok(ExistingRoleFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let update_command = UpdateRoleFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_update_role(
@@ -212,16 +210,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_updating_role_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_update_role(any(), any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let update_command = UpdateRoleFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -234,35 +228,32 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_updating_role_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateRoleFixture::new().build();
-
+    fn given_succeeding_commander_when_updating_role_should_notify_of_success_and_replace_existing_role(
+    ) {
+        let (commander, event_listener, mut existing_guild) = setup();
+        let existing_role = ExistingRoleFixture::new().with_name(A_ROLE_NAME).build();
+        let updated_role = ExistingRoleFixture::new().with_name(A_ROLE_NAME).build();
+        existing_guild.add_or_replace_role(existing_role);
         commander
             .when_update_role(any(), any())
-            .will_return(Ok(ExistingRoleFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
+            .will_return(Ok(updated_role.clone()));
 
+        let update_command = UpdateRoleFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Success(Change::Update(
             ChangeEntity::Role,
             update_command.awaiting_role.name.to_string(),
         ))));
+        assert_eq!(existing_guild.roles().to_list(), vec![&updated_role]);
     }
 
     #[test]
     fn when_deleting_role_should_delete_role_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let delete_command = DeleteRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander.when_delete_role(any()).will_return(Ok(()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let delete_command = DeleteRoleFixture::new().build();
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_delete_role(eq(&delete_command.role.id));
@@ -270,16 +261,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_deleting_role_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let delete_command = DeleteRoleFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_delete_role(any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let delete_command = DeleteRoleFixture::new().build();
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -289,14 +276,12 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_deleting_role_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
+    fn given_succeeding_commander_when_deleting_role_should_notify_of_success_and_delete_existing_role(
+    ) {
+        let (commander, event_listener, mut existing_guild) = setup();
         let delete_command = DeleteRoleFixture::new().build();
-
+        existing_guild.add_or_replace_role(delete_command.role.clone());
         commander.when_delete_role(any()).will_return(Ok(()));
-        event_listener.when_handle(any()).will_return_default();
 
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
@@ -304,5 +289,6 @@ mod tests {
             ChangeEntity::Role,
             delete_command.role.name.to_string(),
         ))));
+        assert!(existing_guild.roles().to_list().is_empty());
     }
 }
