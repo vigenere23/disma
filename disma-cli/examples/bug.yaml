@@ -13,9 +13,12 @@ roles:
 categories:
   items:
     - name: First
+    - name: Second
 
 channels:
   items:
+    - name: same_name
     - category: First
       name: same_name
-    - name: same_name
+    - category: Second
+      name: same_name

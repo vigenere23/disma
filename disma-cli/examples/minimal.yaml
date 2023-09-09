@@ -9,13 +9,3 @@ roles:
         - ADMINISTRATOR
       show_in_sidebar: false
       is_mentionable: false
-  extra_items:
-    strategy: REMOVE
-
-categories:
-  extra_items:
-    strategy: REMOVE
-
-channels:
-  extra_items:
-    strategy: REMOVE
