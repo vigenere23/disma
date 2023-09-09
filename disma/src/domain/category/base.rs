@@ -107,7 +107,10 @@ impl CategoriesList<ExistingCategory> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{category::ExistingCategory, tests::fixtures::existing::ExistingCategoryFixture};
+    use crate::{
+        category::ExistingCategory, core::ListComparison,
+        tests::fixtures::existing::ExistingCategoryFixture,
+    };
 
     use super::CategoriesList;
 
@@ -213,5 +216,32 @@ mod tests {
         let mut list = CategoriesList::<ExistingCategory>::new();
 
         list.remove(non_existant_category);
+    }
+
+    #[test]
+    fn can_compare_lists_by_category_names() {
+        let extra_self_category = ExistingCategoryFixture::new().build();
+        let extra_other_category = ExistingCategoryFixture::new().build();
+        let same_self_category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+        let same_other_category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
+
+        let self_list = CategoriesList::from(vec![
+            same_self_category.clone(),
+            extra_self_category.clone(),
+        ]);
+        let other_list = CategoriesList::from(vec![
+            same_other_category.clone(),
+            extra_other_category.clone(),
+        ]);
+
+        let ListComparison {
+            extra_self,
+            extra_other,
+            same,
+        } = self_list.compare_by_name(&other_list);
+
+        assert_eq!(extra_self, vec![&extra_self_category]);
+        assert_eq!(extra_other, vec![&extra_other_category]);
+        assert_eq!(same, vec![(&same_self_category, &same_other_category)]);
     }
 }

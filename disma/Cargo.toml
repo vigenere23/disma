@@ -19,5 +19,6 @@ serde_repr = "0.1.9"
 strum = { version = "0.24.1", features = ["derive"] }
 
 [dev-dependencies]
+fake = { version = "2.8.0", features = ["uuid"] }
 mock-it = "0.9.0"
 serde_yaml = "0.9.16"
