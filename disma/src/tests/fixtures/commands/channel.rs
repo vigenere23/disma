@@ -1,7 +1,5 @@
 use crate::{
-    category::CategoriesList,
     core::commands::channel::{AddChannel, DeleteChannel, UpdateChannel},
-    role::RolesList,
     tests::fixtures::{awaiting::AwaitingChannelFixture, existing::ExistingChannelFixture},
 };
 
@@ -13,11 +11,7 @@ impl AddChannelFixture {
     }
 
     pub fn build(self) -> AddChannel {
-        AddChannel::new(
-            AwaitingChannelFixture::new().build(),
-            RolesList::new(),
-            CategoriesList::new(),
-        )
+        AddChannel::new(AwaitingChannelFixture::new().build())
     }
 }
 
@@ -32,8 +26,6 @@ impl UpdateChannelFixture {
         UpdateChannel::new(
             ExistingChannelFixture::new().build(),
             AwaitingChannelFixture::new().build(),
-            RolesList::new(),
-            CategoriesList::new(),
         )
     }
 }

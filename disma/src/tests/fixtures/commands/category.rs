@@ -1,6 +1,5 @@
 use crate::{
     core::commands::category::{AddCategory, DeleteCategory, UpdateCategory},
-    role::RolesList,
     tests::fixtures::{awaiting::AwaitingCategoryFixture, existing::ExistingCategoryFixture},
 };
 
@@ -12,7 +11,7 @@ impl AddCategoryFixture {
     }
 
     pub fn build(self) -> AddCategory {
-        AddCategory::new(AwaitingCategoryFixture::new().build(), RolesList::new())
+        AddCategory::new(AwaitingCategoryFixture::new().build())
     }
 }
 
@@ -27,7 +26,6 @@ impl UpdateCategoryFixture {
         UpdateCategory::new(
             ExistingCategoryFixture::new().build(),
             AwaitingCategoryFixture::new().build(),
-            RolesList::new(),
         )
     }
 }

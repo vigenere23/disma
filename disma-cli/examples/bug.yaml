@@ -1,0 +1,24 @@
+roles:
+  items:
+    - name: "@everyone"
+      permissions: []
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: disma
+      permissions:
+        - ADMINISTRATOR
+      show_in_sidebar: false
+      is_mentionable: false
+
+categories:
+  items:
+    - name: First
+    - name: Second
+
+channels:
+  items:
+    - name: same_name
+    - category: First
+      name: same_name
+    - category: Second
+      name: same_name

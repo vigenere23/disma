@@ -91,4 +91,8 @@ impl RolesList<ExistingRole> {
     pub fn add_or_replace(&mut self, role: ExistingRole) {
         self.roles_by_name.insert(role.name().to_string(), role);
     }
+
+    pub fn remove(&mut self, role: ExistingRole) {
+        self.roles_by_name.remove(role.name());
+    }
 }

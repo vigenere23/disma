@@ -1,0 +1,76 @@
+roles:
+  items:
+    - name: "@everyone"
+      permissions:
+        - READ_MESSAGE_HISTORY
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: disma
+      permissions:
+        - ADMINISTRATOR
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: Basic
+      permissions:
+        - CONNECT
+        - SPEAK
+        - READ_MESSAGE_HISTORY
+        - VIEW_CHANNEL
+        - SEND_MESSAGES
+      show_in_sidebar: true
+      is_mentionable: true
+    - name: Contrib
+      permissions:
+        - MANAGE_CHANNELS
+        - MANAGE_ROLES
+      show_in_sidebar: true
+      is_mentionable: true
+  extra_items:
+    strategy: REMOVE
+
+categories:
+  items:
+    - name: Everyone
+      permissions_overwrites:
+        - role: "@everyone"
+          allow:
+            - VIEW_CHANNEL
+      extra_channels:
+        strategy: SYNC_PERMISSIONS
+    - name: Newcomers
+      permissions_overwrites:
+        - role: Basic
+          allow:
+            - VIEW_CHANNEL
+      extra_channels:
+        strategy: SYNC_PERMISSIONS
+    - name: Pros
+      permissions_overwrites:
+        - role: "@everyone"
+          deny:
+            - VIEW_CHANNEL
+            - CONNECT
+        - role: Contrib
+          allow:
+            - VIEW_CHANNEL
+      extra_channels:
+        strategy: SYNC_PERMISSIONS
+  extra_items:
+    strategy: REMOVE
+
+channels:
+  items:
+    - category: Everyone
+      name: welcome
+      permissions_overwrites:
+        strategy: FROM_CATEGORY
+    - category: Newcomers
+      name: discussion
+      permissions_overwrites:
+        strategy: FROM_CATEGORY
+    - category: Pros
+      name: planing
+      permissions_overwrites:
+        strategy: FROM_CATEGORY
+  extra_items:
+    strategy: REMOVE
