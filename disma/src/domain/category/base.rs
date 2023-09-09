@@ -129,7 +129,7 @@ mod tests {
     }
 
     #[test]
-    fn given_non_existant_when_finding_by_name_should_return_none() {
+    fn given_category_not_in_list_when_finding_by_name_should_return_none() {
         let list = CategoriesList::<ExistingCategory>::new();
 
         let found = list.find_by_name(SOME_NAME);
@@ -149,7 +149,7 @@ mod tests {
     }
 
     #[test]
-    fn given_non_existant_when_finding_by_id_should_return_none() {
+    fn given_category_not_in_list_when_finding_by_id_should_return_none() {
         let list = CategoriesList::<ExistingCategory>::new();
 
         let found = list.find_by_id(SOME_ID);
@@ -172,7 +172,7 @@ mod tests {
     fn given_category_with_same_name_already_in_list_when_adding_category_should_panics() {
         let category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
         let category_copy = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
-        let mut list = CategoriesList::<ExistingCategory>::from(vec![category]);
+        let mut list = CategoriesList::from(vec![category]);
 
         list.add(category_copy);
     }
@@ -193,7 +193,7 @@ mod tests {
         // If the name changes (like for invalid characters), it might cause problems?
         let category = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
         let category_clone = ExistingCategoryFixture::new().with_name(SOME_NAME).build();
-        let mut list = CategoriesList::<ExistingCategory>::from(vec![category]);
+        let mut list = CategoriesList::from(vec![category]);
 
         list.add_or_replace(category_clone.clone());
 
@@ -203,7 +203,7 @@ mod tests {
     #[test]
     fn can_remove_category() {
         let category = ExistingCategoryFixture::new().build();
-        let mut list = CategoriesList::<ExistingCategory>::from(vec![category.clone()]);
+        let mut list = CategoriesList::from(vec![category.clone()]);
 
         list.remove(category);
 
