@@ -132,7 +132,7 @@ mod tests {
     };
 
     const AN_ERROR_MESSAGE: &str = "Unexpected error";
-    const A_ROLE_NAME: &str = "abc";
+    const A_ROLE_NAME: &str = "role abc";
 
     fn setup() -> (GuildCommanderMock, ChangeEventListenerMock, ExistingGuild) {
         let commander = GuildCommanderMock::new();
@@ -276,12 +276,14 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_deleting_role_should_notify_of_success_and_delete_existing_role(
+    fn given_succeeding_commander_when_deleting_role_should_notify_of_success_and_remove_existing_role(
     ) {
         let (commander, event_listener, mut existing_guild) = setup();
+        commander.when_delete_role(any()).will_return(Ok(()));
+
         let delete_command = DeleteRoleFixture::new().build();
         existing_guild.add_or_replace_role(delete_command.role.clone());
-        commander.when_delete_role(any()).will_return(Ok(()));
+        assert!(!existing_guild.roles().to_list().is_empty());
 
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
