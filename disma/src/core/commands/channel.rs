@@ -151,6 +151,7 @@ mod tests {
     };
 
     const AN_ERROR_MESSAGE: &str = "Unexpected error";
+    const A_CHANNEL_NAME: &str = "channel abc";
 
     fn setup() -> (GuildCommanderMock, ChangeEventListenerMock, ExistingGuild) {
         let commander = GuildCommanderMock::new();
@@ -199,11 +200,13 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_adding_channel_should_notify_of_success() {
+    fn given_succeeding_commander_when_adding_channel_should_notify_of_success_and_add_existing_channel(
+    ) {
         let (commander, event_listener, mut existing_guild) = setup();
+        let created_channel = ExistingChannelFixture::new().build();
         commander
             .when_add_channel(any(), any(), any())
-            .will_return(Ok(ExistingChannelFixture::new().build()));
+            .will_return(Ok(created_channel.clone()));
 
         let add_command = AddChannelFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
@@ -212,6 +215,7 @@ mod tests {
             ChangeEntity::Channel,
             add_command.channel.unique_name().to_string(),
         ))));
+        assert_eq!(existing_guild.channels().to_list(), vec![&created_channel]);
     }
 
     #[test]
@@ -252,11 +256,19 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_updating_channel_should_notify_of_success() {
+    fn given_succeeding_commander_when_updating_channel_should_notify_of_success_and_replace_existing_channel(
+    ) {
         let (commander, event_listener, mut existing_guild) = setup();
+        let existing_channel = ExistingChannelFixture::new()
+            .with_name(A_CHANNEL_NAME)
+            .build();
+        let updated_channel = ExistingChannelFixture::new()
+            .with_name(A_CHANNEL_NAME)
+            .build();
+        existing_guild.add_or_replace_channel(existing_channel);
         commander
             .when_update_channel(any(), any(), any(), any())
-            .will_return(Ok(ExistingChannelFixture::new().build()));
+            .will_return(Ok(updated_channel.clone()));
 
         let update_command = UpdateChannelFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
@@ -265,6 +277,7 @@ mod tests {
             ChangeEntity::Channel,
             update_command.awaiting_channel.unique_name().to_string(),
         ))));
+        assert_eq!(existing_guild.channels().to_list(), vec![&updated_channel]);
     }
 
     #[test]
@@ -298,16 +311,21 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_deleting_channel_should_notify_of_success() {
+    fn given_succeeding_commander_when_deleting_channel_should_notify_of_success_and_remove_existing_channel(
+    ) {
         let (commander, event_listener, mut existing_guild) = setup();
         commander.when_delete_channel(any()).will_return(Ok(()));
 
         let delete_command = DeleteChannelFixture::new().build();
+        existing_guild.add_or_replace_channel(delete_command.channel.clone());
+        assert!(!existing_guild.channels().to_list().is_empty());
+
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Success(Change::Delete(
             ChangeEntity::Channel,
             delete_command.channel.unique_name().to_string(),
         ))));
+        assert!(existing_guild.channels().to_list().is_empty());
     }
 }

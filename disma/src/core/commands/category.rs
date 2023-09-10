@@ -300,7 +300,7 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_deleting_category_should_notify_of_success_and_remove_category(
+    fn given_succeeding_commander_when_deleting_category_should_notify_of_success_and_remove_existing_category(
     ) {
         let (commander, event_listener, mut existing_guild) = setup();
         commander.when_delete_category(any()).will_return(Ok(()));
