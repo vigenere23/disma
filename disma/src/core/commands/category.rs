@@ -131,7 +131,7 @@ mod tests {
             commands::Command,
             events::{Change, ChangeEntity, ChangeEvent, ChangeEventListenerMock},
         },
-        guild::GuildCommanderMock,
+        guild::{ExistingGuild, GuildCommanderMock},
         tests::fixtures::{
             commands::{AddCategoryFixture, DeleteCategoryFixture, UpdateCategoryFixture},
             existing::{ExistingCategoryFixture, ExistingGuildFixture},
@@ -139,19 +139,26 @@ mod tests {
     };
 
     const AN_ERROR_MESSAGE: &str = "Unexpected error";
+    const A_CATEGORY_NAME: &str = "category abc";
+
+    fn setup() -> (GuildCommanderMock, ChangeEventListenerMock, ExistingGuild) {
+        let commander = GuildCommanderMock::new();
+        let event_listener = ChangeEventListenerMock::new();
+        let existing_guild = ExistingGuildFixture::new().build();
+
+        event_listener.when_handle(any()).will_return_default();
+
+        return (commander, event_listener, existing_guild);
+    }
 
     #[test]
     fn when_adding_category_should_add_category_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_add_category(any(), any())
             .will_return(Ok(ExistingCategoryFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let add_command = AddCategoryFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_add_category(eq(&add_command.category), eq(existing_guild.roles()));
@@ -159,16 +166,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_adding_category_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_add_category(any(), any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let add_command = AddCategoryFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -181,37 +184,35 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_adding_category_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let add_command = AddCategoryFixture::new().build();
-
+    fn given_succeeding_commander_when_adding_category_should_notify_of_success_and_add_existing_category(
+    ) {
+        let (commander, event_listener, mut existing_guild) = setup();
+        let created_category = ExistingCategoryFixture::new().build();
         commander
             .when_add_category(any(), any())
-            .will_return(Ok(ExistingCategoryFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
+            .will_return(Ok(created_category.clone()));
 
+        let add_command = AddCategoryFixture::new().build();
         add_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Success(Change::Create(
             ChangeEntity::Category,
             add_command.category.name.to_string(),
         ))));
+        assert_eq!(
+            existing_guild.categories().to_list(),
+            vec![&created_category]
+        );
     }
 
     #[test]
     fn when_updating_category_should_update_category_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_update_category(any(), any(), any())
             .will_return(Ok(ExistingCategoryFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let update_command = UpdateCategoryFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_update_category(
@@ -223,16 +224,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_updating_category_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_update_category(any(), any(), any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let update_command = UpdateCategoryFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -245,35 +242,39 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_updating_category_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let update_command = UpdateCategoryFixture::new().build();
-
+    fn given_succeeding_commander_when_updating_category_should_notify_of_success_and_replace_existing_category(
+    ) {
+        let (commander, event_listener, mut existing_guild) = setup();
+        let existing_category = ExistingCategoryFixture::new()
+            .with_name(A_CATEGORY_NAME)
+            .build();
+        let updated_category = ExistingCategoryFixture::new()
+            .with_name(A_CATEGORY_NAME)
+            .build();
+        existing_guild.add_or_replace_category(existing_category);
         commander
             .when_update_category(any(), any(), any())
-            .will_return(Ok(ExistingCategoryFixture::new().build()));
-        event_listener.when_handle(any()).will_return_default();
+            .will_return(Ok(updated_category.clone()));
 
+        let update_command = UpdateCategoryFixture::new().build();
         update_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Success(Change::Update(
             ChangeEntity::Category,
             update_command.awaiting_category.name.to_string(),
         ))));
+        assert_eq!(
+            existing_guild.categories().to_list(),
+            vec![&updated_category]
+        );
     }
 
     #[test]
     fn when_deleting_category_should_delete_category_with_commander() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let delete_command = DeleteCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander.when_delete_category(any()).will_return(Ok(()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let delete_command = DeleteCategoryFixture::new().build();
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
         commander.expect_delete_category(eq(&delete_command.category.id));
@@ -281,16 +282,12 @@ mod tests {
 
     #[test]
     fn given_failing_commander_when_deleting_category_should_notify_of_error() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let delete_command = DeleteCategoryFixture::new().build();
-
+        let (commander, event_listener, mut existing_guild) = setup();
         commander
             .when_delete_category(any())
             .will_return(Err(AN_ERROR_MESSAGE.to_string()));
-        event_listener.when_handle(any()).will_return_default();
 
+        let delete_command = DeleteCategoryFixture::new().build();
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
         event_listener.expect_handle(eq(ChangeEvent::Error(
@@ -303,14 +300,14 @@ mod tests {
     }
 
     #[test]
-    fn given_succeeding_commander_when_deleting_category_should_notify_of_success() {
-        let commander = GuildCommanderMock::new();
-        let event_listener = ChangeEventListenerMock::new();
-        let mut existing_guild = ExistingGuildFixture::new().build();
-        let delete_command = DeleteCategoryFixture::new().build();
-
+    fn given_succeeding_commander_when_deleting_category_should_notify_of_success_and_remove_existing_category(
+    ) {
+        let (commander, event_listener, mut existing_guild) = setup();
         commander.when_delete_category(any()).will_return(Ok(()));
-        event_listener.when_handle(any()).will_return_default();
+
+        let delete_command = DeleteCategoryFixture::new().build();
+        existing_guild.add_or_replace_category(delete_command.category.clone());
+        assert!(!existing_guild.categories().to_list().is_empty());
 
         delete_command.execute(&commander, &event_listener, &mut existing_guild);
 
@@ -318,5 +315,6 @@ mod tests {
             ChangeEntity::Category,
             delete_command.category.name.to_string(),
         ))));
+        assert!(existing_guild.categories().to_list().is_empty());
     }
 }
