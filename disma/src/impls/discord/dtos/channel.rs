@@ -3,7 +3,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::{
     category::{AwaitingCategory, CategoriesList, ExistingCategory},
-    channel::{AwaitingChannel, ChannelType, ExistingChannel},
+    channel::{AwaitingChannel, ChannelType, ExistingChannel, UniqueChannelName},
     permission::{PermissionsOverwrite, PermissionsOverwritesList},
     role::{ExistingRole, RolesList},
 };
@@ -115,7 +115,7 @@ impl ChannelResponse {
                     Ok(overwrites) => Some(overwrites),
                     Err(message) => {
                         eprintln!(
-                            "Error while parsing permissions overwrites for category {}: {}",
+                            "Error while parsing permissions overwrites for category '{}': {}",
                             &self.name, message
                         );
                         None
@@ -161,9 +161,13 @@ impl ChannelResponse {
                 match result {
                     Ok(overwrites) => Some(overwrites),
                     Err(message) => {
+                        let channel_name = UniqueChannelName::from(
+                            &self.name,
+                            &channel_type,
+                            category.map(|c| c.name.as_str()),
+                        );
                         eprintln!(
-                            "Error while parsing permissions overwrites for channel {}: {}",
-                            &self.name, message
+                            "Error while parsing permissions overwrites for channel '{channel_name}': {message}",
                         );
                         None
                     }
