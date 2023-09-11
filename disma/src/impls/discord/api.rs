@@ -10,6 +10,7 @@ use reqwest::{
 use super::dtos::{
     channel::{ChannelRequest, ChannelResponse},
     guild::GuildResponse,
+    member::MemberResponse,
     role::{RoleRequest, RoleResponse},
 };
 
@@ -141,6 +142,20 @@ impl DiscordApi {
         let response = self.handle_http_error(self.client.clone().delete(&url).send())?;
 
         self.handle_response(response).map(|_| ())
+    }
+
+    pub fn list_members(&self, guild_id: &str) -> Result<Vec<MemberResponse>, DiscordError> {
+        let url = format!("/guilds/{guild_id}/members");
+        let response = self.handle_http_error(
+            self.client
+                .clone()
+                .get(&url)
+                .query(String::from("limit"), 1000)
+                .send(),
+        )?;
+
+        self.handle_response(response)
+            .map(|response| response.parsed_body().unwrap())
     }
 
     fn handle_request(&self, result: Result<Request, HttpError>) -> Result<Request, DiscordError> {

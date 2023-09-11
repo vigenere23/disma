@@ -6,6 +6,7 @@ If you don't have created a bot yet, here's how to do it :
 
 1. Go to <https://discord.com/developers/applications>, login and create an application.
 2. Go to the created application, click on `Bot` on the sidebar and create a bot.
+   - Make sure to enable the `Server Members Intent` in the `Privileged Gateway Intents` section.
 3. Go to the created Bot page and copy the token (might need to create it first).
    - :warning: **Don't forget to save the token** (in the environment variable `DISCORD_BOT_TOKEN` for `disma-cli`).
 

@@ -98,6 +98,7 @@ pub struct Request {
     url: String,
     headers: HeaderMap,
     body: Option<String>,
+    query: Vec<(String, String)>,
 }
 
 impl Request {
@@ -107,6 +108,7 @@ impl Request {
             url: url.to_string(),
             headers: HeaderMap::new(),
             body: None,
+            query: Vec::new(),
         }
     }
 
@@ -141,6 +143,11 @@ impl Request {
         self
     }
 
+    pub fn query(mut self, key: String, value: impl ToString) -> Self {
+        self.query.push((key, value.to_string()));
+        self
+    }
+
     pub fn json_body<T: Serialize>(mut self, body: T) -> Result<Self, HttpError> {
         let json_body = serde_json::to_string(&body)
             .map_err(|error| HttpError::SendingJsonPayload(error.to_string()))?;
@@ -153,7 +160,8 @@ impl Request {
         let client = reqwest::blocking::Client::new();
         let mut request = client
             .request(self.method.clone(), self.url.clone())
-            .headers(self.headers.clone());
+            .headers(self.headers.clone())
+            .query(self.query.as_slice());
 
         request = match &self.body {
             Some(body) => request.body(body.clone()),
