@@ -44,3 +44,8 @@ impl ExtraRolesStrategy for KeepExtraRoles {
 
     fn handle_extra_role(&self, _extra_existing: &ExistingRole, _changes: &mut Vec<RoleChange>) {}
 }
+
+#[cfg(test)]
+mod tests {
+    // TODO
+}

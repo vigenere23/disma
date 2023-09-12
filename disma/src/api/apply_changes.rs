@@ -51,91 +51,82 @@ impl ApplyChangesUseCase {
         let awaiting_guild: AwaitingGuild = params.into();
         let mut existing_guild = self.querier.get_guild(guild_id);
 
-        self.apply_role_commands(&awaiting_guild, &mut existing_guild);
-        self.apply_category_commands(&awaiting_guild, &mut existing_guild);
-        self.apply_channel_commands(&awaiting_guild, &mut existing_guild);
+        let role_commands = self.list_role_commands(&awaiting_guild, &mut existing_guild);
+        let category_commands = self.list_category_commands(&awaiting_guild, &mut existing_guild);
+        let channel_commands = self.list_channel_commands(&awaiting_guild, &mut existing_guild);
+
+        let commands = role_commands
+            .chain(category_commands)
+            .chain(channel_commands)
+            .collect();
+
+        self.execute_commands(commands, &mut existing_guild);
     }
 
-    fn apply_role_commands(
+    fn list_role_commands(
         &self,
         awaiting_guild: &AwaitingGuild,
         existing_guild: &mut ExistingGuild,
-    ) {
-        let mut commands = Vec::<CommandRef>::new();
-
+    ) -> impl Iterator<Item = CommandRef> {
         let role_changes = self
             .role_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
-        for role_change in role_changes {
-            match role_change {
-                RoleChange::Create(awaiting) => commands.push(Arc::from(AddRole::new(awaiting))),
+        role_changes
+            .into_iter()
+            .map(|role_change| match role_change {
+                RoleChange::Create(awaiting) => Arc::from(AddRole::new(awaiting)) as CommandRef,
                 RoleChange::Update(existing, awaiting, _) => {
-                    commands.push(Arc::from(UpdateRole::new(existing, awaiting)))
+                    Arc::from(UpdateRole::new(existing, awaiting))
                 }
-                RoleChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteRole::new(existing.clone())))
-                }
-            }
-        }
-
-        self.execute_commands(commands, existing_guild);
+                RoleChange::Delete(existing) => Arc::from(DeleteRole::new(existing.clone())),
+            })
     }
 
-    fn apply_category_commands(
+    fn list_category_commands(
         &self,
         awaiting_guild: &AwaitingGuild,
         existing_guild: &mut ExistingGuild,
-    ) {
-        let mut commands = Vec::<CommandRef>::new();
-
+    ) -> impl Iterator<Item = CommandRef> {
         let category_changes = self
             .category_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
-        for category_change in category_changes {
-            match category_change {
+        category_changes
+            .into_iter()
+            .map(|category_change| match category_change {
                 CategoryChange::Create(awaiting) => {
-                    commands.push(Arc::from(AddCategory::new(awaiting)))
+                    Arc::from(AddCategory::new(awaiting)) as CommandRef
                 }
-                CategoryChange::Update(existing, awaiting, _) => commands.push(Arc::from(
-                    UpdateCategory::new(existing.clone(), awaiting.clone()),
-                )),
+                CategoryChange::Update(existing, awaiting, _) => {
+                    Arc::from(UpdateCategory::new(existing.clone(), awaiting.clone()))
+                }
                 CategoryChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteCategory::new(existing.clone())))
+                    Arc::from(DeleteCategory::new(existing.clone()))
                 }
-            }
-        }
-
-        self.execute_commands(commands, existing_guild);
+            })
     }
 
-    fn apply_channel_commands(
+    fn list_channel_commands(
         &self,
         awaiting_guild: &AwaitingGuild,
         existing_guild: &mut ExistingGuild,
-    ) {
-        let mut commands = Vec::<CommandRef>::new();
-
+    ) -> impl Iterator<Item = CommandRef> {
         let channel_changes = self
             .channel_changes_service
             .list_changes(existing_guild, awaiting_guild);
 
-        for channel_change in channel_changes {
-            match channel_change {
+        channel_changes
+            .into_iter()
+            .map(|channel_change| match channel_change {
                 ChannelChange::Create(awaiting) => {
-                    commands.push(Arc::from(AddChannel::new(awaiting)))
+                    Arc::from(AddChannel::new(awaiting)) as CommandRef
                 }
-                ChannelChange::Update(existing, awaiting, _) => commands.push(Arc::from(
-                    UpdateChannel::new(existing.clone(), awaiting.clone()),
-                )),
-                ChannelChange::Delete(existing) => {
-                    commands.push(Arc::from(DeleteChannel::new(existing.clone())))
+                ChannelChange::Update(existing, awaiting, _) => {
+                    Arc::from(UpdateChannel::new(existing.clone(), awaiting.clone()))
                 }
-            }
-        }
-
-        self.execute_commands(commands, existing_guild);
+                ChannelChange::Delete(existing) => Arc::from(DeleteChannel::new(existing.clone())),
+            })
     }
 
     fn execute_commands(&self, commands: Vec<CommandRef>, existing_guild: &mut ExistingGuild) {
