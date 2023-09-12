@@ -3,15 +3,23 @@ use std::sync::Arc;
 
 use crate::{
     category::ExistingCategory,
-    core::commands::{category::DeleteCategory, CommandRef},
+    core::{
+        changes::category::CategoryChange,
+        commands::{category::DeleteCategory, CommandRef},
+    },
 };
 
 pub trait ExtraCategoriesStrategy {
     fn _type(&self) -> ExtraCategoriesStrategyType;
+    fn handle_extra_category_commands(
+        &self,
+        extra_existing: &ExistingCategory,
+        commands: &mut Vec<CommandRef>,
+    );
     fn handle_extra_category(
         &self,
-        extra_category: &ExistingCategory,
-        commands: &mut Vec<CommandRef>,
+        extra_existing: &ExistingCategory,
+        changes: &mut Vec<CategoryChange>,
     );
 }
 
@@ -34,13 +42,21 @@ impl ExtraCategoriesStrategy for RemoveExtraCategories {
         ExtraCategoriesStrategyType::Remove
     }
 
-    fn handle_extra_category(
+    fn handle_extra_category_commands(
         &self,
-        extra_category: &ExistingCategory,
+        extra_existing: &ExistingCategory,
         commands: &mut Vec<CommandRef>,
     ) {
-        let command = DeleteCategory::new(extra_category.clone());
+        let command = DeleteCategory::new(extra_existing.clone());
         commands.push(Arc::from(command));
+    }
+
+    fn handle_extra_category(
+        &self,
+        extra_existing: &ExistingCategory,
+        changes: &mut Vec<CategoryChange>,
+    ) {
+        changes.push(CategoryChange::Delete(extra_existing.clone()));
     }
 }
 
@@ -51,10 +67,17 @@ impl ExtraCategoriesStrategy for KeepExtraCategories {
         ExtraCategoriesStrategyType::Keep
     }
 
+    fn handle_extra_category_commands(
+        &self,
+        _extra_existing: &ExistingCategory,
+        _commands: &mut Vec<CommandRef>,
+    ) {
+    }
+
     fn handle_extra_category(
         &self,
-        _extra_category: &ExistingCategory,
-        _commands: &mut Vec<CommandRef>,
+        _extra_existing: &ExistingCategory,
+        _changes: &mut Vec<CategoryChange>,
     ) {
     }
 }

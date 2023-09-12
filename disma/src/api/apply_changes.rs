@@ -76,7 +76,7 @@ impl ApplyChangesUseCase {
                 RoleChange::Delete(existing) => awaiting_guild
                     .roles
                     .extra_items_strategy
-                    .handle_extra_role(&existing, &mut commands),
+                    .handle_extra_role_commands(&existing, &mut commands),
             }
         }
 
@@ -105,7 +105,7 @@ impl ApplyChangesUseCase {
                 CategoryChange::Delete(existing) => awaiting_guild
                     .categories
                     .extra_items_strategy
-                    .handle_extra_category(&existing, &mut commands),
+                    .handle_extra_category_commands(&existing, &mut commands),
             }
         }
 
@@ -134,7 +134,7 @@ impl ApplyChangesUseCase {
                 ChannelChange::Delete(existing) => awaiting_guild
                     .channels
                     .extra_items_strategy
-                    .handle_extra_channel(
+                    .handle_extra_channel_commands(
                         &existing,
                         &mut commands,
                         awaiting_guild.categories.items.find_by_name(&existing.name),

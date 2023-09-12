@@ -33,6 +33,7 @@ impl ChannelChangesService {
         let to_create = extra_awaiting
             .into_iter()
             .map(|awaiting| ChannelChange::Create(awaiting.clone()));
+
         let to_update = same.into_iter().filter_map(|(awaiting, existing)| {
             let diffs = existing.diffs_with(awaiting);
             match diffs.is_empty() {
@@ -44,9 +45,18 @@ impl ChannelChangesService {
                 )),
             }
         });
-        let to_delete = extra_existing
-            .into_iter()
-            .map(|existing| ChannelChange::Delete(existing.clone()));
+
+        let mut to_delete: Vec<ChannelChange> = Vec::new();
+        for existing in extra_existing.into_iter() {
+            awaiting_guild
+                .channels
+                .extra_items_strategy
+                .handle_extra_channel(
+                    existing,
+                    &mut to_delete,
+                    awaiting_guild.categories.items.find_by_name(&existing.name),
+                )
+        }
 
         to_create.chain(to_update).chain(to_delete).collect()
     }
