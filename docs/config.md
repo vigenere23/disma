@@ -46,7 +46,7 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
 
 **Fields**
 
-- `strategy` (`string`): Strategy for handling extra roles. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+- `strategy` (`string`): Strategy for handling extra roles. Options: `REMOVE`, `KEEP`. Default: `KEEP`.
 
 ## `categories`
 
@@ -63,13 +63,13 @@ The configuration file can be either a JSON file (`.json`) or a YAML file (`.yam
   - ⚠️ Every category needs to have a **unique _name_**.
 - `permissions_overwrites` (`PermissionsOverwrite[]`) : List of [permissions overwrites](#permissionsoverwrite).
 - `extra_channels`:
-  - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`, `SYNC_PERMISSIONS`. Default: `REMOVE`. `SYNC_PERMISSIONS` updates permissions to match categorie's.
+  - `strategy` (`string`): Strategy for handling extra channels under this category. Options: `REMOVE`, `KEEP`, `SYNC_PERMISSIONS`. Default: `KEEP`. `SYNC_PERMISSIONS` updates permissions to match categorie's.
 
 ### `categories.extra_items`
 
 **Fields**
 
-- `strategy` (`string`): Strategy for handling extra categories. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+- `strategy` (`string`): Strategy for handling extra categories. Options: `REMOVE`, `KEEP`. Default: `KEEP`.
 
 ## `channels`
 
@@ -123,7 +123,7 @@ Use permissions overwrites from category.
 
 **Fields**
 
-- `strategy` (`string`): Strategy for handling extra channels. Options: `REMOVE`, `KEEP`. Default: `REMOVE`.
+- `strategy` (`string`): Strategy for handling extra channels. Options: `REMOVE`, `KEEP`. Default: `KEEP`.
 
 ## Types
 

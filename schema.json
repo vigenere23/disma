@@ -36,7 +36,8 @@
           "properties": {
             "strategy": {
               "type": "string",
-              "enum": ["KEEP", "REMOVE"]
+              "enum": ["KEEP", "REMOVE"],
+              "default": "KEEP"
             }
           },
           "required": ["strategy"]
@@ -63,7 +64,8 @@
                 "properties": {
                   "strategy": {
                     "type": "string",
-                    "enum": ["KEEP", "REMOVE", "SYNC_PERMISSIONS"]
+                    "enum": ["KEEP", "REMOVE", "SYNC_PERMISSIONS"],
+                    "default": "KEEP"
                   }
                 },
                 "required": ["strategy"],
@@ -79,7 +81,8 @@
           "properties": {
             "strategy": {
               "type": "string",
-              "enum": ["KEEP", "REMOVE"]
+              "enum": ["KEEP", "REMOVE"],
+              "default": "KEEP"
             }
           },
           "required": ["strategy"],
@@ -148,7 +151,8 @@
           "properties": {
             "strategy": {
               "type": "string",
-              "enum": ["KEEP", "REMOVE"]
+              "enum": ["KEEP", "REMOVE"],
+              "default": "KEEP"
             }
           },
           "required": ["strategy"],
