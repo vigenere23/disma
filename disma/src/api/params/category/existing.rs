@@ -68,7 +68,7 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            extra_channels: CategoryParamsExtraChannelsStrategy::Remove,
+            extra_channels: CategoryParamsExtraChannelsStrategy::Keep,
         };
 
         (existing, params)

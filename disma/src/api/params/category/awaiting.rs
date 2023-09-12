@@ -81,7 +81,7 @@ mod tests {
             permission::PermissionsOverwriteParams,
         },
         category::{AwaitingCategoriesList, AwaitingCategory, CategoriesList, KeepExtraCategories},
-        channel::RemoveExtraChannels,
+        channel::KeepExtraChannels,
         permission::{
             Permission, PermissionsList, PermissionsOverwrite, PermissionsOverwritesList,
         },
@@ -101,7 +101,7 @@ mod tests {
                 allow: vec![Permission::ADMINISTRATOR],
                 deny: vec![Permission::ADMINISTRATOR],
             }],
-            extra_channels: CategoryParamsExtraChannelsStrategy::Remove,
+            extra_channels: CategoryParamsExtraChannelsStrategy::Keep,
         };
 
         let awaiting_entity = AwaitingCategory {
@@ -111,7 +111,7 @@ mod tests {
                 allow: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
                 deny: PermissionsList::from(vec![Permission::ADMINISTRATOR]),
             }]),
-            extra_channels_strategy: Arc::from(RemoveExtraChannels {}),
+            extra_channels_strategy: Arc::from(KeepExtraChannels {}),
         };
 
         (params, awaiting_entity)

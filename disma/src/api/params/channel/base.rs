@@ -47,7 +47,7 @@ pub enum ChannelParamsChannelType {
 
 impl Default for ChannelParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self::Remove
+        Self::Keep
     }
 }
 
@@ -140,7 +140,7 @@ mod tests {
                     items: vec![],
                 },
             }],
-            extra_items: ChannelParamsExtraItemsStrategy::Remove,
+            extra_items: ChannelParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: ChannelsParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

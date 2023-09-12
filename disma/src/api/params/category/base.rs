@@ -36,13 +36,13 @@ pub enum CategoryParamsExtraChannelsStrategy {
 
 impl Default for CategoryParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self::Remove
+        Self::Keep
     }
 }
 
 impl Default for CategoryParamsExtraChannelsStrategy {
     fn default() -> Self {
-        Self::Remove
+        Self::Keep
     }
 }
 
@@ -112,7 +112,7 @@ mod tests {
                 permissions_overwrites: vec![],
                 extra_channels: CategoryParamsExtraChannelsStrategy::default(),
             }],
-            extra_items: CategoryParamsExtraItemsStrategy::Remove,
+            extra_items: CategoryParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: CategoriesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();

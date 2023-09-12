@@ -30,7 +30,7 @@ pub struct RoleParams {
 
 impl Default for RoleParamsExtraItemsStrategy {
     fn default() -> Self {
-        Self::Remove
+        Self::Keep
     }
 }
 
@@ -96,7 +96,7 @@ mod tests {
                 show_in_sidebar: true,
                 is_mentionable: false,
             }],
-            extra_items: RoleParamsExtraItemsStrategy::Remove,
+            extra_items: RoleParamsExtraItemsStrategy::Keep,
         };
 
         let params_list: RolesParamsList = serde_yaml::from_str(yaml_params_list).unwrap();
