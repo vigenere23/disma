@@ -7,6 +7,7 @@ use crate::{
     guild::{AwaitingGuild, ExistingGuild},
 };
 
+#[derive(PartialEq, Debug)]
 pub enum CategoryChange {
     Create(AwaitingCategory),
     Update(ExistingCategory, AwaitingCategory, Vec<Diff>),

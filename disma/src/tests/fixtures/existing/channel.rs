@@ -38,6 +38,11 @@ impl ExistingChannelFixture {
         self
     }
 
+    pub fn with_category(mut self, category: &ExistingCategory) -> Self {
+        self.category = Some(category.clone());
+        self
+    }
+
     pub fn build(self) -> ExistingChannel {
         ExistingChannel {
             id: self.id,

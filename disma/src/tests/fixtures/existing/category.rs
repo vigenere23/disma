@@ -1,7 +1,9 @@
 use fake::Fake;
 
 use crate::{
-    category::ExistingCategory, permission::PermissionsOverwritesList, role::ExistingRole,
+    category::ExistingCategory,
+    permission::{PermissionsOverwrite, PermissionsOverwritesList},
+    role::ExistingRole,
 };
 
 pub struct ExistingCategoryFixture {
@@ -21,6 +23,14 @@ impl ExistingCategoryFixture {
 
     pub fn with_name(mut self, name: &str) -> Self {
         self.name = name.to_string();
+        self
+    }
+
+    pub fn with_permissions_overwrites(
+        mut self,
+        overwrites: Vec<PermissionsOverwrite<ExistingRole>>,
+    ) -> Self {
+        self.overwrites = PermissionsOverwritesList::from(overwrites);
         self
     }
 

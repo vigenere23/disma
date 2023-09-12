@@ -44,3 +44,33 @@ impl ExtraRolesStrategy for KeepExtraRoles {
 
     fn handle_extra_role(&self, _extra_existing: &ExistingRole, _changes: &mut Vec<RoleChange>) {}
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::fixtures::existing::ExistingRoleFixture;
+
+    use super::*;
+
+    #[test]
+    fn when_keeping_extra_roles_should_not_add_changes() {
+        let mut changes: Vec<RoleChange> = Vec::new();
+        let extra_role = ExistingRoleFixture::new().build();
+
+        let strategy = KeepExtraRoles {};
+        strategy.handle_extra_role(&extra_role, &mut changes);
+
+        assert!(changes.is_empty());
+    }
+
+    #[test]
+    fn when_removing_extra_roles_should_add_delete_change() {
+        let mut changes: Vec<RoleChange> = Vec::new();
+        let extra_role = ExistingRoleFixture::new().build();
+
+        let strategy = RemoveExtraRoles {};
+        strategy.handle_extra_role(&extra_role, &mut changes);
+
+        assert!(!changes.is_empty());
+        assert_eq!(changes, vec![RoleChange::Delete(extra_role)]);
+    }
+}
