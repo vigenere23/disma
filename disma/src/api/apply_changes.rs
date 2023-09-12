@@ -9,9 +9,9 @@ use crate::{
             role::{RoleChange, RoleChangesService},
         },
         commands::{
-            category::{AddCategory, UpdateCategory},
-            channel::{AddChannel, UpdateChannel},
-            role::{AddRole, UpdateRole},
+            category::{AddCategory, DeleteCategory, UpdateCategory},
+            channel::{AddChannel, DeleteChannel, UpdateChannel},
+            role::{AddRole, DeleteRole, UpdateRole},
             CommandRef,
         },
         events::ChangeEventListenerRef,
@@ -73,10 +73,9 @@ impl ApplyChangesUseCase {
                 RoleChange::Update(existing, awaiting, _) => {
                     commands.push(Arc::from(UpdateRole::new(existing, awaiting)))
                 }
-                RoleChange::Delete(existing) => awaiting_guild
-                    .roles
-                    .extra_items_strategy
-                    .handle_extra_role_commands(&existing, &mut commands),
+                RoleChange::Delete(existing) => {
+                    commands.push(Arc::from(DeleteRole::new(existing.clone())))
+                }
             }
         }
 
@@ -102,10 +101,9 @@ impl ApplyChangesUseCase {
                 CategoryChange::Update(existing, awaiting, _) => commands.push(Arc::from(
                     UpdateCategory::new(existing.clone(), awaiting.clone()),
                 )),
-                CategoryChange::Delete(existing) => awaiting_guild
-                    .categories
-                    .extra_items_strategy
-                    .handle_extra_category_commands(&existing, &mut commands),
+                CategoryChange::Delete(existing) => {
+                    commands.push(Arc::from(DeleteCategory::new(existing.clone())))
+                }
             }
         }
 
@@ -131,14 +129,9 @@ impl ApplyChangesUseCase {
                 ChannelChange::Update(existing, awaiting, _) => commands.push(Arc::from(
                     UpdateChannel::new(existing.clone(), awaiting.clone()),
                 )),
-                ChannelChange::Delete(existing) => awaiting_guild
-                    .channels
-                    .extra_items_strategy
-                    .handle_extra_channel_commands(
-                        &existing,
-                        &mut commands,
-                        awaiting_guild.categories.items.find_by_name(&existing.name),
-                    ),
+                ChannelChange::Delete(existing) => {
+                    commands.push(Arc::from(DeleteChannel::new(existing.clone())))
+                }
             }
         }
 
