@@ -1,27 +1,13 @@
 use core::fmt::Debug;
-use std::sync::Arc;
 
 use crate::{
     category::AwaitingCategory,
     channel::{AwaitingChannel, Channel, ExistingChannel},
-    core::{
-        changes::channel::ChannelChange,
-        commands::{
-            channel::{DeleteChannel, UpdateChannel},
-            CommandRef,
-        },
-        diffs::Differ,
-    },
+    core::{changes::channel::ChannelChange, diffs::Differ},
 };
 
 pub trait ExtraChannelsStrategy {
     fn _type(&self) -> ExtraChannelsStrategyType;
-    fn handle_extra_channel_commands(
-        &self,
-        extra_existing: &ExistingChannel,
-        commands: &mut Vec<CommandRef>,
-        awaiting_category: Option<&AwaitingCategory>,
-    );
     fn handle_extra_channel(
         &self,
         extra_existing: &ExistingChannel,
@@ -50,16 +36,6 @@ impl ExtraChannelsStrategy for RemoveExtraChannels {
         ExtraChannelsStrategyType::Remove
     }
 
-    fn handle_extra_channel_commands(
-        &self,
-        extra_existing: &ExistingChannel,
-        commands: &mut Vec<CommandRef>,
-        _awaiting_category: Option<&AwaitingCategory>,
-    ) {
-        let command = DeleteChannel::new(extra_existing.clone());
-        commands.push(Arc::from(command));
-    }
-
     fn handle_extra_channel(
         &self,
         extra_existing: &ExistingChannel,
@@ -77,14 +53,6 @@ impl ExtraChannelsStrategy for KeepExtraChannels {
         ExtraChannelsStrategyType::Keep
     }
 
-    fn handle_extra_channel_commands(
-        &self,
-        _extra_existing: &ExistingChannel,
-        _commands: &mut Vec<CommandRef>,
-        _awaiting_category: Option<&AwaitingCategory>,
-    ) {
-    }
-
     fn handle_extra_channel(
         &self,
         _extra_existing: &ExistingChannel,
@@ -99,28 +67,6 @@ pub struct SyncExtraChannelsPermissions {}
 impl ExtraChannelsStrategy for SyncExtraChannelsPermissions {
     fn _type(&self) -> ExtraChannelsStrategyType {
         ExtraChannelsStrategyType::OverwritePermissionsWithCategory
-    }
-
-    fn handle_extra_channel_commands(
-        &self,
-        extra_existing: &ExistingChannel,
-        commands: &mut Vec<CommandRef>,
-        awaiting_category: Option<&AwaitingCategory>,
-    ) {
-        if let Some(category) = awaiting_category {
-            let awaiting_channel = AwaitingChannel {
-                name: extra_existing.name().to_string(),
-                topic: extra_existing.topic.clone(),
-                channel_type: extra_existing.channel_type.clone(),
-                category: Some(category.clone()),
-                overwrites: category.overwrites.clone(),
-            };
-
-            let command = UpdateChannel::new(extra_existing.clone(), awaiting_channel);
-            commands.push(Arc::from(command));
-        } else {
-            panic!("Category cannot be empty for overriding permissions overwrites of extra channel {}", extra_existing.name());
-        }
     }
 
     fn handle_extra_channel(

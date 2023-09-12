@@ -1,21 +1,9 @@
 use core::fmt::Debug;
-use std::sync::Arc;
 
-use crate::{
-    category::ExistingCategory,
-    core::{
-        changes::category::CategoryChange,
-        commands::{category::DeleteCategory, CommandRef},
-    },
-};
+use crate::{category::ExistingCategory, core::changes::category::CategoryChange};
 
 pub trait ExtraCategoriesStrategy {
     fn _type(&self) -> ExtraCategoriesStrategyType;
-    fn handle_extra_category_commands(
-        &self,
-        extra_existing: &ExistingCategory,
-        commands: &mut Vec<CommandRef>,
-    );
     fn handle_extra_category(
         &self,
         extra_existing: &ExistingCategory,
@@ -42,15 +30,6 @@ impl ExtraCategoriesStrategy for RemoveExtraCategories {
         ExtraCategoriesStrategyType::Remove
     }
 
-    fn handle_extra_category_commands(
-        &self,
-        extra_existing: &ExistingCategory,
-        commands: &mut Vec<CommandRef>,
-    ) {
-        let command = DeleteCategory::new(extra_existing.clone());
-        commands.push(Arc::from(command));
-    }
-
     fn handle_extra_category(
         &self,
         extra_existing: &ExistingCategory,
@@ -65,13 +44,6 @@ pub struct KeepExtraCategories {}
 impl ExtraCategoriesStrategy for KeepExtraCategories {
     fn _type(&self) -> ExtraCategoriesStrategyType {
         ExtraCategoriesStrategyType::Keep
-    }
-
-    fn handle_extra_category_commands(
-        &self,
-        _extra_existing: &ExistingCategory,
-        _commands: &mut Vec<CommandRef>,
-    ) {
     }
 
     fn handle_extra_category(
