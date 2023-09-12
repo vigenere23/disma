@@ -7,6 +7,7 @@ use crate::{
     role::{AwaitingRole, ExistingRole},
 };
 
+#[derive(PartialEq, Debug)]
 pub enum RoleChange {
     Create(AwaitingRole),
     Update(ExistingRole, AwaitingRole, Vec<Diff>),

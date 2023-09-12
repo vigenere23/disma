@@ -7,6 +7,7 @@ use crate::{
     guild::{AwaitingGuild, ExistingGuild},
 };
 
+#[derive(PartialEq, Debug)]
 pub enum ChannelChange {
     Create(AwaitingChannel),
     Update(ExistingChannel, AwaitingChannel, Vec<Diff>),

@@ -53,3 +53,33 @@ impl ExtraCategoriesStrategy for KeepExtraCategories {
     ) {
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::fixtures::existing::ExistingCategoryFixture;
+
+    use super::*;
+
+    #[test]
+    fn when_keeping_extra_categories_should_not_add_changes() {
+        let mut changes: Vec<CategoryChange> = Vec::new();
+        let extra_category = ExistingCategoryFixture::new().build();
+
+        let strategy = KeepExtraCategories {};
+        strategy.handle_extra_category(&extra_category, &mut changes);
+
+        assert!(changes.is_empty());
+    }
+
+    #[test]
+    fn when_removing_extra_categories_should_add_delete_change() {
+        let mut changes: Vec<CategoryChange> = Vec::new();
+        let extra_category = ExistingCategoryFixture::new().build();
+
+        let strategy = RemoveExtraCategories {};
+        strategy.handle_extra_category(&extra_category, &mut changes);
+
+        assert!(!changes.is_empty());
+        assert_eq!(changes, vec![CategoryChange::Delete(extra_category)]);
+    }
+}
