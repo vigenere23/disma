@@ -204,6 +204,7 @@ mod tests {
                 .with_role(role_to_add_params.clone())
                 .with_role(role_to_update_params.clone())
                 .with_role(role_not_to_update_params.clone())
+                .remove_extra_roles()
                 .build(),
         );
 
@@ -269,6 +270,7 @@ mod tests {
                 .with_category(category_to_add_params.clone())
                 .with_category(category_to_update_params.clone())
                 .with_category(category_not_to_update_params.clone())
+                .remove_extra_categories()
                 .build(),
         );
 
@@ -343,6 +345,7 @@ mod tests {
                 .with_channel(channel_to_update_params.clone())
                 .with_channel(channel_not_to_update_params.clone())
                 .with_channel(channel_to_change_category_params.clone())
+                .remove_extra_channels()
                 .build(),
         );
 

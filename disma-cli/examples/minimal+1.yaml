@@ -1,0 +1,15 @@
+roles:
+  items:
+    - name: "@everyone"
+      permissions: []
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: disma
+      permissions:
+        - ADMINISTRATOR
+      show_in_sidebar: false
+      is_mentionable: false
+    - name: extra
+      permissions: []
+      show_in_sidebar: false
+      is_mentionable: false

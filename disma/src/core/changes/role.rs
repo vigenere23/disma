@@ -33,6 +33,7 @@ impl RoleChangesService {
         let to_create = extra_awaiting
             .into_iter()
             .map(|awaiting| RoleChange::Create(awaiting.clone()));
+
         let to_update = same.into_iter().filter_map(|(awaiting, existing)| {
             let diffs = existing.diffs_with(awaiting);
             match diffs.is_empty() {
@@ -44,9 +45,14 @@ impl RoleChangesService {
                 )),
             }
         });
-        let to_delete = extra_existing
-            .into_iter()
-            .map(|existing| RoleChange::Delete(existing.clone()));
+
+        let mut to_delete: Vec<RoleChange> = Vec::new();
+        for existing in extra_existing.into_iter() {
+            awaiting_guild
+                .roles
+                .extra_items_strategy
+                .handle_extra_role(existing, &mut to_delete)
+        }
 
         to_create.chain(to_update).chain(to_delete).collect()
     }
