@@ -1,0 +1,262 @@
+disma v0.16.1 (/Users/gabio/Documents/projects/disma/disma)
+├── reqwest v0.11.18
+│   ├── base64 v0.21.2
+│   ├── bytes v1.4.0
+│   ├── encoding_rs v0.8.32
+│   │   └── cfg-if v1.0.0
+│   ├── futures-core v0.3.28
+│   ├── futures-util v0.3.28
+│   │   ├── futures-core v0.3.28
+│   │   ├── futures-io v0.3.28
+│   │   ├── futures-task v0.3.28
+│   │   ├── memchr v2.5.0
+│   │   ├── pin-project-lite v0.2.12
+│   │   ├── pin-utils v0.1.0
+│   │   └── slab v0.4.8
+│   │       [build-dependencies]
+│   │       └── autocfg v1.1.0
+│   ├── h2 v0.3.20
+│   │   ├── bytes v1.4.0
+│   │   ├── fnv v1.0.7
+│   │   ├── futures-core v0.3.28
+│   │   ├── futures-sink v0.3.28
+│   │   ├── futures-util v0.3.28 (*)
+│   │   ├── http v0.2.9
+│   │   │   ├── bytes v1.4.0
+│   │   │   ├── fnv v1.0.7
+│   │   │   └── itoa v1.0.9
+│   │   ├── indexmap v1.9.3
+│   │   │   └── hashbrown v0.12.3
+│   │   │   [build-dependencies]
+│   │   │   └── autocfg v1.1.0
+│   │   ├── slab v0.4.8 (*)
+│   │   ├── tokio v1.32.0
+│   │   │   ├── bytes v1.4.0
+│   │   │   ├── libc v0.2.147
+│   │   │   ├── mio v0.8.8
+│   │   │   │   └── libc v0.2.147
+│   │   │   ├── num_cpus v1.16.0
+│   │   │   │   └── libc v0.2.147
+│   │   │   ├── pin-project-lite v0.2.12
+│   │   │   └── socket2 v0.5.3
+│   │   │       └── libc v0.2.147
+│   │   ├── tokio-util v0.7.8
+│   │   │   ├── bytes v1.4.0
+│   │   │   ├── futures-core v0.3.28
+│   │   │   ├── futures-sink v0.3.28
+│   │   │   ├── pin-project-lite v0.2.12
+│   │   │   ├── tokio v1.32.0 (*)
+│   │   │   └── tracing v0.1.37
+│   │   │       ├── cfg-if v1.0.0
+│   │   │       ├── pin-project-lite v0.2.12
+│   │   │       └── tracing-core v0.1.31
+│   │   │           └── once_cell v1.18.0
+│   │   └── tracing v0.1.37 (*)
+│   ├── http v0.2.9 (*)
+│   ├── http-body v0.4.5
+│   │   ├── bytes v1.4.0
+│   │   ├── http v0.2.9 (*)
+│   │   └── pin-project-lite v0.2.12
+│   ├── hyper v0.14.27
+│   │   ├── bytes v1.4.0
+│   │   ├── futures-channel v0.3.28
+│   │   │   └── futures-core v0.3.28
+│   │   ├── futures-core v0.3.28
+│   │   ├── futures-util v0.3.28 (*)
+│   │   ├── h2 v0.3.20 (*)
+│   │   ├── http v0.2.9 (*)
+│   │   ├── http-body v0.4.5 (*)
+│   │   ├── httparse v1.8.0
+│   │   ├── httpdate v1.0.3
+│   │   ├── itoa v1.0.9
+│   │   ├── pin-project-lite v0.2.12
+│   │   ├── socket2 v0.4.9
+│   │   │   └── libc v0.2.147
+│   │   ├── tokio v1.32.0 (*)
+│   │   ├── tower-service v0.3.2
+│   │   ├── tracing v0.1.37 (*)
+│   │   └── want v0.3.1
+│   │       └── try-lock v0.2.4
+│   ├── hyper-tls v0.5.0
+│   │   ├── bytes v1.4.0
+│   │   ├── hyper v0.14.27 (*)
+│   │   ├── native-tls v0.2.11
+│   │   │   ├── lazy_static v1.4.0
+│   │   │   ├── libc v0.2.147
+│   │   │   ├── security-framework v2.9.2
+│   │   │   │   ├── bitflags v1.3.2
+│   │   │   │   ├── core-foundation v0.9.3
+│   │   │   │   │   ├── core-foundation-sys v0.8.4
+│   │   │   │   │   └── libc v0.2.147
+│   │   │   │   ├── core-foundation-sys v0.8.4
+│   │   │   │   ├── libc v0.2.147
+│   │   │   │   └── security-framework-sys v2.9.1
+│   │   │   │       ├── core-foundation-sys v0.8.4
+│   │   │   │       └── libc v0.2.147
+│   │   │   ├── security-framework-sys v2.9.1 (*)
+│   │   │   └── tempfile v3.8.0
+│   │   │       ├── cfg-if v1.0.0
+│   │   │       ├── fastrand v2.0.0
+│   │   │       └── rustix v0.38.8
+│   │   │           ├── bitflags v2.4.0
+│   │   │           ├── errno v0.3.2
+│   │   │           │   └── libc v0.2.147
+│   │   │           └── libc v0.2.147
+│   │   ├── tokio v1.32.0 (*)
+│   │   └── tokio-native-tls v0.3.1
+│   │       ├── native-tls v0.2.11 (*)
+│   │       └── tokio v1.32.0 (*)
+│   ├── ipnet v2.8.0
+│   ├── log v0.4.20
+│   ├── mime v0.3.17
+│   ├── native-tls v0.2.11 (*)
+│   ├── once_cell v1.18.0
+│   ├── percent-encoding v2.3.0
+│   ├── pin-project-lite v0.2.12
+│   ├── serde v1.0.183
+│   │   └── serde_derive v1.0.183 (proc-macro)
+│   │       ├── proc-macro2 v1.0.66
+│   │       │   └── unicode-ident v1.0.11
+│   │       ├── quote v1.0.33
+│   │       │   └── proc-macro2 v1.0.66 (*)
+│   │       └── syn v2.0.29
+│   │           ├── proc-macro2 v1.0.66 (*)
+│   │           ├── quote v1.0.33 (*)
+│   │           └── unicode-ident v1.0.11
+│   ├── serde_json v1.0.105
+│   │   ├── itoa v1.0.9
+│   │   ├── ryu v1.0.15
+│   │   └── serde v1.0.183 (*)
+│   ├── serde_urlencoded v0.7.1
+│   │   ├── form_urlencoded v1.2.0
+│   │   │   └── percent-encoding v2.3.0
+│   │   ├── itoa v1.0.9
+│   │   ├── ryu v1.0.15
+│   │   └── serde v1.0.183 (*)
+│   ├── tokio v1.32.0 (*)
+│   ├── tokio-native-tls v0.3.1 (*)
+│   ├── tower-service v0.3.2
+│   └── url v2.4.0
+│       ├── form_urlencoded v1.2.0 (*)
+│       ├── idna v0.4.0
+│       │   ├── unicode-bidi v0.3.13
+│       │   └── unicode-normalization v0.1.22
+│       │       └── tinyvec v1.6.0
+│       │           └── tinyvec_macros v0.1.1
+│       └── percent-encoding v2.3.0
+├── serde v1.0.183 (*)
+├── serde_json v1.0.105 (*)
+├── serde_repr v0.1.16 (proc-macro)
+│   ├── proc-macro2 v1.0.66 (*)
+│   ├── quote v1.0.33 (*)
+│   └── syn v2.0.29 (*)
+└── strum v0.24.1
+    └── strum_macros v0.24.3 (proc-macro)
+        ├── heck v0.4.1
+        ├── proc-macro2 v1.0.66 (*)
+        ├── quote v1.0.33 (*)
+        ├── rustversion v1.0.14 (proc-macro)
+        └── syn v1.0.109
+            ├── proc-macro2 v1.0.66 (*)
+            ├── quote v1.0.33 (*)
+            └── unicode-ident v1.0.11
+[dev-dependencies]
+├── fake v2.8.0
+│   ├── rand v0.8.5
+│   │   ├── libc v0.2.147
+│   │   ├── rand_chacha v0.3.1
+│   │   │   ├── ppv-lite86 v0.2.17
+│   │   │   └── rand_core v0.6.4
+│   │   │       └── getrandom v0.2.10
+│   │   │           ├── cfg-if v1.0.0
+│   │   │           └── libc v0.2.147
+│   │   └── rand_core v0.6.4 (*)
+│   ├── unidecode v0.3.0
+│   └── uuid v1.4.1
+│       ├── atomic v0.5.3
+│       ├── getrandom v0.2.10 (*)
+│       ├── md-5 v0.10.5
+│       │   └── digest v0.10.7
+│       │       ├── block-buffer v0.10.4
+│       │       │   └── generic-array v0.14.7
+│       │       │       └── typenum v1.16.0
+│       │       │       [build-dependencies]
+│       │       │       └── version_check v0.9.4
+│       │       └── crypto-common v0.1.6
+│       │           ├── generic-array v0.14.7 (*)
+│       │           └── typenum v1.16.0
+│       └── sha1_smol v1.0.0
+├── mock-it v0.9.0
+│   └── mock-it_codegen v0.9.0 (proc-macro)
+│       ├── proc-macro2 v1.0.66 (*)
+│       ├── quote v1.0.33 (*)
+│       └── syn v1.0.109 (*)
+└── serde_yaml v0.9.25
+    ├── indexmap v2.0.0
+    │   ├── equivalent v1.0.1
+    │   └── hashbrown v0.14.0
+    ├── itoa v1.0.9
+    ├── ryu v1.0.15
+    ├── serde v1.0.183 (*)
+    └── unsafe-libyaml v0.2.10
+
+disma-cli v0.9.1 (/Users/gabio/Documents/projects/disma/disma-cli)
+├── clap v4.4.16
+│   ├── clap_builder v4.4.16
+│   │   ├── anstream v0.6.7
+│   │   │   ├── anstyle v1.0.1
+│   │   │   ├── anstyle-parse v0.2.1
+│   │   │   │   └── utf8parse v0.2.1
+│   │   │   ├── anstyle-query v1.0.0
+│   │   │   ├── colorchoice v1.0.0
+│   │   │   └── utf8parse v0.2.1
+│   │   ├── anstyle v1.0.1
+│   │   ├── clap_lex v0.6.0
+│   │   └── strsim v0.10.0
+│   └── clap_derive v4.4.7 (proc-macro)
+│       ├── heck v0.4.1
+│       ├── proc-macro2 v1.0.66 (*)
+│       ├── quote v1.0.33 (*)
+│       └── syn v2.0.29 (*)
+├── colored v2.0.4
+│   ├── is-terminal v0.4.9
+│   │   └── rustix v0.38.8 (*)
+│   └── lazy_static v1.4.0
+├── disma v0.16.1 (/Users/gabio/Documents/projects/disma/disma) (*)
+├── handlebars v4.3.7
+│   ├── log v0.4.20
+│   ├── pest v2.7.2
+│   │   ├── thiserror v1.0.47
+│   │   │   └── thiserror-impl v1.0.47 (proc-macro)
+│   │   │       ├── proc-macro2 v1.0.66 (*)
+│   │   │       ├── quote v1.0.33 (*)
+│   │   │       └── syn v2.0.29 (*)
+│   │   └── ucd-trie v0.1.6
+│   ├── pest_derive v2.7.2 (proc-macro)
+│   │   ├── pest v2.7.2 (*)
+│   │   └── pest_generator v2.7.2
+│   │       ├── pest v2.7.2 (*)
+│   │       ├── pest_meta v2.7.2
+│   │       │   ├── once_cell v1.18.0
+│   │       │   └── pest v2.7.2 (*)
+│   │       │   [build-dependencies]
+│   │       │   └── sha2 v0.10.7
+│   │       │       ├── cfg-if v1.0.0
+│   │       │       ├── cpufeatures v0.2.9
+│   │       │       │   └── libc v0.2.147
+│   │       │       └── digest v0.10.7 (*)
+│   │       ├── proc-macro2 v1.0.66 (*)
+│   │       ├── quote v1.0.33 (*)
+│   │       └── syn v2.0.29 (*)
+│   ├── serde v1.0.183 (*)
+│   ├── serde_json v1.0.105 (*)
+│   └── thiserror v1.0.47 (*)
+├── serde v1.0.183 (*)
+├── serde_json v1.0.105 (*)
+├── serde_yaml v0.9.25 (*)
+├── yaml-merge-keys v0.5.1
+│   ├── lazy_static v1.4.0
+│   ├── thiserror v1.0.47 (*)
+│   └── yaml-rust v0.4.5
+│       └── linked-hash-map v0.5.6
+└── yaml-rust v0.4.5 (*)
