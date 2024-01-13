@@ -97,7 +97,7 @@ impl DeleteCategory {
     }
 
     fn describe(&self) -> Change {
-        Change::Delete(ChangeEntity::Channel, self.category.name.to_string())
+        Change::Delete(ChangeEntity::Category, self.category.name.to_string())
     }
 }
 
