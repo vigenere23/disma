@@ -15,4 +15,4 @@ echo "Running 'cargo fmt'"
 cargo fmt $args --check
 
 echo "Running 'cargo clippy'"
-cargo clippy $args -- -A clippy::from_over_into -D warnings
+cargo clippy $args -- -A clippy::from_over_into -A clippy::format-collect -D warnings
