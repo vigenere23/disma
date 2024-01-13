@@ -17,7 +17,7 @@ path = "src/main.rs"
 
 [dependencies]
 disma = { path = "../disma", version = "0.16.1" }
-clap = { version = "4.3.23", features = ["derive"] }
+clap = { version = "4.4.16", features = ["derive"] }
 handlebars = "4.3.3"
 serde = { version = "1.0.143", features = ["derive"] }
 serde_json = "1.0.83"
