@@ -14,25 +14,21 @@ pub struct CompileConfig {
 }
 
 impl CompileConfig {
-    const TEMPLATE_NAME: &'static str = "base";
-
     pub fn new(deserializer: Arc<Deserializer>) -> Self {
         Self { deserializer }
     }
 
     pub fn run(&self, template_file: &str, vars_file: &str, output_file: &str, force: bool) {
         let template = fs::read_to_string(template_file).unwrap();
-        // TODO context should probably be a Hash instead or a serde_yaml::Value
+        // TODO context should probably be a Hash instead of a serde_yaml::Value
         let context: Value = self.deserializer.deserialize(Path::new(vars_file));
 
         println!();
         println!("{}", "➜ ⚙️ Compiling guild config...".bold());
         let mut renderer = Handlebars::new();
-        renderer
-            .register_template_string(Self::TEMPLATE_NAME, &template)
-            .unwrap();
+        renderer.register_escape_fn(|s| s.to_string()); // preventing default HTML escaping
 
-        let rendered = renderer.render(Self::TEMPLATE_NAME, &context).unwrap();
+        let rendered = renderer.render_template(&template, &context).unwrap();
 
         let output_path = Path::new(output_file);
         println!(

@@ -14,13 +14,13 @@ use disma::{
 };
 
 use crate::{
+    commands::{
+        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
+        save_guild::SaveExistingGuild,
+    },
     infra::diff::{
         event::CliChangeEventListener,
         formatter::{DiffFormater, DiffFormaterRef},
-    },
-    services::{
-        apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
-        save_guild::SaveExistingGuild,
     },
     utils::{
         env::required_env,
