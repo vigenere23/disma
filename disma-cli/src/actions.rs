@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use super::{
-    injector::{Get, Injector},
-    services::{
+    commands::{
         apply_changes::ApplyChanges, compile_config::CompileConfig, list_guilds::ListGuilds,
         save_guild::SaveExistingGuild,
     },
+    injector::{Get, Injector},
 };
 
 pub fn apply_changes(guild_id: &str, file_path: &str, dry_run: bool, force: bool) {
