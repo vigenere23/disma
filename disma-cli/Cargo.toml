@@ -2,7 +2,7 @@
 name = "disma-cli"
 authors = ["Gab St-Pierre <lolgab1@hotmail.com>"]
 description = "Discord server management has never been easier!"
-version = "0.9.4"
+version = "0.9.5"
 edition = "2021"
 license-file = "../LICENSE"
 homepage = "https://github.com/vigenere23/disma"
@@ -16,7 +16,7 @@ name = "disma"
 path = "src/main.rs"
 
 [dependencies]
-disma = { path = "../disma", version = "0.16.3" }
+disma = { path = "../disma", version = "0.16.4" }
 clap = { version = "4.4.16", features = ["derive"] }
 handlebars = "5.1.1"
 serde = { version = "1.0.143", features = ["derive"] }
