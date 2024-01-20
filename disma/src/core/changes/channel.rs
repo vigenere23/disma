@@ -49,16 +49,23 @@ impl ChannelChangesService {
 
         let mut to_delete: Vec<ChannelChange> = Vec::new();
         for existing in extra_existing.into_iter() {
-            awaiting_guild
-                .channels
-                .extra_items_strategy
-                .handle_extra_channel(
-                    existing,
-                    &mut to_delete,
-                    awaiting_guild.categories.items.find_by_name(&existing.name),
-                )
+            let matching_awaiting_category = existing.category_name().and_then(|category_name| {
+                awaiting_guild.categories.items.find_by_name(category_name)
+            });
+
+            let extra_channels_strategy = matching_awaiting_category
+                .map(|category| &category.extra_channels_strategy)
+                .unwrap_or(&awaiting_guild.channels.extra_items_strategy);
+
+            extra_channels_strategy.handle_extra_channel(
+                existing,
+                &mut to_delete,
+                matching_awaiting_category,
+            )
         }
 
         to_create.chain(to_update).chain(to_delete).collect()
     }
 }
+
+// TODO add tests
