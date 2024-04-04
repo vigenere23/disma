@@ -40,13 +40,13 @@ devDependencies:
     version: 4.9.5
   vite:
     specifier: ^4.3.5
-    version: 4.5.2
+    version: 4.5.3
   vite-plugin-prismjs:
     specifier: ^0.0.8
     version: 0.0.8(prismjs@1.29.0)
   vite-plugin-solid:
     specifier: ^2.7.0
-    version: 2.7.0(solid-js@1.7.5)(vite@4.5.2)
+    version: 2.7.0(solid-js@1.7.5)(vite@4.5.3)
 
 packages:
 
@@ -1625,7 +1625,7 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-solid@2.7.0(solid-js@1.7.5)(vite@4.5.2):
+  /vite-plugin-solid@2.7.0(solid-js@1.7.5)(vite@4.5.3):
     resolution: {integrity: sha512-avp/Jl5zOp/Itfo67xtDB2O61U7idviaIp4mLsjhCa13PjKNasz+IID0jYTyqUp9SFx6/PmBr6v4KgDppqompg==}
     peerDependencies:
       solid-js: ^1.7.2
@@ -1638,14 +1638,14 @@ packages:
       merge-anything: 5.1.6
       solid-js: 1.7.5
       solid-refresh: 0.5.2(solid-js@1.7.5)
-      vite: 4.5.2
-      vitefu: 0.2.4(vite@4.5.2)
+      vite: 4.5.3
+      vitefu: 0.2.4(vite@4.5.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite@4.5.2:
-    resolution: {integrity: sha512-tBCZBNSBbHQkaGyhGCDUGqeo2ph8Fstyp6FMSvTtsXeZSPpSMGlviAOav2hxVTqFcx8Hj/twtWKsMJXNY0xI8w==}
+  /vite@4.5.3:
+    resolution: {integrity: sha512-kQL23kMeX92v3ph7IauVkXkikdDRsYMGTVl5KY2E9OY4ONLvkHf04MDTbnfo6NKxZiDLWzVpP5oTa8hQD8U3dg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -1679,7 +1679,7 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitefu@0.2.4(vite@4.5.2):
+  /vitefu@0.2.4(vite@4.5.3):
     resolution: {integrity: sha512-fanAXjSaf9xXtOOeno8wZXIhgia+CZury481LsDaV++lSvcU2R9Ch2bPh3PYFyoHW+w9LqAeYRISVQjUIew14g==}
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0
@@ -1687,7 +1687,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.5.2
+      vite: 4.5.3
     dev: true
 
   /wrappy@1.0.2:
