@@ -34,12 +34,6 @@ impl PartialEq for AwaitingCategory {
     }
 }
 
-impl ToString for AwaitingCategory {
-    fn to_string(&self) -> String {
-        self.name.clone()
-    }
-}
-
 impl Category for AwaitingCategory {
     fn name(&self) -> &str {
         &self.name
