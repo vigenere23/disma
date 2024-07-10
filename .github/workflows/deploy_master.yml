@@ -32,13 +32,13 @@ jobs:
         working-directory: site
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7.26.1
+          version: 9
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: "18.13.0"
           cache: "pnpm"
@@ -51,7 +51,7 @@ jobs:
         run: pnpm build --base=/disma
 
       - name: Upload artifact for Github Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           name: build
           path: site/dist
@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: Deploy to Github Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
         with:
           artifact_name: build
           timeout: "100000"
